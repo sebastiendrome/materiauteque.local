@@ -1,0 +1,6 @@
+.DS_Store
+_content/
+*.psd
+.vscode/settings.json
+_uploads/
+php.ini
