@@ -1,0 +1,178 @@
+@charset "UTF-8";
+
+input[type=text], textarea{color:#000; border:1px solid #ccc; padding:3px; margin:0;}
+input[type=text]:focus, textarea:focus{border-color:#777;}
+
+#adminContainer{padding:20px; padding-top:10px; clear:both;}
+.adminHeader{position:relative; padding:0 20px;}
+.adminHeader h1{display:inline-block; margin-right:20px;}
+
+.pagination a{display:inline-block; margin:3px;}
+
+.first{margin-top:0;}
+
+
+input.position{width:20px; text-align:right;}
+
+a.hide:hover{font-style:italic; color:#999 !important;}
+a.show:hover{font-style:normal !important;}
+a.newSub:hover{color:#25850d !important;}
+a.delete:hover{color:#bb0808 !important;}
+
+
+#working, #done{
+	display:none; 
+	text-align:center;
+	width:300px;
+	left: calc(50% - 150px);
+	position:fixed; top:-4px; z-index:100; 
+	height:auto; padding:10px;
+	background-color:#ffc; 
+	border:1px solid #7e6b00; border-radius: 3px;
+	box-shadow:0 3px 10px #aaa;
+}
+
+
+
+.above::before { 
+	content:"\02191\00a0";
+}
+.below::before { 
+	content:"\02193\00a0";
+}
+.leftArrow::before{
+	content:"\02190";
+}
+.rightArrow::before{
+	content:"\02192";
+}
+.warning{color:rgb(252, 123, 2);}
+.warning::before { 
+    content:"\26A0\00a0";
+}
+.remove::before{
+	content:"\02A02\00a0";
+}
+.add::before{
+	content:"\0002B\00a0";
+}
+.undo::before{
+	content:"\021A9\00a0";
+}
+.redo::before{
+	content:"\021AA\00a0";
+}
+.hide::before{
+	content:"-\00a0";
+}
+.help::before{
+	content:"@ ";
+}
+.rotate::before{
+	content:"\021BA\00a0";
+}
+.fav::before{
+	content:"\02606\00a0";
+}
+.download::before{
+	content:"\022BB\00a0";
+}
+.edit::before{
+	content:"\270E\00a0";
+}
+
+div.editImageDiv{position:relative; margin:10px 0;}
+div.editImageDiv a{display:block; background-color:rgba(224, 172, 73, .5);}
+div.editImageDiv img{display:block; margin:0 auto;}
+div.editImageDiv a.button{position:absolute; opacity:.5; bottom:3px;}
+div.editImageDiv:hover a{opacity:1;}
+/*div.editImageDiv:hover img{opacity:.5;}*/
+div.editImageDiv a.change{left:-15px;}
+div.editImageDiv a.remove{right:15px;}
+
+#localMessage{color:#25850d; display:inline-block; background-color:#fff; padding:1px 4px; border:1px solid #ddd; border-radius:3px;}
+
+div.tip{
+	margin-bottom:20px; padding:3px 10px; 
+	border-radius:3px;
+	border:1px solid #ccc;
+	background-color: rgba(255, 255, 255, 0.2);
+	font-size:.9em;
+}
+div.tip a.tipTitle{display:block;}
+a.tipTitle::before{
+	content: '\25B8\ ';
+}
+a.tipTitle.open::before{
+	content: '\25BE\ ';
+}
+div.tip ol{display:none;}
+
+/* upload progress bar */
+div.progress{margin-top:10px; background-color:#eee; border:1px solid #ccc; border-top-color:#999; border-radius: 3px; height:5px; width:100%; overflow:hidden; display:none;}
+div.bar{width:0%; background-color:#3eb121; height:10px;}
+
+
+/* .data and .data.small table */
+table.data{background-color:#ddd;}
+table.data td{padding:3px; background-color:#fff;}
+/*table.data.small td{font-size:11px; padding:4px; line-height:11px; white-space:nowrap; max-width:150px; overflow:visible;}*/
+
+tr.topRow td, th{
+	text-align:left;
+	padding:5px 5px 5px 16px; 
+	background-color:#666; 
+	color:#fff;
+	text-transform:capitalize; 
+	cursor: pointer; 
+	background-image:url('/_code/images/sort.gif'); 
+	background-repeat:no-repeat; 
+	background-position: 5px center;
+}
+th{font-weight:normal;}
+th.headerSortUp, th.headerSortDown { 
+	background-color:#000;
+	color:#fff;
+}
+th.headerSortUp{
+	background-image: url('/_code/images/up.gif');
+}
+th.headerSortDown{
+	background-image: url('/_code/images/down.gif');
+}
+table.data.small tr.topRow td{background-color:#000 !important;}
+tr.topRow td a.selected::before{content:url(/images/arrowDown.png);}
+table.data td a.selected{color:#fff;}
+/* colors for div percent bars */
+
+
+table{
+	background-color:#ddd;
+	margin-bottom:15px;
+	border-spacing:1px; border-collapse:separate;
+}
+table td{
+	background-color:#f5f5f5;
+	padding:3px;
+	vertical-align: top;
+}
+tr.top td{
+	font-weight:bold;
+}
+
+form{display:inline-block;}
+
+form, .dpTable {
+    background-color: #ddd;
+    padding: 10px;
+	border-radius: 5px;
+	margin-bottom:10px;
+}
+
+
+input[type='text'], input[type='number'], input[type='password'], input[type='email'], select, textarea{min-width:300px;}
+textarea{height:100px;}
+
+
+div.short{position:relative;}
+div.short div.long{display:none; position:absolute; z-index:1; top:-3px; left:-3px; padding:2px; border:1px solid #ccc; background-color:#fff; width:auto; height:auto;}

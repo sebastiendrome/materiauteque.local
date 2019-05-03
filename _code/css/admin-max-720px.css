@@ -1,0 +1,19 @@
+/****
+* css modifications for small screens (width less than or equal to 720px)
+****/
+.modal{width:auto;}
+/*ul.structure{
+    margin-left: -75px;
+    margin-right: -19px;
+}*/
+
+#adminContainer{padding-right:0;}
+
+.adminHeader #admin{position:relative; top:0; left:0;}
+#editTextHeader{position:relative; top:0; left:0; width:100%; padding:0;}
+
+ul.structure li span.imgInput{margin-left:0;}
+ul.structure li ul li.sub::before{margin-left:-23px;}
+/*ul.structure li a{margin-left:5px;}*/
+
+div.halfContainer{width:99.8%;}

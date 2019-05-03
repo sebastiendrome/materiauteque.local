@@ -3,4 +3,7 @@ _content/
 *.psd
 .vscode/settings.json
 _uploads/
+uploads/
+_excel/
+tests/
 php.ini
