@@ -159,7 +159,7 @@ if( isset($message) ){
 		?>
         </select>
 
-        <tr id="prixVente"<?php if($item_data['statut'] !== 'vendu'){echo ' style="display:none;"';} ?>>
+        <tr id="prixVente"<?php if($item_data['statut_id'] !== 6){echo ' style="display:none;"';} ?>>
         <td>Prix de vente:<td><input type="number" name="prix_vente" step="any" value="<?php echo $item_data['prix_vente']; ?>">
         
         <tr>
@@ -234,7 +234,7 @@ if( isset($message) ){
 	
 	<tr>
 	<td>Statut:<td>
-	<select name="statut">
+	<select name="statut_id">
 		<?php
 		$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
 		$options = '';
@@ -252,7 +252,7 @@ if( isset($message) ){
 		?>
 	</select>
 
-	<tr id="prixVente"<?php if($item_data_copy['statut'] !== 'vendu'){echo ' style="display:none;"';} ?>>
+	<tr id="prixVente"<?php if($item_data_copy['statut_id'] !== 6){echo ' style="display:none;"';} ?>>
 	<td>Prix de vente:<td><input type="number" name="prix_vente" step="any" value="<?php echo $item_data_copy['prix_vente']; ?>">
 	
 	<tr>

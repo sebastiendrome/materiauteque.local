@@ -38,19 +38,23 @@ if( isset($_GET['previous_id']) && !empty($_GET['previous_id']) && $_GET['previo
 		<input type="hidden" name="id" value="<?php echo $id; ?>">
 		<input type="hidden" name="previous_id" value="<?php echo $previous_statut_id; ?>">
 		<input type="hidden" name="prix" value="<?php echo $prix; ?>">
-		<h3>Prix de vente: <input type="text" style="width:60px; min-width:60px; text-align:right;" name="prix_vente" value="<?php echo str_replace('.' ,',' ,$prix); ?>" placeholder="0,00"> €
-		<button type="submit" name="prixVenteSubmit" id="prixVenteSubmit">Enregistrer la vente</button></h3>
+		<h3>Prix de vente: <input type="text" style="width:60px; min-width:60px; text-align:right;" name="prix_vente" value="<?php echo str_replace('.' ,',' ,$prix); ?>" placeholder="0,00"> €</h3>
+		<input type="checkbox" id="payement_cheque" name="payement_cheque" value="2" style="margin-left:0;"> <label for="payement_cheque">Payement par chèque</label> 
+		<h3><button type="submit" name="prixVenteSubmit" id="prixVenteSubmit" style="width:100%; margin-left:0;">Enregistrer la vente</button></h3>
 		<!--<a href="javascript:;" class="annuler button left hideModal">Annuler</a>-->
 
-		<h3 style="text-align:center; margin:20px 0;"> —— OU —— </h3>
+		<p>&nbsp;</p>
+		<h3 style="text-align:center; margin:20px 0; clear:both;"> —— OU —— </h3>
 
 	<span style="color:#383838; font-weight:bold; font-size:larger;">Vente partielle:</span> 
 	<a href="/_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>" class="button left">Scinder l'article en deux</a>
 
+	<!--
 	<div style="border-top:1px solid #ddd; margin:20px 0;"></div>
 	<a href="javascript:;" class="button annuler left">Annuler</a>
 
 	</div>
+	-->
 	</form>
 	
 	<!-- update to vendu, add prix de vente END -->

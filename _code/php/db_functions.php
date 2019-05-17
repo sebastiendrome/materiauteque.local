@@ -225,6 +225,7 @@ function update_table($table, $article_id, $update){
 	$q .= update_sql($update);
 	$q .= " WHERE id = $article_id";
 	
+	// debug
 	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
 	
 	if( $query = mysqli_query($db, $q) ){
@@ -414,7 +415,7 @@ function find_articles($key_val_pairs, $include_vendus = FALSE){
 			$q = "SELECT id FROM articles WHERE $key = '$value'";
 		}
 
-		// include statut='vendu' or not
+		// include statut=6 (=vendu) or not
 		if(!$include_vendus){
 			$q .= " AND statut_id != 6";
 		}
@@ -482,7 +483,7 @@ function search($keywords = '', $category = '', $visible = TRUE, $vendus = FALSE
 	if( $visible ){
 		$filters_array['visible'] = "`visible` = 1";
 	}
-	// vendus = FALSE > show only items where statut is NOT 'vendu'
+	// vendus = FALSE > show only items where statut_id is NOT 6 (=vendu)
 	if( !$vendus ){
 		$filters_array['vendus'] = "`statut_id` != 6";
 	}
@@ -835,51 +836,6 @@ function scinde_article($original, $copy){
 }
 
 
-
-
-/* echo table to represent SQL results (uses function present() above) */
-/*
-function echo_table($result_array){
-	$output = '';
-	$i = 0;
-    $output .= '<table class="data">'.PHP_EOL;
-    foreach($result_array as $key => $value){
-		
-		// first iteration, show top row = key name
-        if($i == 0){
-			$output .= '<thead>';
-			$output .= '<tr class="topRow">';
-            foreach($value as $k => $v){
-                $output .= '<th>'.$k.'</th>';
-			}
-			if( isset($value['statut']) ){
-				$output .= '<th>&nbsp;</th>';
-			}
-			$output .= '</tr>';
-			$output .= '</thead><tbody>'; 
-		}
-
-		// show results
-		$output .= '<tr>';
-        foreach($value as $k => $v){
-			$v = present($k, $v);
-			if($i % 2 == 0){
-				$style = ' style="background-color:#f5f5f5;"';
-			}else{
-				$style = '';
-			}
-            $output .= '<td'.$style.'>'.$v.'</td>';
-		}
-		if( isset($value['statut']) ){
-			$output .= '<td'.$style.'><a href="/_code/php/forms/editArticle.php?article_id='.$value['id'].'" class="button edit" style="margin:0;">modifier</a></td>';
-        $output .= '</tr>';
-		}
-        $i++;
-    }
-	$output .= '</tbody></table>'.PHP_EOL;
-	echo $output;
-}
-*/
 
 
 /* echo item (article) data in a table */

@@ -13034,3 +13034,54 @@ p Session: 1
 wH Cookie: 888
 wW Cookie: 1351
 PHPSESSID Cookie: 8kf6c93vc2a7t6cflqfo0am4f4
+
+An error has occurred on materiauteque.local/:
+
+Error at 2019-05-17 11:59:09: URI: /_code/php/forms/scinderArticle.php?article_id=930: level: 8 
+ msg:Undefined index: statut 
+ file:/Users/seb/Sites/materiauteque.local/_code/php/forms/scinderArticle.php 
+ line:162
+Severity: info
+http_ref: http://materiauteque.local/admin/
+userName Session: d033e22ae348aeb5660fc2140aec35850c4da997
+kftgrnpoiu Session: 5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8
+limit Session: 20
+p Session: 1
+article_id Session: 930
+wH Cookie: 682
+wW Cookie: 649
+PHPSESSID Cookie: 8kf6c93vc2a7t6cflqfo0am4f4
+
+An error has occurred on materiauteque.local/:
+
+Error at 2019-05-17 11:59:09: URI: /_code/php/forms/scinderArticle.php?article_id=930: level: 8 
+ msg:Undefined index: statut 
+ file:/Users/seb/Sites/materiauteque.local/_code/php/forms/scinderArticle.php 
+ line:255
+Severity: info
+http_ref: http://materiauteque.local/admin/
+userName Session: d033e22ae348aeb5660fc2140aec35850c4da997
+kftgrnpoiu Session: 5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8
+limit Session: 20
+p Session: 1
+article_id Session: 930
+wH Cookie: 682
+wW Cookie: 649
+PHPSESSID Cookie: 8kf6c93vc2a7t6cflqfo0am4f4
+
+An error has occurred on materiauteque.local/:
+
+Error at 2019-05-17 12:00:04: URI: /_code/php/forms/scinderArticle.php?article_id=930: level: 8 
+ msg:Undefined index: statut 
+ file:/Users/seb/Sites/materiauteque.local/_code/php/forms/scinderArticle.php 
+ line:255
+Severity: info
+http_ref: http://materiauteque.local/admin/
+userName Session: d033e22ae348aeb5660fc2140aec35850c4da997
+kftgrnpoiu Session: 5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8
+limit Session: 20
+p Session: 1
+article_id Session: 930
+wH Cookie: 682
+wW Cookie: 649
+PHPSESSID Cookie: 8kf6c93vc2a7t6cflqfo0am4f4

@@ -30,43 +30,6 @@ $(document).ajaxStart(function(){
 });
 
 
-
-
-/* NOT USED ANYMORE (OLD STATUT)
-// if (article) statut is changed to 'vendu' (from within 'Modifier un article' page only), show prix_vente field, set visible = 0
-$("select[name='statut']").on('change', function(){
-	var $table = $(this).parent().parent().parent();
-	if($table !== false){
-		var $tr = $table.find('tr#prixVente');
-		if($tr !== false){
-			var $prixVente = $table.find($("input[name='prix_vente']"));
-			if($(this).val() == 'vendu'){
-				$tr.show();
-				var $visibleZero = $table.find($("input[name='visible']#visibleZero"));
-				$prixVente.prop("required","required");
-				$prixVente.focus();
-				$visibleZero.prop("checked", true);
-			}else{
-				$prixVente.val('');
-				$tr.hide();
-			}
-		}
-	}
-});
-*/
-
-/*
-// for 'statut' select inputs, store previous value before change, empty it on blur.
-var previous;
-$("table.data").on('keydown', "select[name='statut']", function(){
-	previous = $(this).val();
-	//alert(previous);
-}).on('blur', "select[name='statut']", function(){
-	previous = '';
-});
-*/
-
-
 // if (article) statut_id is changed to 6='vendu' (from within 'Modifier un article' page only), show prix_vente field, set visible = 0
 $("select[name='statut_id']").on('change', function(){
 	var $table = $(this).parent().parent().parent();
@@ -98,20 +61,20 @@ $("table.data").on('keydown', "select[name='statut_id']", function(){
 	previous_id = '';
 });
 
-// handles all select drop-downs change via ajax, including article sale (opens prixVenteModal) if statut changed to 'vendu'
+// handles all select drop-downs change via ajax, including article sale (opens prixVenteModal) if statut_id changed to 6 (vendu)
 $("table.data").on('change', 'select.ajax', function(){
 	var $table = $(this).parents('table');
 	var table = $table.data('id'); // 'articles'
 	var id = $(this).parents('tr').data('id'); // '167'
 	var value = $(this).val();
-	var col = $(this).attr('name'); // 'statut'
+	var col = $(this).attr('name'); // 'statut_id'
 
 	//alert(table);
 	//alert(id);
 	//alert(previous);
 
-	// select[name='statut_id'] can be used to change statut to 'vendu', in this case, show prixVenteModal
-	if(/*value == 'vendu' || */value == 6){
+	// select[name='statut_id'] can be used to change statut_id to 6 = 'vendu', in this case, show prixVenteModal
+	if(value == 6){ // = vendu
 		var prix = $(this).parents('tr').find('td.prix').html();
 		showModal('prixVenteModal?article_id='+id+'&prix='+encodeURIComponent(prix)+'&previous_id='+previous_id);
 		
@@ -124,12 +87,17 @@ $("table.data").on('change', 'select.ajax', function(){
 
 $("body").on('click', '#prixVenteSubmit', function(e){
 	e.preventDefault();
-	var form = $(this).parents('form');
-	var id = form.find('input[name="id"]').val();
-	var prix_vente = form.find('input[name="prix_vente"]').val();
+	var $form = $(this).parents('form');
+	var id = $form.find('input[name="id"]').val();
+	var prix_vente = $form.find('input[name="prix_vente"]').val();
+	var $payement = $form.find('input[name="payement_cheque"]');
 	//alert('id='+id+' prix_vente='+prix_vente);
 	hideModal($(this).parents('div.modal'));
 	updateTable('articles', 'prix_vente', id, prix_vente);
+	if($payement.prop('checked') == true){
+		//alert('checked');
+		updateTable('articles', 'payement_id', id, '2');
+	}
 });
 
 

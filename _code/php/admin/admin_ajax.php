@@ -23,7 +23,7 @@ if( isset($_GET['updateTable']) ){
 		$value = str_replace(',','.',$value);
 	}
 	if($col == 'prix_vente'){
-		$update['statut'] = 'vendu';
+		$update['statut_id'] = '6';
 		$update['visible'] = '0';
 		$update['date_vente'] = time();
 	}

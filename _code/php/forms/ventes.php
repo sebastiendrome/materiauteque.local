@@ -378,7 +378,7 @@ Si l'article n'existe pas ou est introuvable...
 
     </table>
 	
-	<input type="hidden" name="statut" value="vendu">
+	<input type="hidden" name="statut_id" value="6">
 	<input type="hidden" name="visible" value="0">
 	<input type="hidden" name="date_vente" value="<?php echo time(); ?>">
     <input type="hidden" name="newArticleSubmitted" id="newArticleSubmitted" value="newArticleSubmitted">

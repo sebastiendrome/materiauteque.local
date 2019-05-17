@@ -45,12 +45,18 @@
         <td>Poids (Kg):<td><input type="number" name="poids" step="any" value="">
         
         <tr>
-        <td>Statut:<td><select name="statut">
+        <td>Statut:<td><select name="statut_id">
         <option value="" selected>Choisir...</option>
-            <option value="disponible">disponible</option>
-            <option value="à réparer">à réparer</option>
-            <option value="réservé">réservé</option>
-            <option value="vendu">vendu</option>
+		<?php
+			$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
+			$options = '';
+
+			foreach($statut_array as $st){ // loop through statut_array to output the options
+				$options .= '<option value="'.$st['id'].'">'.$st['nom'].'</option>';
+			}
+			echo $options;
+
+			?>
         </select>
         
         <tr>
