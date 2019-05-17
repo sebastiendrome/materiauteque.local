@@ -4,15 +4,6 @@
 #header h1#mainHeader{height:80px;}
 #header h1#mainHeader a img{max-width:50%;}
 
+/*
 #mobileMenu{visibility:visible; top:20px;}
-#content{margin-left:0; margin-top:54px; padding:0;}
-#content div.divItem:first-child{margin-top:80px;}
-#footer{padding-left:10px;}
-#bigImgContainer{margin-top:37px;}
-
-.divItem div.txt, .divItem div.html, .divItem p.description{padding-left:10px; padding-right:10px;}
-
-#nav.collapsible{height:auto;}
-
-/* sub-nav */
-#nav ul li ul{position:relative; top:0; left:0; margin-left:20px; box-shadow:none;}
+*/

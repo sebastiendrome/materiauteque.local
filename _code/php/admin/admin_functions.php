@@ -39,47 +39,7 @@ function rmdirr($dirname){
     $dir->close();// Clean up
     return rmdir($dirname);
 }
-/* validate new section name (format: "english, deutsch") */
-function validate_section_name($newName){
-	$en = $de = '';
-	// remove dangerous characters
-	$newName = strip_tags($newName);
-	$newName = str_replace(array("\\", "\t", "\n", "\r", "(", ")", "/"), '', $newName);
 
-	// cannot start with more than one underscore
-	$newName = preg_replace('/^_+/', '_', $newName);
-
-	// no comma, just add it to end of string, and duplicate name
-	if(!strstr($newName, ',')){
-		$newName .= ', '.$newName;
-
-	}else{ // deal with at least one comma, maybe more?...
-		$pieces = explode(',', $newName); // split string by comma
-		$en = trim($pieces[0]);
-		$de = trim($pieces[1]);
-		
-		// names reserved for system
-		if( preg_match(SYSTEM_NAMES, $en) ){
-			return false;
-		}
-		
-		if(empty($de)){
-			$newName = $en.', '.$en;
-		}elseif(empty($en)){
-			$newName = $de.', '.$de;
-		}else{
-			$newName = $en.', '.$de;
-		}
-	}
-	return $newName;
-}
-/* sanitize user input */
-function sanitize_text($input){
-	$input = 
-	preg_replace('/on(load|unload|click|dblclick|mouseover|mouseenter|mouseout|mouseleave|mousemove|mouseup|keydown|pageshow|pagehide|resize|scroll)[^"]*/i', '', $input);
-	$input = addslashes( strip_tags($input, ALLOWED_TAGS) );
-	return $input;
-}
 /* human file size */
 function FileSizeConvert($bytes){
 	$bytes = floatval($bytes);
@@ -117,100 +77,10 @@ function FileSizeConvert($bytes){
 }
 
 
-/* change $parents(string) = 
-* "parent_1, parent_1qQqparent_2, parent_2" 
-* to array
-* $parents[0]='parent_1'; $parents[1]='parent_2'; 
-*/
-function string_to_array($parents_string, $glue){
-	if( !empty($parents_string) ){
-		if( strstr($parents_string, $glue) ){
-			$parents_array = explode($glue, $parents_string);
-		}else{
-			$parents_array = array($parents_string);
-		}
-	}else{
-		$parents_array = '';
-	}
-	return $parents_array;// array or empty string
-}
-	
-
-
 
 
 /*********** 2: DISPLAY FUNCTIONS (FUNCTIONS THAT OUTPUT HTML MARKUP) ***************/
 
-// display file
-function display_file_admin($path, $file_name){
-	$ext = file_extension($file_name);
-	
-	// various ways to display file depending on extension
-	// 1. resizable types (jpg, png, gif)
-	if( preg_match($_POST['types']['resizable_types'], $ext) ){
-		$item = $path.'/_S/'.$file_name;
-		// url link to file
-		if(substr($item, 0, 1) != '/'){
-			$file_link = '/'.$item;
-		}else{
-			$file_link = $item;
-		}
-		
-		$display_file = '<a href="'.str_replace('/_S/', '/_XL/', $file_link).'" title="view image in a new window" target="_blank"><img src="'.$file_link.'?rand='.rand(111,999).'" id="'.$file_name.'"></a>';
-		
-	}else{
-		// if not an image, the file is in the _XL directory (no various sizes)
-		$item = $path.'/_XL/'.$file_name;
-		// url link to file
-		$file_link = '/'.$item;
-		
-		if( preg_match($_POST['types']['audio_types'], $ext) ){ // audio, show <audio>
-			if($ext == '.mp3' || $ext == '.mpg'){
-				$media_type = 'mpeg';
-			}elseif($ext == '.m4a'){
-				$media_type = 'mp4';
-			}elseif($ext == '.oga'){
-					$media_type = 'ogg';
-			}else{
-				$media_type = substr($ext, 1);
-			}
-			$display_file = PHP_EOL.'<audio controls style="width:100%; border:1px solid #ccc;">
-			<source src="/'.$item.'" type="audio/'.$media_type.'">
-			Sorry, your browser doesn\'t support HTML5 audio.
-			</audio>'.PHP_EOL;
-
-		}elseif( preg_match($_POST['types']['video_types'], $ext) ){ // text video files
-			if($ext == '.m4v'){
-				$media_type = 'mp4';
-			}elseif($ext == '.ogv'){
-				$media_type = 'ogg';
-			}else{
-				$media_type = substr($ext, 1);
-			}
-			$display_file = PHP_EOL.'<video controls style="width:100%; border:1px solid #ccc;">
-			<source src="/'.$item.'" type="video/'.$media_type.'">
-			Sorry, your browser doesn\'t support HTML5 video.
-			</video>'.PHP_EOL;
-
-		
-		}elseif($ext == '.txt'){ // txt
-			$display_file = '<div class="txt admin">'.my_nl2br( strip_tags( file_get_contents(ROOT.$item) , ALLOWED_TAGS ) ).'</div>';
-		
-		}elseif($ext == '.html'){ // html
-			$display_file = '<div class="html admin">'.strip_tags( file_get_contents(ROOT.$item) , ALLOWED_TAGS ).'</div>';
-
-		}elseif($ext == '.emb'){ // embeded media
-			$display_file = '<div class="html admin">'.file_get_contents(ROOT.$item).'</div>';
-		
-		}else{
-			$display_file = '<a href="'.str_replace('/_S/', '/_XL/', $file_link).'" title="view file in a new window" target="_blank"><img src="/_code/images/'.substr($ext,1).'.png" id="'.$file_name.'"></a>';
-		}
-	}
-	if( !isset($display_file) || empty($display_file) ){
-		$display_file = '<p class="error">Cannot display '.$path.$file_name.'</p>';
-	}
-	return $display_file;
-}
 
 
 /*********** 3: ACTIVE FUNCTIONS (FUNCTIONS THAT CHANGE THE CONTENT) ***************/

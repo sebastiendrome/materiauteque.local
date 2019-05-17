@@ -3,5 +3,3 @@
 ****/
 #header h1#mainHeader{height:100px;}
 #header h1#mainHeader a img{max-width:70%;}
-
-#content div.divItem:first-child{margin-top:60px;}

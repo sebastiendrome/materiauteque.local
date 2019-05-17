@@ -28,7 +28,7 @@ body, td, th, select, input, button, textarea{
 a{color:#000000;} 
 
 /* site bg_color */
-body, #nav, #nav ul li ul, .backTitle, div.txt, div.html, .modal, .textareaContainer{background-color: #FFFFFF;}
+body, .modal{background-color: #FFFFFF;}
 
 #header, #footer{padding:10px; background-color:rgba(199, 129, 0, 0.753);}
 #header h1#mainHeader, #footer p{margin:0; padding:0;}
@@ -151,25 +151,10 @@ z-index:10;
 
 
 
-
-
-
-
-/* within file linking to sub-section, text should look normal */
-a.imgMore{color:#383838;}
-
-/* borders */
-.divItem img, .divItem div.txt, .divItem div.html,/* .textareaContainer,*/ .wysihtml5-editor img{border:none;}
-.divItem div.txt, .divItem div.html{border-bottom:1px solid #ddd;}
-#nav ul li:hover ul{display:block;}
-
-
 /* for trouble-shooting */
 pre{border:1px solid #000; background-color:#222; color:#eee;}
 
 /* STYLE */
-.bg{background-repeat:no-repeat; background-size:cover; background-position:50% 50%;}
-
 
 a{text-decoration: none;}
 a:hover, a.selected{text-decoration: underline;}
@@ -180,54 +165,7 @@ a.imgMore:hover div.txt, a.imgMore:hover div.html{
     box-shadow:inset 0px 0px 0px 1px #555;
 }
 
-img#inOut{background:#fff url(/_code/images/progress.gif) 50% 50% no-repeat;}
-
-audio, video{width:100%;}
-video{border:1px solid #ccc;}
-
-.zoom{cursor:zoom-in; display:block;}
 .clearBoth{clear:both;}
-
-.langLink{
-	display:block; position:absolute; top:2px; right:2px;
-	font-size:smaller;
-	background-color:#fff;
-	padding:2px 5px;
-}
-
-#content p.description, #content p.title{margin:6px 0 14px 0;}
-
-.divItem img{width:100%;}
-.divItem img.icon{width:auto; border:none;}
-.divItem{margin-bottom:55px;}
-.divItem, div.txt, div.html{position:relative;}
-div.txt, div.html{padding-bottom:15px; padding-top:7px;}
-
-/* images inserted in html/text files should have native width, but no more than allowed by container */
-div.txt img, div.html img, .wysihtml5-editor img{width:auto; max-width:100%;}
-
-/* first p, h1, h2 and h3 in txt or html div, should have a margin-top that aligns with nav title (h1) */
-div.txt p:first-child, div.html p:first-child{margin-top:-1px;}
-div.txt h3:first-child, div.html h3:first-child{margin-top:-3px;}
-div.txt h2:first-child, div.html h2:first-child{margin-top:-7px;}
-div.txt h1:first-child, div.html h1:first-child{margin-top:-14px;}
-
-#mobileMenu{display:block; position:absolute; top:9px; right:18px; visibility:hidden;}
-
-.backTitle.zoomPage{left:0;}
-
-span.question{
-	cursor:pointer;
-	position:relative; opacity:.3; display:inline-block; margin-left:5px; padding:3px; width:8px; height:8px; border-radius:8px; line-height:8px; text-align:center; border:1px solid #000; background-color:#fff; color:#000;
-}
-/* tooltips appear when span.question are clicked. */
-span.tooltip{
-	position:absolute; z-index:10; top:20px; left:0;
-	min-width:200px; padding:5px 8px; 
-	font-size:smaller; font-family: Arial, Helvetica, sans-serif; font-weight:normal; line-height:15px; text-align:left; color:#fff;
-	background-color:#333; box-shadow:3px 3px 7px rgba(0, 0, 0, .2);
-	border-radius:3px;
-}
 
 /* FORMS */
 /** buttons **/

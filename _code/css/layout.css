@@ -1,27 +1,4 @@
 @charset "UTF-8";
 
 /***** LAYOUT *****/
-/** Relative to each other **/
-#nav, .backTitle{position:fixed; z-index:100;}
-#nav{top:0; left:0; width:100%; padding-bottom:19px; box-shadow:0 1px 2px rgba(0,0,0,.2); z-index:200;}
-.backTitle{top: 95px; padding:5px 10px 5px 0;}
-#content{padding:20px;}
-#nav ul{padding:10px; margin:10px;}
-#content{margin:50px auto 0 auto; max-width:850px;}
-#nav ul li:first-child{min-width:272px;}
-#nav ul li:last-child{float:right;} /* languages links */
-#nav ul li.lastLi{float:right;} /* languages links, other way to target */
-#nav ul li{float:left; line-height:30px;}
-#nav ul li a{display:block; padding-left:20px; padding-right:20px;}
-/* languages links and title link should be inline */
-#nav ul li.lastLi a, #nav ul li h1 a{display:inline;}
-#nav ul li h1{margin:0;}
-/* sub-nav */
-#nav ul li{position:relative;}
-#nav ul li ul{margin:0; padding:0; position:absolute; z-index:200; top:30px; left:0; width:100%; min-width:150px; box-shadow:0 1px 1px rgba(0,0,0,.3); display:none;}
-#nav ul li ul li{display:block; float:none;/* clear:both;*/ max-width:250px; line-height:1.3em; padding-bottom:8px; padding-top:8px;}
-#nav ul li ul li:last-child{margin-bottom:10px; float:none;}
 
-#content div.divItem:first-child{margin-top:30px;}
-
-#footer{padding-left:45px; font-size:smaller;}
