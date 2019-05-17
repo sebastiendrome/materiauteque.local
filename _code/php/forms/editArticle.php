@@ -152,14 +152,27 @@ if( isset($message) ){
         <td>Poids (Kg):<td><input type="number" min="0" name="poids"  step="any" value="<?php echo $item_data['poids']; ?>" required>
         
         <tr>
-        <td>Statut:<td><select name="statut">
-            <option value="disponible"<?php if($item_data['statut'] == 'disponible'){echo ' selected';}?>>disponible</option>
-            <option value="à réparer"<?php if($item_data['statut'] == 'à réparer'){echo ' selected';}?>>à réparer</option>
-            <option value="réservé"<?php if($item_data['statut'] == 'réservé'){echo ' selected';}?>>réservé</option>
-            <option value="vendu"<?php if($item_data['statut'] == 'vendu'){echo ' selected';}?>>vendu</option>
+        <td>Statut:<td>
+		<select name="statut_id">
+
+		<?php
+		$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
+		$options = '';
+
+		foreach($statut_array as $st){ // loop through statut_array to output the options
+			if($st['id'] == $item_data['statut_id']){
+				$selected = ' selected';
+			}else{
+				$selected = '';
+			}
+			$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
+		}
+		echo $options;
+
+		?>
         </select>
 
-        <tr id="prixVente"<?php if($item_data['statut'] !== 'vendu'){echo ' style="display:none;"';} ?>>
+        <tr id="prixVente"<?php if($item_data['statut_id'] !== 6){echo ' style="display:none;"';} ?>>
         <td>Prix de vente:<td><input type="number" name="prix_vente" step="any" value="<?php echo $item_data['prix_vente']; ?>">
         
         <tr>

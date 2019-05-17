@@ -122,11 +122,24 @@ if(isset($items_table)){
         <td>Poids (Kg):<td><input type="number" min="0" name="poids" step="any" value="" required>
         
         <tr>
-        <td>Statut:<td><select name="statut">
-            <option value="disponible" selected>disponible</option>
-            <option value="à réparer">à réparer</option>
-            <option value="réservé">réservé</option>
-            <option value="vendu">vendu</option>
+        <td>Statut:<td>
+		<select name="statut_id">
+		<?php
+		$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
+		$options = '';
+
+		foreach($statut_array as $st){ // loop through statut_array to output the options
+			if($st['id'] == 1){
+				$selected = ' selected';
+			}else{
+				$selected = '';
+			}
+			$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
+		}
+		echo $options;
+
+		?>
+            
         </select>
         
         <tr>

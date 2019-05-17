@@ -91,7 +91,7 @@ if($prev ==0){
 	$prev = $pages;
 }
 
-$fields = array('date', 'titre', 'descriptif', 'categories_id', 'observations', 'statut', 'visible');
+$fields = array('date', 'titre', 'descriptif', 'categories_id', 'observations', 'statut_id', 'visible');
 $articles = get_items_data($fields, 'all', FALSE, 'all', 'date DESC', $limit, $offset);
 
 $items_table = items_table_output($articles);
@@ -140,24 +140,32 @@ if( isset($search_items) && !empty($search_items)){
     if(isset($results)){
         $search_count = count($results);
         if($search_count>1){$s='s';}else{$s='';} // plural or singular
-        echo '<p>'.$search_count.' article'.$s.' trouvé'.$s.'. 
+        echo '<p><b>'.$search_count.' article'.$s.' trouvé'.$s.'.</b><br> 
         Paramètres de recherche: ';
         foreach($key_val_pairs as $rk => $rv){
-            if( is_array($rv) ){
-                $string = '';
-                foreach($rv as $rrk => $rrv){
-                    $string .= $rrk.':'.$rrv.'&nbsp;&nbsp;';
-                }
-                $rv = $string;
-            }
-            echo $rk.' = '.$rv.'</p>';
-        }
+			if( !empty($rv) ){
+				if( is_array($rv) ){
+					$string = '';
+					foreach($rv as $rrk => $rrv){
+						$string .= $rrk.':'.$rrv.'&nbsp;&nbsp;';
+					}
+					$rv = $string;
+				}
+				echo $rk.' = '.$rv;
+			}
+		}
+		echo '</p>';
+
     }else{
         $search_count = count($search_items);
         if($search_count>1){$s='s';}else{$s='';} // plural or singular
-        echo '<p>'.$search_count.' article'.$s.' trouvé'.$s.'. 
+        echo '<p><b>'.$search_count.' article'.$s.' trouvé'.$s.'.</b></br> 
         Paramètres de recherche: ';
-        echo $keywords.' catégorie: '.id_to_name($categories_id, 'categories').'</p>';
+		echo $keywords;
+		if(!empty($categories_id)){
+			echo '&nbsp;&nbsp;Catégorie: '.id_to_name($categories_id, 'categories');
+		}
+		echo '</p>';
     }
 
 	$search_table = items_table_output($search_items);

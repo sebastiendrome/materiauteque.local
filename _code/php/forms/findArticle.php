@@ -99,31 +99,43 @@ if( isset($_POST['findArticleSubmitted']) ){
 
 <?php
 if( isset($items) && !empty($items)){
-    echo '<p class="success" style="overflow:auto;">';
+	echo '<p class="success" style="overflow:auto;">
+	<span style="display:block; margin: 10px 0;">';
     if(isset($results)){
         $count = count($results);
         if($count>1){$s='s';}else{$s='';} // plural or singular
-        echo $count.' article'.$s.' trouvé'.$s.'. 
+        echo '<b>'.$count.' article'.$s.' trouvé'.$s.'.</b> <a href="#recherche" class="button">Nouvelle recherche</a><br>
         Paramètres de recherche: ';
         foreach($key_val_pairs as $rk => $rv){
             if( is_array($rv) ){
                 $string = '';
                 foreach($rv as $rrk => $rrv){
-                    $string .= $rrk.':'.$rrv.'&nbsp;&nbsp;';
+					if(substr($rrk, -3) == '_id'){
+						$table = substr($rrk, 0, -3);
+						$rrv = id_to_name($rrv, $table);
+					}
+                    $string .= $rrk.': '.$rrv.'&nbsp;&nbsp;';
                 }
                 $rv = $string;
-            }
-            echo $rk.' = '.$rv.'<br>';
+			}
+			if(substr($rk, -3) == '_id'){
+				$rk = substr($rk, 0, -3);
+				$rv = id_to_name($rv, $rk);
+			}
+            echo $rk.' = '.$rv.'&nbsp;&nbsp;';
         }
     }else{
         $count = count($items);
         if($count>1){$s='s';}else{$s='';} // plural or singular
-        echo $count.' article'.$s.' trouvé'.$s.'. 
+        echo '<b>'.$count.' article'.$s.' trouvé'.$s.'.</b><br>
         Paramètres de recherche: ';
-        echo $keywords.' catégorie: '.id_to_name($categories_id, 'categories').'<br>';
+		echo $keywords;
+		if(!empty($categories_id)){
+			echo '&nbsp;&nbsp;Catégorie: '.id_to_name($categories_id, 'categories');
+		}
     }
-    
-    echo '<a href="#recherche" class="button">Nouvelle recherche</a>';
+	
+	echo '</span>';
 
 	$items_table = items_table_output($items);
 	echo $items_table;
@@ -246,12 +258,25 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
         <td>Poids (Kg):<td><input type="number" min="0" name="poids" step="any" value="<?php if(isset($key_val_pairs['poids'])){echo $key_val_pairs['poids'];} ?>">
         
         <tr>
-        <td>Statut:<td><select name="statut">
+        <td>Statut:<td><select name="statut_id">
         <option value="" selected>Tous statuts</option>
-            <option value="disponible"<?php if(isset($key_val_pairs['statut']) && $key_val_pairs['statut']=='disponible'){echo ' selected';} ?>>disponible</option>
-            <option value="à réparer"<?php if(isset($key_val_pairs['statut']) && $key_val_pairs['statut']=='à réparer'){echo ' selected';} ?>>à réparer</option>
-            <option value="réservé"<?php if(isset($key_val_pairs['statut']) && $key_val_pairs['statut']=='réservé'){echo ' selected';} ?>>réservé</option>
-            <option value="vendu"<?php if(isset($key_val_pairs['statut']) && $key_val_pairs['statut']=='vendu'){echo ' selected';} ?>>vendu</option>
+			
+			<?php
+			$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
+			$options = '';
+
+			foreach($statut_array as $st){ // loop through statut_array to output the options
+				if($st['id'] == $key_val_pairs['statut_id']){
+					$selected = ' selected';
+				}else{
+					$selected = '';
+				}
+				$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
+			}
+			echo $options;
+
+			?>
+
         </select>
         
         <tr>

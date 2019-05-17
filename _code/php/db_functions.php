@@ -45,7 +45,7 @@ function get_table($table, $where = '', $order = ''){
 	}
 }
 
-// GET (active) CATEGORIES
+// GET (visible) CATEGORIES
 function get_categories($visible = ''){
 	global $db;
 	if( $visible !== '' ){
@@ -80,7 +80,7 @@ function get_item_field($article_id, $field){
 	return $row[0];
 }
 
-// get item info
+// get all item data
 function get_item($article_id){
 	global $db;
     $query = mysqli_query( $db, "SELECT * FROM articles WHERE id = '$article_id'") or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
@@ -89,6 +89,16 @@ function get_item($article_id){
 	//$item['images'] = get_article_images($article_id);
 	return $item;
 }
+
+/* NOT USED 
+// get statut name from id
+function statut_name($statut_id){
+	global $db;
+	$query = mysqli_query( $db, "SELECT 'nom' FROM 'statut' WHERE id = '$statut_id'") or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
+	$statut_name = mysqli_fetch_row( $query );
+	return $statut_name[0];
+}
+*/
 
 /** return array of articles data, 
  * optional filters: visible, categories_id. Sort as needed */
@@ -110,7 +120,7 @@ function get_items_data($fields = '*', $visible = 'all', $vendu = FALSE, $catego
 		$filter[] = " visible = ".$visible;
 	}
 	if(!$vendu){
-		$filter[] = " statut != 'vendu'";
+		$filter[] = " statut_id != 6";
 	}
 	if($categories_id !== 'all'){
 		$filter[] = " categories_id = ".$categories_id;
@@ -406,7 +416,7 @@ function find_articles($key_val_pairs, $include_vendus = FALSE){
 
 		// include statut='vendu' or not
 		if(!$include_vendus){
-			$q .= " AND statut != 'vendu'";
+			$q .= " AND statut_id != 6";
 		}
 
 		// assign values to search criterias
@@ -474,7 +484,7 @@ function search($keywords = '', $category = '', $visible = TRUE, $vendus = FALSE
 	}
 	// vendus = FALSE > show only items where statut is NOT 'vendu'
 	if( !$vendus ){
-		$filters_array['vendus'] = "`statut` != 'vendu'";
+		$filters_array['vendus'] = "`statut_id` != 6";
 	}
 	// if a category is specified show only this category
 	if($category !== ''){
@@ -586,10 +596,29 @@ function update_sql($update){
 
 /* format SQL values for presentation, in items tables for admin (function below) */
 function present($k, $v){
+	
+	// show select input for statut_id
+	if($k == 'statut_id'){
+
+		$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
+		$options = '';
+
+		foreach($statut_array as $st){ // loop through statut_array to output the options
+			if($st['id'] == $v){
+				$selected = ' selected';
+			}else{
+				$selected = '';
+			}
+			$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
+		}
+		$v = '<select name="statut_id" style="min-width:50px;" class="ajax">'.$options.'</select>';
+
 	// show name of keys_id
-	if( substr($k, -3) == '_id' ){
+	}elseif( substr($k, -3) == '_id'){
 		$name = id_to_name( $v, substr($k, 0, -3) );
-		$v .= '-'.$name;
+		$v = $name;
+		//$v .= '-'.$name;
+
 	// show select input for visible
 	}elseif($k == 'visible'){
 		$selected_1 = $selected_2 = '';
@@ -602,6 +631,7 @@ function present($k, $v){
 		<option value="1"'.$selected_1.'>oui</option>
 		<option value="0"'.$selected_2.'>non</option>
 		</select>';
+
 	// show delect input for vrac
 	}elseif($k == 'vrac'){
 		$selected_1 = $selected_2 = '';
@@ -614,30 +644,15 @@ function present($k, $v){
 		<option value="1"'.$selected_1.'>oui</option>
 		<option value="0"'.$selected_2.'>non</option>
 		</select>';
+
 	// format numbers to EU format
 	}elseif($k == 'prix' || $k == 'poids' || $k == 'prix_vente' ){
 		$v = str_replace(array(',','.'), array('.',','), $v);
+
 	// format php timestamp to readbale date in EU format
 	}elseif($k == 'date'){
 		$v = date('d-m-Y', $v);
-	// show select input for statut
-	}elseif($k == 'statut'){
-		$selected_1 = $selected_2 = $selected_3 = $selected_4 = '';
-		if($v == 'à réparer'){
-			$selected_1 = ' selected';
-		}elseif($v == 'disponible'){
-			$selected_2 = ' selected';
-		}elseif($v == 'réservé'){
-			$selected_3 = ' selected';
-		}elseif($v == 'vendu'){
-			$selected_4 = ' selected';
-		}
-		$v = '<select name="statut" style="min-width:50px;" class="ajax">
-		<option value="à réparer"'.$selected_1.'>à réparer</option>
-		<option value="disponible"'.$selected_2.'>disponible</option>
-		<option value="réservé"'.$selected_3.'>réservé</option>
-		<option value="vendu"'.$selected_4.'>vendu</option>
-		</select>';
+
 	// show short descriptif, long on mouse enter
 	}elseif( ($k == 'descriptif' || $k == 'observations') && !empty($v) ){
 		$less = substr($v, 0, 15);
@@ -667,8 +682,8 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 	// debug
 	//echo '<pre>'.__FUNCTION__.PHP_EOL;print_r($result_array);echo '</pre>';
 	
-	$editable = array('categories_id', 'dechette_categories_id', 'titre', 'descriptif', 'observations', 'prix', 'poids','statut','visible');
-	$exclude = array('id', 'date', 'date_vente', 'vrac', 'etiquette', 'prix_vente');
+	$editable = array('categories_id', 'dechette_categories_id', 'titre', 'descriptif', 'observations', 'prix', 'poids', 'statut_id', 'visible');
+	$exclude = array('id', 'date', 'date_vente', 'vrac', 'etiquette', 'prix_vente', 'payement_id');
 
 	$output = '';
 	$i = $n = 0;
@@ -696,7 +711,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 						$class = '';
 					}
 					if( !in_array($k, $exclude) ){
-						$output .= '<th'.$class.'>'.str_replace('s_id', '', $k).'</th>';
+						$output .= '<th'.$class.'>'.str_replace('_id', '', $k).'</th>';
 					}
 				}
 				// th for edit button
@@ -908,12 +923,12 @@ function show_article($item_array){
 		$kg = 'g';
 		$poids = str_replace($matches[0], '', $poids);
 	}
-	if($item_array['statut'] == 'disponible'){
+	if($item_array['statut_id'] == 1){
 		$statut = 'success';
-	}elseif($item_array['statut'] == 'réservé' || $item_array['statut'] == 'vendu'){
-		$statut = 'error';
-	}elseif($item_array['statut'] == 'à réparer'){
+	}elseif($item_array['statut_id'] == 2){
 		$statut = 'note';
+	}else{
+		$statut = 'error';
 	}
 	
 	
@@ -947,7 +962,7 @@ function show_article($item_array){
 	$output .= '<!-- start detail -->'.PHP_EOL.'<div class="detail">'.PHP_EOL;
 	$output .= '<p class="title">'.$item_array['titre'].'</p>'.PHP_EOL;
 	$output .= '<p>'.$item_array['descriptif'].'</p>'.PHP_EOL;
-	$output .= '<p><span class="'.$statut.'">'.$item_array['statut'].'</span></p>'.PHP_EOL;
+	$output .= '<p><span class="'.$statut.'">'.id_to_name($item_array['statut_id'], 'statut').'</span></p>'.PHP_EOL;
 	$output .= '<p>';
 	if( !empty($item_array['prix']) && $item_array['prix'] > 0){
 		$output .= 'Prix conséillé: € '.str_replace('.', ',', $item_array['prix']).'<br>'.PHP_EOL;
