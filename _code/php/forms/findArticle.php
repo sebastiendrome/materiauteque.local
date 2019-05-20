@@ -35,11 +35,12 @@ if( !isset($title) ){
 if( !isset($categories) || empty($categories) ){
     $categories = get_table('categories');
 }
-if( !isset($dechette_categories) || empty($dechette_categories) ){
-    $dechette_categories = get_table('dechette_categories');
+if( !isset($matieres) || empty($matieres) ){
+    $matieres = get_table('matieres');
 }
 
 // process form POST data (simple search)
+/*
 if( isset($_POST['simpleSearch']) ){
 
     // check and clean up user input
@@ -56,7 +57,7 @@ if( isset($_POST['simpleSearch']) ){
         $categories_id = '';
     }
     if($keywords !== '' || $categories_id !== ''){
-		$ids = search($keywords, $categories_id, /*visible-only=*/TRUE, /*vendus=*/FALSE);
+		$ids = search($keywords, $categories_id, TRUE, FALSE);
 		if( !empty($ids) ){
 			foreach($ids as $id){
 				//echo 'Article #'.$key.'<br>';
@@ -64,9 +65,10 @@ if( isset($_POST['simpleSearch']) ){
 			}
 		}
     }
-}else{
+}else{*/
     $keywords = $categories_id = '';
-}
+/*}
+*/
 
 
 // process form POST data (detailed search)
@@ -156,9 +158,9 @@ if( isset($items) && !empty($items)){
     }
     echo '</p>'.PHP_EOL;
         
-}elseif( isset($_POST['simpleSearch']) ){
+}/*elseif( isset($_POST['simpleSearch']) ){
     echo '<p class="note">Aucun résultat...</p>'.PHP_EOL;
-}
+}*/
 
 ?>
 
@@ -199,95 +201,12 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 ?>
 
 <!--<h3>Recherche détaillée:</h3>-->
-<p class="below">Remplir au moins 1 des champs.</p>
-
-    <table>
-		
+<p class="below">Saisir au moins 1 des champs.</p>
 	
-	<tr>
-        <td><h3>Le Titre contient...</h3><td><h3><input type="text" name="titre" value="<?php if(isset($key_val_pairs['titre'])){echo $key_val_pairs['titre'];} ?>"></h3>
-
-        <tr>
-        <td>Le Descriptif contient...<td><textarea name="descriptif"><?php if(isset($key_val_pairs['descriptif'])){echo $key_val_pairs['descriptif'];} ?></textarea>
-
-
-		<tr>
-            <td colspan="2">Créé entre le: <input type="text" name="date[start]" id="startDate" value="<?php if(isset($key_val_pairs['date']['start'])){echo $key_val_pairs['date']['start'];} ?>" style="min-width:75px; width:100px;" placeholder="25-12-1970"> et le: <input type="text" name="date[end]" id="endDate" value="<?php if(isset($key_val_pairs['date']['end'])){echo $key_val_pairs['date']['end'];} ?>" style="min-width:75px; width:100px;" placeholder="<?php echo date('d-m-Y'); ?>"></td>
-
-		
-		<tr>
-        <td>Vrac:<td><input type="radio" name="vrac" value="0"><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="vrac" value="1"><label for="1"> oui</label>
-        <!--
-        <tr style="display:none;">
-        <td>etiquette:<td><input type="text" name="etiquette" value="">
-        -->
-
-		<tr>
-        <td>Catégorie:<td><select name="categories_id">
-            <option value="">Toutes catégories</option>
-            <?php
-            foreach($categories as $cat){
-                $sel = '';
-                if(isset($key_val_pairs['categories_id']) && $key_val_pairs['categories_id'] == $cat['id']){
-                    $sel = ' selected';
-                }
-                echo '<option value="'.$cat['id'].'"'.$sel.'>'.$cat['id'].' = '.$cat['nom'].'</option>';
-            }
-            ?>
-        </select>
-        
-        <tr>
-        <td>Déchet. Catégorie:<td><select name="dechette_categories_id">
-            <option value="">Toutes catégories</option>
-            <?php
-            foreach($dechette_categories as $cat){
-                $sel = '';
-                if(isset($key_val_pairs['dechette_categories_id']) && $key_val_pairs['dechette_categories_id'] == $cat['id']){
-                    $sel = ' selected';
-                }
-                echo '<option value="'.$cat['id'].'"'.$sel.'>'.$cat['id'].' = '.$cat['nom'].'</option>';
-            }
-            ?>
-        </select>
-		
-		
-        <tr>
-        <td>Prix:<td><input type="number" min="0" name="prix" step="any" value="<?php if(isset($key_val_pairs['prix'])){echo $key_val_pairs['prix'];} ?>">
-        
-        <tr>
-        <td>Poids (Kg):<td><input type="number" min="0" name="poids" step="any" value="<?php if(isset($key_val_pairs['poids'])){echo $key_val_pairs['poids'];} ?>">
-        
-        <tr>
-        <td>Statut:<td><select name="statut_id">
-        <option value="" selected>Tous statuts</option>
-			
-			<?php
-			$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
-			$options = '';
-
-			foreach($statut_array as $st){ // loop through statut_array to output the options
-				if($st['id'] == $key_val_pairs['statut_id']){
-					$selected = ' selected';
-				}else{
-					$selected = '';
-				}
-				$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
-			}
-			echo $options;
-
-			?>
-
-        </select>
-        
-        <tr>
-        <td>Visible:<td><input type="radio" name="visible" value="0"<?php if(isset($key_val_pairs['visible']) && $key_val_pairs['visible']==0){echo ' checked';} ?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="visible" value="1"<?php if(isset($key_val_pairs['visible']) && $key_val_pairs['visible']==1){echo ' checked';} ?>><label for="1"> oui</label>
-        </select>
-        
-        <tr>
-        <td>Les Observations <br>contiennent...<td><textarea name="observations"><?php if(isset($key_val_pairs['observations'])){echo $key_val_pairs['observations'];} ?></textarea>
-
-    
-    </table>
+	<?php
+	$context = 'search';
+	require(ROOT.'_code/php/forms/edit_article_table.php');
+	?>
 
     <input type="hidden" name="findArticleSubmitted" id="findArticleSubmitted" value="findArticleSubmitted">
     <a href="" class="button left">Réinitialiser</a>

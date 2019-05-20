@@ -17,7 +17,8 @@ if( !isset($id) || empty($id) ){
 if( isset($_GET['prix']) && $_GET['prix']!=='undefined'){
 	$prix = urldecode($_GET['prix']);
 }else{
-    $prix = get_item_data($id, 'prix');
+	$it_data = get_item_data($id, 'prix');
+	$prix = $it_data['prix'];
 }
 
 $table = 'articles';
@@ -26,9 +27,9 @@ $table = 'articles';
 if( isset($_GET['previous_id']) && !empty($_GET['previous_id']) && $_GET['previous_id']!=='undefined' && $_GET['previous_id']!=='null'){
 	$previous_statut_id = $_GET['previous_id'];
 }else{
-	$previous_statut_id = get_item_data($id, 'statut_id');
+	$it_data = get_item_data($id, 'statut_id');
+	$previous_statut_id = $it_data['statut_id'];
 }
- 
 ?>
 
 	<!-- update to vendu, add prix de vente START -->

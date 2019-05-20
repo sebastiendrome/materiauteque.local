@@ -1,6 +1,6 @@
 <?php
 if( !isset($categories) ){
-    $categories = get_table('categories_copy', 'visible=1');
+    $categories = get_table('categories', 'visible=1');
 }
 
 /// check and clean up user input

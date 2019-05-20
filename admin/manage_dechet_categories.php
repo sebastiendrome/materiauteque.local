@@ -7,7 +7,7 @@ if( !defined("ROOT") ){
 
 $new_categorie_message = $update_message = '';
 
-$table = 'dechette_categories';
+$table = 'matieres';
 
 // UPDATE CATEGORIES
 if(isset($_POST['update'])){
@@ -86,7 +86,7 @@ if( isset($_SESSION['article_id']) ){
 
 <div class="adminHeader">
 
-<h1><a href="/admin/">Admin</a> : Déchet. Catégories</h1>
+<h1><a href="/admin/">Admin</a> : Matières</h1>
 
 </div>
 
@@ -141,7 +141,7 @@ foreach($categories as $cat){
 
 
 <form action="" name="createForm" method="post">
-<h3>Créer une nouvelle déchet. catégorie:</h3>
+<h3>Créer une nouvelle Matière:</h3>
 <strong>Nom:</strong> <input name="newCategory" type="text" value=""> 
 <button name="create" type="submit">CRÉER</button>
 </form>

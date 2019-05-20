@@ -106,7 +106,7 @@ $items_table = items_table_output($articles);
 <div class="adminHeader">
 <h1>Admin</h1>
 
-<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button">€ Nouvelle vente</a> <a href="/admin/manage_categories.php" class="button edit">Catégories</a> <a href="/admin/manage_dechet_categories.php" class="button edit">Déchet. Catégories</a> <!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
+<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button">€ Nouvelle vente</a> <a href="/admin/manage_categories.php" class="button edit">Catégories</a> <a href="/admin/manage_dechet_categories.php" class="button edit">Matières</a> <!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
 
 
 <div class="clearBoth"></div>

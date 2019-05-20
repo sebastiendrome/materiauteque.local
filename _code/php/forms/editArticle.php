@@ -66,8 +66,8 @@ echo '</pre>';
 if( !isset($categories) || empty($categories) ){
     $categories = get_table('categories');
 }
-if( !isset($dechette_categories) || empty($dechette_categories) ){
-    $dechette_categories = get_table('dechette_categories');
+if( !isset($matieres) || empty($matieres) ){
+    $matieres = get_table('matieres');
 }
 
 // process form POST data
@@ -103,6 +103,7 @@ if( isset($message) ){
 
 <form name="newArticle" id="newArticle" action="?article_id=<?php echo $article_id; ?>" method="post" style="display:inline-block; float:left; margin-right:10px;">
 
+<!--
     <table>
 
 	<tr>
@@ -118,7 +119,9 @@ if( isset($message) ){
         
         <tr>
         <td>etiquette:<td><input type="text" name="etiquette" value="">
-        --> 
+		--> 
+		
+		<!--
         <tr>
         <td>Catégorie:<td><select name="categories_id" required>
             <?php
@@ -133,11 +136,11 @@ if( isset($message) ){
         </select>
         
         <tr>
-        <td>Déchet. Catégorie:<td><select name="dechette_categories_id" required>
+        <td>Matières:<td><select name="matieres_id" required>
             <?php
-            foreach($dechette_categories as $cat){
+            foreach($matieres as $cat){
                 $selected = '';
-                if($item_data['dechette_categories_id'] == $cat['id']){
+                if($item_data['matieres_id'] == $cat['id']){
                     $selected = ' selected';
                 }
                 echo '<option value="'.$cat['id'].'"'.$selected.'>'.$cat['id'].' = '.$cat['nom'].'</option>';
@@ -182,7 +185,10 @@ if( isset($message) ){
         <tr>
         <td>Observations:<td><textarea name="observations"><?php echo $item_data['observations']; ?></textarea>
     
-    </table>
+    </table> -->
+	<?php
+	require(ROOT.'_code/php/forms/edit_article_table.php');
+	?>
 
     <input type="hidden" name="editArticleSubmitted" id="editArticleSubmitted" value="editArticleSubmitted">
     <button type="submit" name="editArticleSubmit" id="editArticleSubmit" class="right" >Modifier</button>

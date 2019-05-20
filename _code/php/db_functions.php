@@ -34,7 +34,7 @@ function get_table($table, $where = '', $order = ''){
 
 	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
 
-	$query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
+	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
 	while($row = mysqli_fetch_assoc($query)){
 		$data[] = $row;
 	}
@@ -43,6 +43,43 @@ function get_table($table, $where = '', $order = ''){
 	}else{
 		return FALSE;
 	}
+}
+
+// GET ARRAY OF CATEGORIES AND SUB-CATEGORIES
+function get_cats_array($visible_only = TRUE){
+	global $db;
+	$q = "SELECT * FROM categories";
+	if($visible_only == TRUE){
+		$q .= " WHERE visible = 1";
+	}
+
+	// debug
+	echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
+
+	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
+	while($row = mysqli_fetch_assoc($query)){
+		//$cats_array[] = $row;
+		if($row['id_parent'] == 0){
+			$cats_array[$row['id']] = $row;
+		}else{
+			$cats_array[$row['id_parent']]['children'][] = $row;
+		}
+	}
+	if(!empty($cats_array)){
+		return($cats_array);
+	}else{
+		return FALSE;
+	}
+}
+
+// get categorie from sub-categorie
+function get_parent_categorie($cat){
+	return false;
+}
+
+// get sub categorie from parent categorie
+function get_child_categories($cat){
+	return false;
 }
 
 // get all item data
@@ -58,8 +95,6 @@ function get_item_data($article_id, $fields = '*'){
 	$q = "SELECT $fields FROM articles WHERE id = '$article_id'";
     $query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
 	$item = mysqli_fetch_assoc( $query );
-	// image(s)?
-	//$item['images'] = get_article_images($article_id);
 	return $item;
 }
 
@@ -163,23 +198,6 @@ function get_article_images($article_id = '', $size = '_M', $path = 'uploads'){
 
 
 /**** 2. UPDATERS ****/
-
-/*
-function update_item($article_id, $update){
-	global $db;
-	$q = "UPDATE articles SET ";
-	$q .= update_sql($update);
-	$q .= " WHERE id = $article_id";
-	
-	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
-	
-	if( $query = mysqli_query($db, $q) ){
-		return '<p class="success">Article #'.$article_id.' modifié.</p>';
-	}else{
-		log_db_errors( mysqli_error($db), 'Query: '.$q.' Function: '.__FUNCTION__ );
-	}
-}
-*/
 
 // UPDATE TABLE DATA (generic)
 function update_table($table, $article_id, $update){
@@ -320,7 +338,7 @@ function delete_item($table, $article_id){
 
 /** 
  * find article(s) from array of key=val pairs such as 
- * $key_val_pairs = array('categories_id' => 'bois', 'dechette_categories_id' => 1, 'descriptif' => 'hello');
+ * $key_val_pairs = array('categories_id' => 'bois', 'matieres_id' => 1, 'descriptif' => 'hello');
  * all articles matching one or more pairs are returned, sorted from best to worst match 
  * returns: array[article id][sort value]
  * */
@@ -334,7 +352,7 @@ function find_articles($key_val_pairs, $include_vendus = FALSE){
 			$q = "SELECT id FROM articles WHERE $key LIKE '%$value%'";
 		// for categories name (nom) convert to id
 		/*
-		}elseif( $key == 'categories_id' || $key == 'dechette_categories_id' && !is_numeric($value)  ){
+		}elseif( $key == 'categories_id' || $key == 'matieres_id' && !is_numeric($value)  ){
 			$value = name_to_id($value, substr($key, 0, -3) );
 			$q = "SELECT id FROM articles WHERE $key = '$value'";*/
 		// start/end date: gather both start and end, if set, then compare dates at end of foreach loop
@@ -646,7 +664,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 	// debug
 	//echo '<pre>'.__FUNCTION__.PHP_EOL;print_r($result_array);echo '</pre>';
 	
-	$editable = array('categories_id', 'dechette_categories_id', 'titre', 'descriptif', 'observations', 'prix', 'poids', 'statut_id', 'visible');
+	$editable = array('categories_id', 'matieres_id', 'titre', 'descriptif', 'observations', 'prix', 'poids', 'statut_id', 'visible');
 	$exclude = array('id', 'date', 'date_vente', 'vrac', 'etiquette', 'prix_vente', 'payement_id');
 
 	$output = '';
@@ -876,7 +894,7 @@ function show_article($item_array){
 	}else{
 		$img = '_code/images/404.gif';
 	}
-	
+
 	$output = '';
 	$output .= '<!-- start article -->'.PHP_EOL.'<div class="article" id="'.$item_array['id'].'">'.PHP_EOL;
 	$output .= '<div class="imgContainer" style="background-image:url(/'.$img.');">'.$inner_img_output.'</div>'.PHP_EOL;
@@ -902,9 +920,9 @@ function show_article($item_array){
 /* 
 // Somme des ventes et du poids, entre 2 dates, classés par déchette-catégorie:
 
-SELECT sum(prix_vente) AS vente_total, sum(poids) AS poids_total, dechette_categories_id
+SELECT sum(prix_vente) AS vente_total, sum(poids) AS poids_total, matieres_id
 FROM articles
 WHERE date_vente BETWEEN 1532988000 AND 1548940324
-GROUP BY dechette_categories_id 
+GROUP BY matieres_id 
 ORDER BY vente_total DESC
 */

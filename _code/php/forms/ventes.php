@@ -35,8 +35,8 @@ if( !isset($title) ){
 if( !isset($categories) || empty($categories) ){
     $categories = get_table('categories');
 }
-if( !isset($dechette_categories) || empty($dechette_categories) ){
-    $dechette_categories = get_table('dechette_categories');
+if( !isset($matieres) || empty($matieres) ){
+    $matieres = get_table('matieres');
 }
 
 // process form POST data (simple search)
@@ -189,31 +189,6 @@ if( isset($message) ){
 <a name="recherche"></a>
 
 
-<!-- recherche simple start -->
-<!--
-	<form name="search" class="searchForm" action="#top" method="post" style="display:inline-block; margin-top:20px;">
-<h3>Recherche simple:</h3>
-<input type="hidden" name="simpleSearch" value="simpleSearch">
-<input type="text" name="keywords" value="<?php echo $keywords; ?>" placeholder="Que recherchez-vous?" style="background-image:none;"><select name="categories_id" style="min-width:auto;">
-<option value="">Toutes catégories</option>
-<?php 
-foreach($categories as $c){
-    echo '<option value="'.$c['id'].'"';
-    if( $categories_id == $c['id'] ){
-        echo ' selected';
-    }
-    echo '>'.$c['nom'].'</option>'.PHP_EOL;
-}
-?>
-</select><button type="submit" name="searchSubmit">Rechercher</button>
-</form>
--->
-<!-- recherche simple end -->
-
-<!--<div style="margin:10px;"></div>-->
-
-
-
 
 <!-- recherche detail start -->
 <form name="findArticle" id="findArticle" action="#top" method="post" style="display:inline-block; float:left; margin-right:20px;">
@@ -225,8 +200,9 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 ?>
 
 <h3>Rechercher l'article à vendre:</h3>
-<p class="below">Remplir au moins 1 des champs.</p>
+<span class="below">Saisir au moins 1 des champs.</span>
 
+	<!--
     <table>
         
         <tr>
@@ -235,7 +211,7 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
         <tr style="display:none;">
         <td>etiquette:<td><input type="text" name="etiquette" value="">
         -->
-
+<!--
         <tr>
             <td colspan="2">Créé entre le: <input type="text" name="date[start]" id="startDate" value="<?php if(isset($key_val_pairs['date']['start'])){echo $key_val_pairs['date']['start'];} ?>" style="min-width:75px; width:100px;" placeholder="25-12-1970"> et le: <input type="text" name="date[end]" id="endDate" value="<?php if(isset($key_val_pairs['date']['end'])){echo $key_val_pairs['date']['end'];} ?>" style="min-width:75px; width:100px;" placeholder="<?php echo date('d-m-Y'); ?>">
 
@@ -254,12 +230,12 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
         </select>
         
         <tr>
-        <td>Déchet. Catégorie:<td><select name="dechette_categories_id">
+        <td>Matières:<td><select name="matieres_id">
             <option value="">Toutes catégories</option>
             <?php
-            foreach($dechette_categories as $cat){
+            foreach($matieres as $cat){
                 $sel = '';
-                if(isset($key_val_pairs['dechette_categories_id']) && $key_val_pairs['dechette_categories_id'] == $cat['id']){
+                if(isset($key_val_pairs['matieres_id']) && $key_val_pairs['matieres_id'] == $cat['id']){
                     $sel = ' selected';
                 }
                 echo '<option value="'.$cat['id'].'"'.$sel.'>'.$cat['id'].' = '.$cat['nom'].'</option>';
@@ -280,7 +256,8 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
         <tr>
 		<td>Poids (Kg):<td><input type="number" name="poids" step="any" value="<?php if(isset($key_val_pairs['poids'])){echo $key_val_pairs['poids'];} ?>">
 		-->
-        
+		
+		<!--
         <tr>
         <td>Statut:<td><select name="statut_id">
         <option value="" selected>Tous statuts</option>
@@ -306,12 +283,17 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
         <td>Visible:<td><input type="radio" name="visible" value="0"<?php if(isset($key_val_pairs['visible']) && $key_val_pairs['visible']==0){echo ' checked';} ?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="visible" value="1"<?php if(isset($key_val_pairs['visible']) && $key_val_pairs['visible']==1){echo ' checked';} ?>><label for="1"> oui</label>
 		</select>
 		-->
-        
+        <!--
         <tr>
         <td>Les Observations <br>contiennent...<td><textarea name="observations"><?php if(isset($key_val_pairs['observations'])){echo $key_val_pairs['observations'];} ?></textarea>
 
     
-    </table>
+	</table> -->
+
+	<?php
+	$context = 'search';
+	require(ROOT.'_code/php/forms/edit_article_table.php');
+	?>
 
     <input type="hidden" name="findArticleSubmitted" id="findArticleSubmitted" value="findArticleSubmitted">
     <a href="" class="button left">Réinitialiser</a>
@@ -330,6 +312,7 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 Si l'article n'existe pas ou est introuvable...
 <h3>Créer l'article à vendre:</h3>
 
+<!--
     <table>
 
         
@@ -338,7 +321,8 @@ Si l'article n'existe pas ou est introuvable...
         <!--
         <tr>
         <td>etiquette:<td><input type="text" name="etiquette" value="">
-        --> 
+		--> 
+		<!--
         <tr>
         <td>Catégorie:<td><select name="categories_id" required>
             <option value="">Choisir...</option>
@@ -350,10 +334,10 @@ Si l'article n'existe pas ou est introuvable...
         </select>
         
         <tr>
-        <td>Déchet. Catégorie:<td><select name="dechette_categories_id" required>
+        <td>Matières:<td><select name="matieres_id" required>
             <option value="">Choisir...</option>
             <?php
-            foreach($dechette_categories as $cat){
+            foreach($matieres as $cat){
                 echo '<option value="'.$cat['id'].'">'.$cat['id'].' = '.$cat['nom'].'</option>';
             }
             ?>
@@ -376,7 +360,12 @@ Si l'article n'existe pas ou est introuvable...
 
 
 
-    </table>
+	</table> -->
+
+	<?php
+	$context = '';
+	require(ROOT.'_code/php/forms/edit_article_table.php');
+	?>
 	
 	<input type="hidden" name="statut_id" value="6">
 	<input type="hidden" name="visible" value="0">

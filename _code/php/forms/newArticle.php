@@ -32,8 +32,8 @@ if( !isset($title) ){
 if( !isset($categories) || empty($categories) ){
     $categories = get_table('categories');
 }
-if( !isset($dechette_categories) || empty($dechette_categories) ){
-    $dechette_categories = get_table('dechette_categories');
+if( !isset($matieres) || empty($matieres) ){
+    $matieres = get_table('matieres');
 }
 
 $titre_autofocus = true;
@@ -79,8 +79,7 @@ if(isset($items_table)){
 
 <form name="newArticle" id="newArticle" action="" method="post" style="display:inline-block; float:left; margin-right:10px;">
 
-<!--<h3>Ajouter un article:</h3>-->
-
+	<!--
     <table>
 
 	<tr>
@@ -94,7 +93,8 @@ if(isset($items_table)){
         <!--
         <tr>
         <td>etiquette:<td><input type="text" name="etiquette" value="">
-        --> 
+		--> 
+		<!--
         <tr>
         <td>Catégorie:<td><select name="categories_id" required>
             <option value="">Choisir...</option>
@@ -106,10 +106,10 @@ if(isset($items_table)){
         </select>
         
         <tr>
-        <td>Déchet. Catégorie:<td><select name="dechette_categories_id" required>
+        <td>Matières:<td><select name="matieres_id" required>
             <option value="">Choisir...</option>
             <?php
-            foreach($dechette_categories as $cat){
+            foreach($matieres as $cat){
                 echo '<option value="'.$cat['id'].'">'.$cat['id'].' = '.$cat['nom'].'</option>';
             }
             ?>
@@ -151,7 +151,11 @@ if(isset($items_table)){
 
 
 
-    </table>
+	</table> -->
+	
+	<?php
+	require(ROOT.'_code/php/forms/edit_article_table.php');
+	?>
 
     <input type="hidden" name="newArticleSubmitted" id="newArticleSubmitted" value="newArticleSubmitted">
     <button type="submit" name="newArticleSubmit" id="newArticleSubmit" class="right" >Créer l'article</button>

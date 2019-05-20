@@ -23,10 +23,10 @@
         </select>
         
         <tr>
-        <td>Déchet. Catégorie:<td><select name="dechette_categories_id">
+        <td>Matière:<td><select name="matieres_id">
             <option value="">Choisir...</option>
             <?php
-            foreach($dechette_categories as $cat){
+            foreach($matieres as $cat){
                 echo '<option value="'.$cat['id'].'">'.$cat['id'].' = '.$cat['nom'].'</option>';
             }
             ?>
