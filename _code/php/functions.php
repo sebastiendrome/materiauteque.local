@@ -29,6 +29,64 @@ function clean( $string ){
     return stripslashes( $string );
 }
 
+/* Replace special characters with their equivalents */
+function normalize( $data ){
+    $invalid_values = array(
+    	'/ä|æ|ǽ/' => 'ae',
+    	'/ö|œ/' => 'oe',
+    	'/ü/' => 'ue',
+    	'/Ä/' => 'Ae',
+    	'/Ü/' => 'Ue',
+    	'/Ö/' => 'Oe',
+    	'/À|Á|Â|Ã|Ä|Å|Ǻ|Ā|Ă|Ą|Ǎ/' => 'A',
+    	'/à|á|â|ã|å|ǻ|ā|ă|ą|ǎ|ª/' => 'a',
+    	'/Ç|Ć|Ĉ|Ċ|Č/' => 'C',
+    	'/ç|ć|ĉ|ċ|č/' => 'c',
+    	'/Ð|Ď|Đ/' => 'D',
+    	'/ð|ď|đ/' => 'd',
+    	'/È|É|Ê|Ë|Ē|Ĕ|Ė|Ę|Ě/' => 'E',
+    	'/è|é|ê|ë|ē|ĕ|ė|ę|ě/' => 'e',
+    	'/Ĝ|Ğ|Ġ|Ģ/' => 'G',
+    	'/ĝ|ğ|ġ|ģ/' => 'g',
+    	'/Ĥ|Ħ/' => 'H',
+    	'/ĥ|ħ/' => 'h',
+    	'/Ì|Í|Î|Ï|Ĩ|Ī|Ĭ|Ǐ|Į|İ/' => 'I',
+    	'/ì|í|î|ï|ĩ|ī|ĭ|ǐ|į|ı/' => 'i',
+    	'/Ĵ/' => 'J',
+    	'/ĵ/' => 'j',
+    	'/Ķ/' => 'K',
+    	'/ķ/' => 'k',
+    	'/Ĺ|Ļ|Ľ|Ŀ|Ł/' => 'L',
+    	'/ĺ|ļ|ľ|ŀ|ł/' => 'l',
+    	'/Ñ|Ń|Ņ|Ň/' => 'N',
+    	'/ñ|ń|ņ|ň|ŉ/' => 'n',
+    	'/Ò|Ó|Ô|Õ|Ō|Ŏ|Ǒ|Ő|Ơ|Ø|Ǿ/' => 'O',
+    	'/ò|ó|ô|õ|ō|ŏ|ǒ|ő|ơ|ø|ǿ|º/' => 'o',
+    	'/Ŕ|Ŗ|Ř/' => 'R',
+    	'/ŕ|ŗ|ř/' => 'r',
+    	'/Ś|Ŝ|Ş|Š/' => 'S',
+    	'/ś|ŝ|ş|š|ſ/' => 's',
+    	'/Ţ|Ť|Ŧ/' => 'T',
+    	'/ţ|ť|ŧ/' => 't',
+    	'/Ù|Ú|Û|Ũ|Ū|Ŭ|Ů|Ű|Ų|Ư|Ǔ|Ǖ|Ǘ|Ǚ|Ǜ/' => 'U',
+    	'/ù|ú|û|ũ|ū|ŭ|ů|ű|ų|ư|ǔ|ǖ|ǘ|ǚ|ǜ/' => 'u',
+    	'/Ý|Ÿ|Ŷ/' => 'Y',
+    	'/ý|ÿ|ŷ/' => 'y',
+    	'/Ŵ/' => 'W',
+    	'/ŵ/' => 'w',
+    	'/Ź|Ż|Ž/' => 'Z',
+    	'/ź|ż|ž/' => 'z',
+    	'/Æ|Ǽ/' => 'AE',
+    	'/ß/'=> 'ss',
+    	'/Ĳ/' => 'IJ',
+    	'/ĳ/' => 'ij',
+    	'/Œ/' => 'OE',
+    	'/ƒ/' => 'f'
+    );
+    $data_out = preg_replace(array_keys($invalid_values), array_values($invalid_values), $data);
+    return $data_out;
+}
+
 // Sanitize user data
 function filter($data){
 	global $db;
@@ -45,4 +103,44 @@ function filter($data){
 	return $data;
 }
 
+// ENCODE STRING TO SAFE FILENAME
+function filename($string, $de_encode){
+	// <>:"/\|?*
+	$char = array
+	(
+		' ', '/', '\\', '(', ')', '[', ']', '{', '}', '|', '<', '>', '*', '#', '%', '&', '$', '@', '+', '!', '?', ',', '.', ';', ':', '"', "'", '‘', '’', '“', '”', '‛', '‟', '′', '″', '©', 'ç', 'à', 'á', 'â', 'ã', 'ä', 'Ä', 'Ö', 'Ü', 'ß', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ĩ', 'ï', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ú', 'ü', 'û'
+	);
+	$rep =  array
+	(
+		'qZ','zFSz','zBSz','zOPz','zCPz','zOBz','zCBz','zOAz','zCAz','zVLz','zPz','zNz','zSRz','zPDz','zPTz','zAz','zDRz','zATz','zPSz','zEPz','zQz','zCz','zDz','zSCz','zCNz','zQTz','zSQz','zSQDz','zSQUz','zQDz','zQUz','zSQFz','zQFz','zAFz','zDAFz','zCYz','qCCq','qAGq','qAAq','qACq','qATq','qADq','QADQ','QODQ','QUDQ','qSSq','qEGq','qEAq','qECq','qEDq','qIGq','qIAq','qICq','qITq','qIDq','qOGq','qOAq','qOCq','qOTq','qODq','qUGq','qUAq','qUCq','qUDq'
+	);
+	if($de_encode == 'encode'){
+		foreach($char as $key => $value){
+			$string = str_replace($value, $rep[$key], $string);
+		}
+	}elseif($de_encode == 'decode'){
+		foreach($rep as $key => $value){
+			$string = str_replace($value, $char[$key], $string);
+		}
+	}
+	return $string;
+}
 
+// get file name without extension
+function file_name_no_ext($file_name){
+	if( strstr($file_name, '/') ){
+		$file_name = basename($file_name);
+	}
+	$file_name_no_ext = preg_replace('/\.[^\.]*$/', '', $file_name);
+	return $file_name_no_ext;
+}
+
+// get file extension from file name (including the dot: ".jpg")
+function file_extension($file_name){
+	preg_match('/\.[^\.]*$/', $file_name, $matches);
+	if( !empty($matches) ){
+		return $matches[0];
+	}else{
+		return false;
+	}
+}

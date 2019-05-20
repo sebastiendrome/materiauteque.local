@@ -45,60 +45,23 @@ function get_table($table, $where = '', $order = ''){
 	}
 }
 
-// GET (visible) CATEGORIES
-function get_categories($visible = ''){
-	global $db;
-	if( $visible !== '' ){
-		$filter = " WHERE visible = ".$visible;
-	}else{
-        $filter = '';
-    }
-	$query = mysqli_query( $db, "SELECT * FROM categories".$filter) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
-	while($row = mysqli_fetch_assoc($query)){
-		$categories[] = $row;
-	}
-	if(!empty($categories)){
-		return($categories);
-	}else{
-		return FALSE;
-	}
-}
-
-// get the categories_id from an article id
-function get_item_category($article_id){
-	global $db;
-    $query = mysqli_query( $db, "SELECT categorie_id FROM articles WHERE id = '$article_id'") or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
-	$categorie_id = mysqli_fetch_row($query);
-	return $categorie_id[0];
-}
-
-// get article field
-function get_item_field($article_id, $field){
-	global $db;
-    $query = mysqli_query( $db, "SELECT $field FROM articles WHERE id = '$article_id'") or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
-	$row = mysqli_fetch_row($query);
-	return $row[0];
-}
-
 // get all item data
-function get_item($article_id){
+function get_item_data($article_id, $fields = '*'){
 	global $db;
-    $query = mysqli_query( $db, "SELECT * FROM articles WHERE id = '$article_id'") or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
+	if( is_array($fields) ){
+		if( !in_array('id', $fields) ){
+			array_unshift($fields , 'id');
+		}
+		$fields_string = implode(", ", $fields);
+		$fields = $fields_string;
+	}
+	$q = "SELECT $fields FROM articles WHERE id = '$article_id'";
+    $query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
 	$item = mysqli_fetch_assoc( $query );
 	// image(s)?
 	//$item['images'] = get_article_images($article_id);
 	return $item;
 }
-
-/* NOT USED 
-// get statut name from id
-function statut_name($statut_id){
-	global $db;
-	$query = mysqli_query( $db, "SELECT 'nom' FROM 'statut' WHERE id = '$statut_id'") or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
-	$statut_name = mysqli_fetch_row( $query );
-	return $statut_name[0];
-}
-*/
 
 /** return array of articles data, 
  * optional filters: visible, categories_id. Sort as needed */
@@ -873,21 +836,23 @@ function echo_item_table($item){
 
 // display article data array on public pages (array provided by get_items_data())
 function show_article($item_array){
+	// format item poids
 	$kg = 'kg';
 	$poids = preg_replace('/\.0+$/', '', $item_array['poids']);
 	if(preg_match('/^0*\./', $poids, $matches)){
 		$kg = 'g';
 		$poids = str_replace($matches[0], '', $poids);
 	}
-	if($item_array['statut_id'] == 1){
+	// item statut
+	if($item_array['statut_id'] == 1){ 		// disponible
 		$statut = 'success';
-	}elseif($item_array['statut_id'] == 2){
+	}elseif($item_array['statut_id'] == 2){ // réservé
 		$statut = 'note';
-	}else{
+	}else{ 									// vendu, transféré, rejeté
 		$statut = 'error';
 	}
 	
-	
+	// images
 	if( !isset($item_array['images']) ){
 		$item_array['images'] = get_article_images($item_array['id']);
 	}
@@ -911,6 +876,7 @@ function show_article($item_array){
 	}else{
 		$img = '_code/images/404.gif';
 	}
+	
 	$output = '';
 	$output .= '<!-- start article -->'.PHP_EOL.'<div class="article" id="'.$item_array['id'].'">'.PHP_EOL;
 	$output .= '<div class="imgContainer" style="background-image:url(/'.$img.');">'.$inner_img_output.'</div>'.PHP_EOL;

@@ -49,7 +49,7 @@ if( isset($_POST['newArticleSubmitted']) ){
     }
     if($article_id = insert_new('articles', $item_data)){
 		$_SESSION['article_id'] = $article_id;
-		$new_item[0] = get_item($article_id);
+		$new_item[0] = get_item_data($article_id);
 		$items_table = items_table_output($new_item);
         $message = '<p class="success">Nouvel Article créé. ID: '.$article_id.'</p>';
         $path = 'uploads/'.$article_id;
@@ -59,7 +59,7 @@ if( isset($_POST['newArticleSubmitted']) ){
     }
 }elseif( isset($_GET['upload_result'])){
 	$titre_autofocus = false;
-	$new_item[0] = get_item($_SESSION['article_id']);
+	$new_item[0] = get_item_data($_SESSION['article_id']);
 	$items_table = items_table_output($new_item);
     $message = urldecode($_GET['upload_result']);
     $path = 'uploads/'.$_SESSION['article_id'];

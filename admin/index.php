@@ -7,6 +7,7 @@ if( isset($_SESSION['article_id']) ){
     unset($_SESSION['article_id']);
 }
 
+
 // make sure we get the needed data, if we don't have it already
 if( !isset($categories) || empty($categories) ){
     $categories = get_table('categories');
@@ -33,7 +34,7 @@ if( isset($_POST['simpleSearch']) ){
 		if( !empty($ids) ){
 			foreach($ids as $id){
 				//echo 'Article #'.$key.'<br>';
-				$search_items[] = get_item($id);
+				$search_items[] = get_item_data($id);
 			}
 		}
     }

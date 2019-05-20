@@ -22,7 +22,7 @@ if( isset($search_result) ){ // $search_result: see above (header include)
         //echo '<pre>'; print_r($search_result); echo '</pre>';
         
         foreach($search_result as $id){
-            $items[] = get_item($id);
+            $items[] = get_item_data($id);
         }
         foreach($items as $item){
             $output .= show_article($item);

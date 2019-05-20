@@ -56,13 +56,6 @@ define("DB_NAME", $db_name);
 require(ROOT.'_code/php/errors.php');
 
 
-// create error reporting file  if it does not exist
-if( !file_exists(ROOT.'hGtDjkpPWSXk.php') ){
-	if( !$fp = fopen(ROOT.'hGtDjkpPWSXk.php', 'w') ){
-		echo '<p style="color:red;">Error: Could not create error log!</p>';
-	}
-}
-
 
 // FILE TYPES
 $types = array();

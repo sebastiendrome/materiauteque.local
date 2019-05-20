@@ -60,7 +60,7 @@ if( isset($_POST['simpleSearch']) ){
 		if( !empty($ids) ){
 			foreach($ids as $id){
 				//echo 'Article #'.$key.'<br>';
-				$items[] = get_item($id);
+				$items[] = get_item_data($id);
 			}
 		}
     }
@@ -90,7 +90,7 @@ if( isset($_POST['findArticleSubmitted']) ){
         if( $results = find_articles($key_val_pairs) ){
             foreach($results as $key => $val){
                 //echo 'Article #'.$key.'<br>';
-                $items[] = get_item($key);
+                $items[] = get_item_data($key);
             }
         }
     }
