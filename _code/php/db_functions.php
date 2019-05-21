@@ -45,20 +45,21 @@ function get_table($table, $where = '', $order = ''){
 	}
 }
 
-// GET ARRAY OF CATEGORIES AND SUB-CATEGORIES
-function get_cats_array($visible_only = TRUE){
+/** Return multi-dimentional array from id_parent/Child hierarchy table
+ * For 'categories' and 'matieres' tables
+ *  */ 
+function get_hierarchy_array($table, $visible_only = TRUE){
 	global $db;
-	$q = "SELECT * FROM categories";
+	$q = "SELECT * FROM $table";
 	if($visible_only == TRUE){
 		$q .= " WHERE visible = 1";
 	}
 
 	// debug
-	echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
+	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
 
 	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
 	while($row = mysqli_fetch_assoc($query)){
-		//$cats_array[] = $row;
 		if($row['id_parent'] == 0){
 			$cats_array[$row['id']] = $row;
 		}else{
@@ -67,6 +68,45 @@ function get_cats_array($visible_only = TRUE){
 	}
 	if(!empty($cats_array)){
 		return($cats_array);
+	}else{
+		return FALSE;
+	}
+}
+
+// get parent (main) items in hierarchy table (categories or matieres)
+function get_parents($table, $visible_only = TRUE){
+	global $db;
+	$q = "SELECT * FROM $table WHERE id_parent = 0";
+	if($visible_only == TRUE){
+		$q .= " AND visible = 1";
+	}
+	// debug
+	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
+
+	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
+	while($row = mysqli_fetch_assoc($query)){
+		$parents_array[] = $row;
+	}
+	if(!empty($parents_array)){
+		return($parents_array);
+	}else{
+		return FALSE;
+	}
+}
+
+// get children (sub) items in hierarchy table (categories or matieres)
+function get_children($table, $id_parent){
+	global $db;
+	$q = "SELECT * FROM $table WHERE id_parent = $id_parent";
+	// debug
+	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
+
+	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
+	while($row = mysqli_fetch_assoc($query)){
+		$children_array[] = $row;
+	}
+	if(!empty($children_array)){
+		return($children_array);
 	}else{
 		return FALSE;
 	}
@@ -93,7 +133,7 @@ function get_item_data($article_id, $fields = '*'){
 		$fields = $fields_string;
 	}
 	$q = "SELECT $fields FROM articles WHERE id = '$article_id'";
-    $query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
+	$query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
 	$item = mysqli_fetch_assoc( $query );
 	return $item;
 }
@@ -671,7 +711,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 	$i = $n = 0;
 	$output .= '<table class="data" data-id="articles">'.PHP_EOL;
 	
-    foreach($result_array as $key => $value){
+	foreach($result_array as $key => $value){
 
 		if($n >= $start && $n < $end){
 			$article_id = $value['id'];
@@ -753,7 +793,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			$i++;
 			$n++;
 		}
-    }
+	}
 	$output .= '</tbody></table>'.PHP_EOL;
 	return $output;
 }
@@ -834,12 +874,12 @@ function echo_item_table($item){
 		$item['images'] = '<span class="warning">Pas d\'image...</span>';
 	}
 	
-    $output .= '<table class="data">'.PHP_EOL;
-    //$output .= '<tr><td>Image</td><td>'.$img_output.'</td></tr>';
-    foreach($item as $k => $v){
-        $output .= '<tr>
-        <td>'.ucwords($k).'</td>';
-        $v = present($k, $v);
+	$output .= '<table class="data">'.PHP_EOL;
+	//$output .= '<tr><td>Image</td><td>'.$img_output.'</td></tr>';
+	foreach($item as $k => $v){
+		$output .= '<tr>
+		<td>'.ucwords($k).'</td>';
+		$v = present($k, $v);
 		$output .= '<td>'.$v.'</td>'.PHP_EOL;
 	}
 	$output .= '</tr>'.PHP_EOL;
@@ -908,7 +948,11 @@ function show_article($item_array){
 		$output .= 'Prix conséillé: € '.str_replace('.', ',', $item_array['prix']).'<br>'.PHP_EOL;
 	}
 	$output .= 'Poids: '.$poids.' '.$kg.'<br>'.PHP_EOL;
-	$output .= 'Catégorie: '.ucwords(id_to_name($item_array['categories_id'], 'categories')).'<br>'.PHP_EOL;
+	$output .= 'Catégorie: '.ucwords(id_to_name($item_array['categories_id'], 'categories'));
+	if(!empty($item_array['sous_categories_id'])){
+		$output .= ', '.ucwords(id_to_name($item_array['sous_categories_id'], 'categories'));
+	}
+	$output .= '<br>'.PHP_EOL;
 	$output .= 'Article entré le '.date('d-m-Y', $item_array['date']).PHP_EOL;
 	$output .= '</p>';
 	$output .= '</div><!-- end detail -->'.PHP_EOL;
@@ -918,7 +962,7 @@ function show_article($item_array){
 
 
 /* 
-// Somme des ventes et du poids, entre 2 dates, classés par déchette-catégorie:
+// Somme des ventes et du poids, entre 2 dates, classés par matière:
 
 SELECT sum(prix_vente) AS vente_total, sum(poids) AS poids_total, matieres_id
 FROM articles

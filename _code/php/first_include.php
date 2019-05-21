@@ -86,9 +86,9 @@ $_POST['sizes'] = $sizes;
 // image size 
 $size = "_M";
 if(isset($_COOKIE['wW'])){
-    if($_COOKIE['wW'] > 1370 ){
-        $size = "_L";
-    }elseif($_COOKIE['wW'] < 340){
+	if($_COOKIE['wW'] > 1370 ){
+		$size = "_L";
+	}elseif($_COOKIE['wW'] < 340){
 		$size = "_S";
 	}
 }

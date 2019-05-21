@@ -161,8 +161,8 @@ a:hover, a.selected{text-decoration: underline;}
 a.imgMore{text-decoration:none; display:block;}
 a.imgMore:hover div.txt, a.imgMore:hover div.html{
 	-webkit-box-shadow:inset 0px 0px 0px 1px #555;
-    -moz-box-shadow:inset 0px 0px 0px 1px #555;
-    box-shadow:inset 0px 0px 0px 1px #555;
+	-moz-box-shadow:inset 0px 0px 0px 1px #555;
+	box-shadow:inset 0px 0px 0px 1px #555;
 }
 
 .clearBoth{clear:both;}
@@ -192,7 +192,7 @@ padding-left:25px;}
 select{
 	-webkit-appearance: none; 
 	-moz-appearance: none;
-	appearance: none;       /* remove default arrow */
+	appearance: none;	   /* remove default arrow */
 	padding-right:25px !important;
 	background: #fff url(/_code/images/arrow-down-dark.gif) no-repeat 96% 50%;/* add custom arrow */
 }

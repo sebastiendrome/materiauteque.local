@@ -1,20 +1,20 @@
 <?php
 /* return human file size to bytes */
 function return_bytes($val){
-    preg_match('/(?<value>\d+)(?<option>.?)/i', trim($val), $matches);
-    $inc = array(
-        'g' => 1073741824, // (1024 * 1024 * 1024)
-        'm' => 1048576, // (1024 * 1024)
-        'k' => 1024
-    );
+	preg_match('/(?<value>\d+)(?<option>.?)/i', trim($val), $matches);
+	$inc = array(
+		'g' => 1073741824, // (1024 * 1024 * 1024)
+		'm' => 1048576, // (1024 * 1024)
+		'k' => 1024
+	);
 
-    $value = (int) $matches['value'];
-    $key = strtolower(trim($matches['option']));
-    if (isset($inc[$key])) {
-        $value *= $inc[$key];
-    }
+	$value = (int) $matches['value'];
+	$key = strtolower(trim($matches['option']));
+	if (isset($inc[$key])) {
+		$value *= $inc[$key];
+	}
 
-    return $value;
+	return $value;
 }
 
 /***** STRING and file name MANIPULATIONS *******/
@@ -26,80 +26,80 @@ function cleanXXS($input){
 }
 
 function clean( $string ){
-    return stripslashes( $string );
+	return stripslashes( $string );
 }
 
 /* Replace special characters with their equivalents */
 function normalize( $data ){
-    $invalid_values = array(
-    	'/ä|æ|ǽ/' => 'ae',
-    	'/ö|œ/' => 'oe',
-    	'/ü/' => 'ue',
-    	'/Ä/' => 'Ae',
-    	'/Ü/' => 'Ue',
-    	'/Ö/' => 'Oe',
-    	'/À|Á|Â|Ã|Ä|Å|Ǻ|Ā|Ă|Ą|Ǎ/' => 'A',
-    	'/à|á|â|ã|å|ǻ|ā|ă|ą|ǎ|ª/' => 'a',
-    	'/Ç|Ć|Ĉ|Ċ|Č/' => 'C',
-    	'/ç|ć|ĉ|ċ|č/' => 'c',
-    	'/Ð|Ď|Đ/' => 'D',
-    	'/ð|ď|đ/' => 'd',
-    	'/È|É|Ê|Ë|Ē|Ĕ|Ė|Ę|Ě/' => 'E',
-    	'/è|é|ê|ë|ē|ĕ|ė|ę|ě/' => 'e',
-    	'/Ĝ|Ğ|Ġ|Ģ/' => 'G',
-    	'/ĝ|ğ|ġ|ģ/' => 'g',
-    	'/Ĥ|Ħ/' => 'H',
-    	'/ĥ|ħ/' => 'h',
-    	'/Ì|Í|Î|Ï|Ĩ|Ī|Ĭ|Ǐ|Į|İ/' => 'I',
-    	'/ì|í|î|ï|ĩ|ī|ĭ|ǐ|į|ı/' => 'i',
-    	'/Ĵ/' => 'J',
-    	'/ĵ/' => 'j',
-    	'/Ķ/' => 'K',
-    	'/ķ/' => 'k',
-    	'/Ĺ|Ļ|Ľ|Ŀ|Ł/' => 'L',
-    	'/ĺ|ļ|ľ|ŀ|ł/' => 'l',
-    	'/Ñ|Ń|Ņ|Ň/' => 'N',
-    	'/ñ|ń|ņ|ň|ŉ/' => 'n',
-    	'/Ò|Ó|Ô|Õ|Ō|Ŏ|Ǒ|Ő|Ơ|Ø|Ǿ/' => 'O',
-    	'/ò|ó|ô|õ|ō|ŏ|ǒ|ő|ơ|ø|ǿ|º/' => 'o',
-    	'/Ŕ|Ŗ|Ř/' => 'R',
-    	'/ŕ|ŗ|ř/' => 'r',
-    	'/Ś|Ŝ|Ş|Š/' => 'S',
-    	'/ś|ŝ|ş|š|ſ/' => 's',
-    	'/Ţ|Ť|Ŧ/' => 'T',
-    	'/ţ|ť|ŧ/' => 't',
-    	'/Ù|Ú|Û|Ũ|Ū|Ŭ|Ů|Ű|Ų|Ư|Ǔ|Ǖ|Ǘ|Ǚ|Ǜ/' => 'U',
-    	'/ù|ú|û|ũ|ū|ŭ|ů|ű|ų|ư|ǔ|ǖ|ǘ|ǚ|ǜ/' => 'u',
-    	'/Ý|Ÿ|Ŷ/' => 'Y',
-    	'/ý|ÿ|ŷ/' => 'y',
-    	'/Ŵ/' => 'W',
-    	'/ŵ/' => 'w',
-    	'/Ź|Ż|Ž/' => 'Z',
-    	'/ź|ż|ž/' => 'z',
-    	'/Æ|Ǽ/' => 'AE',
-    	'/ß/'=> 'ss',
-    	'/Ĳ/' => 'IJ',
-    	'/ĳ/' => 'ij',
-    	'/Œ/' => 'OE',
-    	'/ƒ/' => 'f'
-    );
-    $data_out = preg_replace(array_keys($invalid_values), array_values($invalid_values), $data);
-    return $data_out;
+	$invalid_values = array(
+		'/ä|æ|ǽ/' => 'ae',
+		'/ö|œ/' => 'oe',
+		'/ü/' => 'ue',
+		'/Ä/' => 'Ae',
+		'/Ü/' => 'Ue',
+		'/Ö/' => 'Oe',
+		'/À|Á|Â|Ã|Ä|Å|Ǻ|Ā|Ă|Ą|Ǎ/' => 'A',
+		'/à|á|â|ã|å|ǻ|ā|ă|ą|ǎ|ª/' => 'a',
+		'/Ç|Ć|Ĉ|Ċ|Č/' => 'C',
+		'/ç|ć|ĉ|ċ|č/' => 'c',
+		'/Ð|Ď|Đ/' => 'D',
+		'/ð|ď|đ/' => 'd',
+		'/È|É|Ê|Ë|Ē|Ĕ|Ė|Ę|Ě/' => 'E',
+		'/è|é|ê|ë|ē|ĕ|ė|ę|ě/' => 'e',
+		'/Ĝ|Ğ|Ġ|Ģ/' => 'G',
+		'/ĝ|ğ|ġ|ģ/' => 'g',
+		'/Ĥ|Ħ/' => 'H',
+		'/ĥ|ħ/' => 'h',
+		'/Ì|Í|Î|Ï|Ĩ|Ī|Ĭ|Ǐ|Į|İ/' => 'I',
+		'/ì|í|î|ï|ĩ|ī|ĭ|ǐ|į|ı/' => 'i',
+		'/Ĵ/' => 'J',
+		'/ĵ/' => 'j',
+		'/Ķ/' => 'K',
+		'/ķ/' => 'k',
+		'/Ĺ|Ļ|Ľ|Ŀ|Ł/' => 'L',
+		'/ĺ|ļ|ľ|ŀ|ł/' => 'l',
+		'/Ñ|Ń|Ņ|Ň/' => 'N',
+		'/ñ|ń|ņ|ň|ŉ/' => 'n',
+		'/Ò|Ó|Ô|Õ|Ō|Ŏ|Ǒ|Ő|Ơ|Ø|Ǿ/' => 'O',
+		'/ò|ó|ô|õ|ō|ŏ|ǒ|ő|ơ|ø|ǿ|º/' => 'o',
+		'/Ŕ|Ŗ|Ř/' => 'R',
+		'/ŕ|ŗ|ř/' => 'r',
+		'/Ś|Ŝ|Ş|Š/' => 'S',
+		'/ś|ŝ|ş|š|ſ/' => 's',
+		'/Ţ|Ť|Ŧ/' => 'T',
+		'/ţ|ť|ŧ/' => 't',
+		'/Ù|Ú|Û|Ũ|Ū|Ŭ|Ů|Ű|Ų|Ư|Ǔ|Ǖ|Ǘ|Ǚ|Ǜ/' => 'U',
+		'/ù|ú|û|ũ|ū|ŭ|ů|ű|ų|ư|ǔ|ǖ|ǘ|ǚ|ǜ/' => 'u',
+		'/Ý|Ÿ|Ŷ/' => 'Y',
+		'/ý|ÿ|ŷ/' => 'y',
+		'/Ŵ/' => 'W',
+		'/ŵ/' => 'w',
+		'/Ź|Ż|Ž/' => 'Z',
+		'/ź|ż|ž/' => 'z',
+		'/Æ|Ǽ/' => 'AE',
+		'/ß/'=> 'ss',
+		'/Ĳ/' => 'IJ',
+		'/ĳ/' => 'ij',
+		'/Œ/' => 'OE',
+		'/ƒ/' => 'f'
+	);
+	$data_out = preg_replace(array_keys($invalid_values), array_values($invalid_values), $data);
+	return $data_out;
 }
 
 // Sanitize user data
 function filter($data){
 	global $db;
-    if( !is_array($data) ){
-        $data = strip_tags($data);
-        if( get_magic_quotes_gpc() ){
-            $data = stripslashes($data);
-        }
-    	$data = mysqli_real_escape_string($db, $data);
-    }else{
-        //Self call function to sanitize array data
-        $data = array_map("filter", $data);
-    }
+	if( !is_array($data) ){
+		$data = strip_tags($data);
+		if( get_magic_quotes_gpc() ){
+			$data = stripslashes($data);
+		}
+		$data = mysqli_real_escape_string($db, $data);
+	}else{
+		//Self call function to sanitize array data
+		$data = array_map("filter", $data);
+	}
 	return $data;
 }
 

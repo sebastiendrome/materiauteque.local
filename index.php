@@ -7,12 +7,12 @@ $items = get_items_data('*', 1);
 $output = '';
 
 if(!empty($items)){
-    foreach($items as $item){
-        $output .= show_article($item);
-    }
-    
+	foreach($items as $item){
+		$output .= show_article($item);
+	}
+	
 }else{
-    $output .= '<p>Aucun article...</p>';
+	$output .= '<p>Aucun article...</p>';
 }
 
 ?>

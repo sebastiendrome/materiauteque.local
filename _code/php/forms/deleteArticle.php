@@ -5,31 +5,31 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
 if( !isset($title) ){
-    $title = ' : Supprimer un Article';
-    require(ROOT.'_code/php/doctype.php');
-    echo '<!-- admin css -->
-    <link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
+	$title = ' : Supprimer un Article';
+	require(ROOT.'_code/php/doctype.php');
+	echo '<!-- admin css -->
+	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
 
-    echo '<!-- start admin container -->
-    <div id="adminContainer">'.PHP_EOL;
+	echo '<!-- start admin container -->
+	<div id="adminContainer">'.PHP_EOL;
 
-    echo '<h1><a href="/admin/">Admin</a>'.$title.'</h1>'.PHP_EOL;
-    $footer = true;
+	echo '<h1><a href="/admin/">Admin</a>'.$title.'</h1>'.PHP_EOL;
+	$footer = true;
 }else{
-    $footer = false;
+	$footer = false;
 }
 
 // process form POST data
 if( isset($_POST['deleteArticleSubmitted']) ){
-    $article_id = $_POST['delete_id'];
+	$article_id = $_POST['delete_id'];
 }elseif( isset($_GET['article_id']) ){
-    $article_id = urldecode($_GET['article_id']);
+	$article_id = urldecode($_GET['article_id']);
 }
 
 if( isset($article_id) && !empty($article_id) ){
-    $table = 'articles';
-    $result = delete_item($table, $article_id);
-    echo $result;
+	$table = 'articles';
+	$result = delete_item($table, $article_id);
+	echo $result;
 }
 ?>
 
@@ -37,15 +37,15 @@ if( isset($article_id) && !empty($article_id) ){
 
 <h3>Supprimer un article:</h3>
 
-    Article ID: <input type="number" name="delete_id" id="delete_id" step="any" value="">
+	Article ID: <input type="number" name="delete_id" id="delete_id" step="any" value="">
 
-    <input type="hidden" name="deleteArticleSubmitted" id="deleteArticleSubmitted" value="deleteArticleSubmitted">
-    <button type="submit" name="deleteArticleSubmit" id="deleteArticleSubmit" class="right">Supprimer</button>
+	<input type="hidden" name="deleteArticleSubmitted" id="deleteArticleSubmitted" value="deleteArticleSubmitted">
+	<button type="submit" name="deleteArticleSubmit" id="deleteArticleSubmit" class="right">Supprimer</button>
 </form>
 
 <?php
 if($footer){
-    echo '</div><!-- end admin container -->'.PHP_EOL;
+	echo '</div><!-- end admin container -->'.PHP_EOL;
 	require(ROOT.'/_code/php/admin/admin_footer.php');
 	echo '
 	</body>

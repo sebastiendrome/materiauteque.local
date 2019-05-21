@@ -10,7 +10,7 @@ $('body').on('click', '.closeMessage', function(e){
 	var parent = $(this).parent();
 	parent.hide();
 	//window.location.search = '';
-    e.preventDefault();
+	e.preventDefault();
 });
 
 // display 'working' div while processing ajax requests
@@ -154,14 +154,14 @@ $("body").on("change", '#fileUpload', function(){
 		var extMatch = dotExt.match(supported_types);
 		if(extMatch == null){
 			error = true;
-        	alert('Sorry, this file type is not supported: .'+ext+'\n\nThe file has not been uploaded.');
+			alert('Sorry, this file type is not supported: .'+ext+'\n\nThe file has not been uploaded.');
 		}
 		
 		// validate file size
 		if(fileSize > max_upload_bytes) {
 			var readableSize = bytesToReadbale(fileSize);
 			error = true;
-        	alert('The file is too large: '+readableSize+'\n\nThe maximum upload size is '+max_upload_size);
+			alert('The file is too large: '+readableSize+'\n\nThe maximum upload size is '+max_upload_size);
 		}
 		
 		if(!error){
@@ -266,19 +266,19 @@ function updateTable(table, col, id, value){
 
 // get upload fileName without 'fake' path
 function basename(path){
-    return path.replace(/\\/g,'/').replace( /.*\//, '' );
+	return path.replace(/\\/g,'/').replace( /.*\//, '' );
 }
 
 // return file size in bytes
 function getFileSize(){
-    if(window.ActiveXObject){	// old IE
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
-        var filepath = document.getElementById('fileUpload').value;
-        var thefile = fso.getFile(filepath);
-        var sizeinbytes = thefile.size;
-    }else{						// modern browsers
-        var sizeinbytes = document.getElementById('fileUpload').files[0].size;
-    }
+	if(window.ActiveXObject){	// old IE
+		var fso = new ActiveXObject("Scripting.FileSystemObject");
+		var filepath = document.getElementById('fileUpload').value;
+		var thefile = fso.getFile(filepath);
+		var sizeinbytes = thefile.size;
+	}else{						// modern browsers
+		var sizeinbytes = document.getElementById('fileUpload').files[0].size;
+	}
 	return sizeinbytes;
 }
 
@@ -301,7 +301,7 @@ function bytesToReadbale(sizeInBytes){
 /*
 function is_touch_device() {
 	//return true;
-	return 'ontouchstart' in window        // works on most browsers 
+	return 'ontouchstart' in window		// works on most browsers 
 		|| 'onmsgesturechange' in window;  // works on IE10 with some false positives
 };
 */

@@ -32,7 +32,7 @@ if(isset($_POST['update'])){
 
 // make sure we get the needed data, if we don't have it already
 if( !isset($categories) || empty($categories) ){
-    $categories = get_table($table);
+	$categories = get_table($table);
 }
 
 
@@ -77,7 +77,7 @@ if(isset($_POST['create']) && !empty($_POST['newCategory'])){
 
 require(ROOT.'_code/php/doctype.php');
 if( isset($_SESSION['article_id']) ){
-    unset($_SESSION['article_id']);
+	unset($_SESSION['article_id']);
 }
 ?>
 

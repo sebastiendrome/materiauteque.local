@@ -15,20 +15,20 @@ require(ROOT.'/_code/inc/header.php');
 <?php
 $output = '';
 if( isset($search_result) ){ // $search_result: see above (header include)
-    if(!$search_result){
-        $output .= '<p class="warning">Aucun résultat...</p>';
-    }else{
-        // debug
-        //echo '<pre>'; print_r($search_result); echo '</pre>';
-        
-        foreach($search_result as $id){
-            $items[] = get_item_data($id);
-        }
-        foreach($items as $item){
-            $output .= show_article($item);
-        }
-    }
-    echo $output;
+	if(!$search_result){
+		$output .= '<p class="warning">Aucun résultat...</p>';
+	}else{
+		// debug
+		//echo '<pre>'; print_r($search_result); echo '</pre>';
+		
+		foreach($search_result as $id){
+			$items[] = get_item_data($id);
+		}
+		foreach($items as $item){
+			$output .= show_article($item);
+		}
+	}
+	echo $output;
 }
 ?>
 

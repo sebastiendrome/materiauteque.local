@@ -2,15 +2,15 @@
 // show Modal window
 function showModal(modal, callback){
 	var $newDiv,
-	    $overlayDiv,
+		$overlayDiv,
 		query = '';
 		
 	// create overlay if it does not exist
 	if($('div.overlay').length == 0){
-	    $overlayDiv = $('<div class="overlay"/>');
+		$overlayDiv = $('<div class="overlay"/>');
 		$('body').append($overlayDiv);
 	}else{
-	    $overlayDiv = $('div.overlay');
+		$overlayDiv = $('div.overlay');
 	}
 	$overlayDiv.fadeIn();
 	// parse and check for query string (rel="zoomModal?img=/path/to/image.jpg") will append query string to loading modal.
@@ -31,33 +31,33 @@ function showModal(modal, callback){
 	$newdiv.show();
 	checkModalHeight('#'+modal);
 	if(callback !== undefined && typeof callback === 'function') {
-        callback();
-    }
+		callback();
+	}
 }
 
 
 function hideModal($elem){
-    var n = $('div.modalContainer:visible').length;
+	var n = $('div.modalContainer:visible').length;
 	if(n > 0){
-	    $elem.closest('div.modalContainer').hide();
-	    n = n-1;
+		$elem.closest('div.modalContainer').hide();
+		n = n-1;
 	}else{
-	    $elem.closest('div').hide();
+		$elem.closest('div').hide();
 	}
 	//alert(n);
-    if(n < 1){
-        $('div.overlay').fadeOut();
-    }
+	if(n < 1){
+		$('div.overlay').fadeOut();
+	}
 }
 
 // change positioning of modals to account for scrolling down window!
 function checkModalHeight(elem){
-    var scroltop = parseInt($(window).scrollTop());
-    var newtop = scroltop+50;
-    if(newtop<100){
-	    newtop =  100;	
-    }
-    //alert(newtop);
+	var scroltop = parseInt($(window).scrollTop());
+	var newtop = scroltop+50;
+	if(newtop<100){
+		newtop =  100;	
+	}
+	//alert(newtop);
 	$(elem).animate({top: newtop}, 100, function() {
 		// calback function to focus on first txt input but exclude newFile modal
 		var elId = $(elem).attr("id");
@@ -93,6 +93,6 @@ $('body').on('click', '.showModal', function(e){
 
 // assign behavior to .closeBut et .hideModal (close parent div on click)
 $('body').on('click', '.closeBut, .hideModal', function(e){
-    hideModal($(this));
-    e.preventDefault();
+	hideModal($(this));
+	e.preventDefault();
 });

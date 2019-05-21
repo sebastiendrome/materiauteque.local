@@ -1,16 +1,16 @@
 Options -indexes
 Options +FollowSymLinks
 <IfModule mod_rewrite.c>
-    # Tell PHP that the mod_rewrite module is ENABLED. Then check, using: array_key_exists('HTTP_MOD_REWRITE', $_SERVER)
-    SetEnv HTTP_MOD_REWRITE On
-    RewriteEngine on
-    
-    # missing images:
-    <FilesMatch ".(jpg|png|gif)$">
-    ErrorDocument 404 /_code/images/404.gif
-    </FilesMatch>
+	# Tell PHP that the mod_rewrite module is ENABLED. Then check, using: array_key_exists('HTTP_MOD_REWRITE', $_SERVER)
+	SetEnv HTTP_MOD_REWRITE On
+	RewriteEngine on
+	
+	# missing images:
+	<FilesMatch ".(jpg|png|gif)$">
+	ErrorDocument 404 /_code/images/404.gif
+	</FilesMatch>
 
-    ErrorDocument 404 /404.php
+	ErrorDocument 404 /404.php
 </IfModule>
 
 # MIME Types we want to make sure Apache will serve...

@@ -12,7 +12,7 @@ if(isset($_POST['uploadFileSubmit'])){
 	$path = urldecode($_POST['path']);
 	$replace = urldecode($_POST['replace']);
 	$replace_ext = file_extension(basename($replace));
-    $file_type = $_FILES['file']['type'];
+	$file_type = $_FILES['file']['type'];
 	
 	// get and format file extension
 	if(isset($file_type) && !empty($file_type)){ // get it from file metadata
@@ -31,14 +31,14 @@ if(isset($_POST['uploadFileSubmit'])){
 		$ext = file_extension($file_name);
 		$ext = strtolower($ext);
 		$ext = str_replace('jpeg', 'jpg', $ext);
-    }
-    
+	}
+	
 	$file_name = 'bg'.$ext;
-    $dest = $path.$file_name;
+	$dest = $path.$file_name;
 	if( up_file(ROOT.CONTENT.$dest) ){
-        $upload_result = 'file uploaded';
-    }else{
-        $upload_result = 'error';
+		$upload_result = 'file uploaded';
+	}else{
+		$upload_result = 'error';
 	}
 	// if file uploaded successfully and was supposed to replace another file, remove the other file (if it has a different name.extension)
 	if( $upload_result == 'file uploaded' && !empty($replace) && $replace != $dest){

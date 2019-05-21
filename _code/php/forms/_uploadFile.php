@@ -15,7 +15,7 @@ $path = 'uploads/'.$article_id.'/';
 		<input type="file" name="file" id="fileUpload" style="opacity:0;"> 
 		<button type="submit" name="uploadFileSubmit" style="opacity:0;" id="uploadFileSubmit">Upload</button>
 		<div class="progress">
-    		<div class="bar"></div>
+			<div class="bar"></div>
 		</div>
 	</form>
 	</div>

@@ -4,32 +4,32 @@ require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
 require(ROOT.'_code/php/doctype.php');
 if( isset($_SESSION['article_id']) ){
-    unset($_SESSION['article_id']);
+	unset($_SESSION['article_id']);
 }
 
 
 // make sure we get the needed data, if we don't have it already
 if( !isset($categories) || empty($categories) ){
-    $categories = get_table('categories');
+	$categories = get_table('categories');
 }
 
 // process form POST data (simple search)
 if( isset($_POST['simpleSearch']) ){
 
-    // check and clean up user input
-    if( isset($_POST['keywords'])  && !empty($_POST['keywords']) ){
-        $keywords = trim($_POST['keywords']);
-        $keywords = normalize($keywords);
-        $keywords = cleanXXS($keywords);
-    }else{
-        $keywords = '';
-    }
-    if( isset($_POST['categories_id']) && is_numeric($_POST['categories_id']) ){
-        $categories_id = trim($_POST['categories_id']);
-    }else{
-        $categories_id = '';
-    }
-    if($keywords !== '' || $categories_id !== ''){
+	// check and clean up user input
+	if( isset($_POST['keywords'])  && !empty($_POST['keywords']) ){
+		$keywords = trim($_POST['keywords']);
+		$keywords = normalize($keywords);
+		$keywords = cleanXXS($keywords);
+	}else{
+		$keywords = '';
+	}
+	if( isset($_POST['categories_id']) && is_numeric($_POST['categories_id']) ){
+		$categories_id = trim($_POST['categories_id']);
+	}else{
+		$categories_id = '';
+	}
+	if($keywords !== '' || $categories_id !== ''){
 		$ids = search($keywords, $categories_id, /*visible-only=*/FALSE, /*vendus=*/FALSE);
 		if( !empty($ids) ){
 			foreach($ids as $id){
@@ -37,9 +37,9 @@ if( isset($_POST['simpleSearch']) ){
 				$search_items[] = get_item_data($id);
 			}
 		}
-    }
+	}
 }else{
-    $keywords = $categories_id = '';
+	$keywords = $categories_id = '';
 }
 
 
@@ -123,11 +123,11 @@ $items_table = items_table_output($articles);
 <option value="">Toutes catégories</option>
 <?php 
 foreach($categories as $c){
-    echo '<option value="'.$c['id'].'"';
-    if( $categories_id == $c['id'] ){
-        echo ' selected';
-    }
-    echo '>'.$c['nom'].'</option>'.PHP_EOL;
+	echo '<option value="'.$c['id'].'"';
+	if( $categories_id == $c['id'] ){
+		echo ' selected';
+	}
+	echo '>'.$c['nom'].'</option>'.PHP_EOL;
 }
 ?>
 </select><button type="submit" name="searchSubmit">Rechercher</button> <a href="/_code/php/forms/findArticle.php">&nbsp;>Recherche détaillée</a>
@@ -137,13 +137,13 @@ foreach($categories as $c){
 <?php
 
 if( isset($search_items) && !empty($search_items)){
-    echo '<div class="success clearBoth" style="overflow:auto;">';
-    if(isset($results)){
-        $search_count = count($results);
-        if($search_count>1){$s='s';}else{$s='';} // plural or singular
-        echo '<p><b>'.$search_count.' article'.$s.' trouvé'.$s.'.</b><br> 
-        Paramètres de recherche: ';
-        foreach($key_val_pairs as $rk => $rv){
+	echo '<div class="success clearBoth" style="overflow:auto;">';
+	if(isset($results)){
+		$search_count = count($results);
+		if($search_count>1){$s='s';}else{$s='';} // plural or singular
+		echo '<p><b>'.$search_count.' article'.$s.' trouvé'.$s.'.</b><br> 
+		Paramètres de recherche: ';
+		foreach($key_val_pairs as $rk => $rv){
 			if( !empty($rv) ){
 				if( is_array($rv) ){
 					$string = '';
@@ -157,22 +157,22 @@ if( isset($search_items) && !empty($search_items)){
 		}
 		echo '</p>';
 
-    }else{
-        $search_count = count($search_items);
-        if($search_count>1){$s='s';}else{$s='';} // plural or singular
-        echo '<p><b>'.$search_count.' article'.$s.' trouvé'.$s.'.</b></br> 
-        Paramètres de recherche: ';
+	}else{
+		$search_count = count($search_items);
+		if($search_count>1){$s='s';}else{$s='';} // plural or singular
+		echo '<p><b>'.$search_count.' article'.$s.' trouvé'.$s.'.</b></br> 
+		Paramètres de recherche: ';
 		echo $keywords;
 		if(!empty($categories_id)){
 			echo '&nbsp;&nbsp;Catégorie: '.id_to_name($categories_id, 'categories');
 		}
 		echo '</p>';
-    }
+	}
 
 	$search_table = items_table_output($search_items);
 	echo $search_table;
 
-    echo '</div>';
+	echo '</div>';
 
 }elseif( isset($_POST['simpleSearch']) ){
 	echo '<p class="note">Aucun résultat...</p>';
@@ -182,7 +182,7 @@ if( isset($search_items) && !empty($search_items)){
 
 <?php
 if( isset($_GET['upload_result']) ){
-    echo urldecode($_GET['upload_result']);
+	echo urldecode($_GET['upload_result']);
 }
 ?>
 

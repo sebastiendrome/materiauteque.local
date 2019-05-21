@@ -3,41 +3,41 @@
 
 /* COPY DIRECTORY AND ITS CONTENTS */
 function copyr($source, $dest){
-    if (is_file($source)) {// Simple copy for a file
-        return copy($source, $dest);
-    }
-    if (!is_dir($dest)) {// Make destination directory
-        mkdir($dest,0777);
-    }
-    $dir = dir($source);// Loop through the folder
-    while (false !== $entry = $dir->read()) {
-        if ($entry == '.' || $entry == '..') {// Skip pointers
-            continue;
-        }
-        if ($dest !== "$source/$entry") {// Deep copy directories
-            copyr("$source/$entry", "$dest/$entry");
-        }
-    }
-    $dir->close();// Clean up
-    return true;
+	if (is_file($source)) {// Simple copy for a file
+		return copy($source, $dest);
+	}
+	if (!is_dir($dest)) {// Make destination directory
+		mkdir($dest,0777);
+	}
+	$dir = dir($source);// Loop through the folder
+	while (false !== $entry = $dir->read()) {
+		if ($entry == '.' || $entry == '..') {// Skip pointers
+			continue;
+		}
+		if ($dest !== "$source/$entry") {// Deep copy directories
+			copyr("$source/$entry", "$dest/$entry");
+		}
+	}
+	$dir->close();// Clean up
+	return true;
 }
 /* FUNCTION TO REMOVE DIRECTORY AND ITS CONTENTS */
 function rmdirr($dirname){
-    if (!file_exists($dirname)){// Sanity check
-        return false;
-    }
-    if (is_file($dirname)){// Simple delete for a file
-        return unlink($dirname);
-    }
-    $dir = dir($dirname);// Loop through the folder
-    while (false !== $entry = $dir->read()){
-        if ($entry == '.' || $entry == '..'){// Skip pointers
-            continue;
-        }
-        rmdirr("$dirname/$entry");// Recurse
-    }
-    $dir->close();// Clean up
-    return rmdir($dirname);
+	if (!file_exists($dirname)){// Sanity check
+		return false;
+	}
+	if (is_file($dirname)){// Simple delete for a file
+		return unlink($dirname);
+	}
+	$dir = dir($dirname);// Loop through the folder
+	while (false !== $entry = $dir->read()){
+		if ($entry == '.' || $entry == '..'){// Skip pointers
+			continue;
+		}
+		rmdirr("$dirname/$entry");// Recurse
+	}
+	$dir->close();// Clean up
+	return rmdir($dirname);
 }
 
 /* human file size */

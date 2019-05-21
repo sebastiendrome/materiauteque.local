@@ -48,7 +48,7 @@ a.delete:hover{color:#bb0808 !important;}
 }
 .warning{color:rgb(252, 123, 2);}
 .warning::before { 
-    content:"\26A0\00a0";
+	content:"\26A0\00a0";
 }
 .remove::before{
 	content:"\02A02\00a0";
@@ -163,8 +163,8 @@ tr.top td{
 form{display:inline-block;}
 
 form, .dpTable {
-    background-color: #ddd;
-    padding: 10px;
+	background-color: #ddd;
+	padding: 10px;
 	border-radius: 3px;
 	margin-bottom:10px;
 }

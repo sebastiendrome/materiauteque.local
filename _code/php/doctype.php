@@ -37,13 +37,13 @@ if( file_exists($gtag) ){
 <meta name="description" content="<?php echo $description; ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta property="og:url"           content="<?php echo $social_url; ?>">
-<meta property="og:type"          content="website">
-<meta property="og:title"         content="<?php echo $title; ?>">
+<meta property="og:url"		   content="<?php echo $social_url; ?>">
+<meta property="og:type"		  content="website">
+<meta property="og:title"		 content="<?php echo $title; ?>">
 <meta property="og:description"   content="<?php echo $description; ?>">
 <?php 
 if( isset($social_image) && !empty($social_image) ){ ?>
-<meta property="og:image"         content="<?php echo $social_image; ?>">
+<meta property="og:image"		 content="<?php echo $social_image; ?>">
 <?php 
 }
 ?>

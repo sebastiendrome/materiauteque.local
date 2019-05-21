@@ -7,7 +7,7 @@ if( !defined("ROOT") ){
 
 // make sure we get the needed data, if we don't have it already
 if( !isset($categories) || empty($categories) ){
-    $categories = get_table('categories');
+	$categories = get_table('categories');
 }
 
 $message='';
@@ -59,8 +59,8 @@ require(ROOT.DYNO.INCLUDES.\'index_categories.php\');
 					}
 				}
 			}else{
-			    $message .= '<p class="error">A directory named: <strong>'.$dir_name.'</strong> already exists!<br>
-			    The category was NOT created.</p>';
+				$message .= '<p class="error">A directory named: <strong>'.$dir_name.'</strong> already exists!<br>
+				The category was NOT created.</p>';
 			}
 		}
 		
