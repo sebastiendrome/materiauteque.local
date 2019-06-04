@@ -78,10 +78,17 @@ if($context !== 'search'){
 			?>
 		</select>
 
-		<?php if(isset($sous_cats)){ ?>
+		<?php 
+		if(isset($sous_cats)){ 
+			$sous_cats_enabled = '';
+		}else{
+			$sous_cats_enabled = ' disabled';
+			$sous_cats = array();
+		}	
+		?>
 		<tr>
 		<td>Sous-catégorie:<td>
-		<select name="sous_categories_id"<?php echo in_array('sous_categories_id', $required) ? " required" : ""; ?>>
+		<select name="sous_categories_id"<?php echo in_array('sous_categories_id', $required) ? " required" : ""; ?><?php echo $sous_cats_enabled; ?>>
 			<?php
 			$options = '';
 			if( !isset($item_data['sous_categories_id']) ){
@@ -104,7 +111,6 @@ if($context !== 'search'){
 			?>
 		</select>
 
-		<?php } ?>
 		
 		<tr>
 		<td>Matière:<td>
@@ -132,11 +138,18 @@ if($context !== 'search'){
 			echo $options;
 			?>
 		</select>
-
-		<?php if(isset($sous_mats)){ ?>
+		
+		<?php
+		if(isset($sous_mats)){ 
+			$sous_mats_enabled = '';
+		}else{
+			$sous_mats_enabled = ' disabled';
+			$sous_mats = array();
+		}
+		?>
 		<tr>
 		<td>Sous-matière:<td>
-		<select name="sous_matieres_id"<?php echo in_array('sous_matiere_id', $required) ? " required" : ""; ?>>
+		<select name="sous_matieres_id"<?php echo in_array('sous_matiere_id', $required) ? " required" : ""; ?><?php echo $sous_mats_enabled; ?>>
 			<?php
 			$options = '';
 			if( !isset($item_data['sous_matieres_id']) ){
@@ -159,7 +172,6 @@ if($context !== 'search'){
 			?>
 		</select>
 
-		<?php } ?>
 		
 		<tr>
 		<td>Prix:<td><input type="number" min="0" name="prix" step="any" value="<?= $item_data['prix'] ?? '' ?>">

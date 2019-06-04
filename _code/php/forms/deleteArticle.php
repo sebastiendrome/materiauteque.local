@@ -9,11 +9,14 @@ if( !isset($title) ){
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
 	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
+	echo '<!-- adminHeader start -->
+	<div class="adminHeader">
+	<h1><a href="/admin/">Admin</a>'.$title.' </h1>';
+	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
 
-	echo '<h1><a href="/admin/">Admin</a>'.$title.'</h1>'.PHP_EOL;
 	$footer = true;
 }else{
 	$footer = false;
@@ -33,6 +36,7 @@ if( isset($article_id) && !empty($article_id) ){
 }
 ?>
 
+<!--
 <form name="deleteArticle" id="deleteArticle" action="" method="post" style="display:inline-block;">
 
 <h3>Supprimer un article:</h3>
@@ -42,6 +46,7 @@ if( isset($article_id) && !empty($article_id) ){
 	<input type="hidden" name="deleteArticleSubmitted" id="deleteArticleSubmitted" value="deleteArticleSubmitted">
 	<button type="submit" name="deleteArticleSubmit" id="deleteArticleSubmit" class="right">Supprimer</button>
 </form>
+-->
 
 <?php
 if($footer){

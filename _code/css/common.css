@@ -174,7 +174,7 @@ button[type=submit], a.button.submit{background-color:rgb(1, 156, 27); color:#ff
 button.cancel, a.button.cancel{background-color:#bb0808; color:#fff; border-color:#7c0011;}
 button.cancel, a.button.cancel, button[type=submit], a.button.submit{text-shadow:-1px -1px rgb(0, 0, 0);}
 button.cancel:hover, a.cancel:hover, button[type=submit]:hover, a.submit:hover{text-shadow:1px 1px rgb(0, 0, 0);}
-button.disabled, a.button.disabled, button:disabled, input:disabled{opacity:.3;}
+button.disabled, a.button.disabled, button:disabled, input:disabled, select:disabled{opacity:.3;}
 button.right, .button.right{float:right; margin-right:0;}
 button.left, .button.left{margin-left:0;}
 .button.discret{background-color:#fff; border:none;}

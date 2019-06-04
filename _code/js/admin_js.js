@@ -1,5 +1,55 @@
 
-/***** behavior functions *****************************************************/
+/***** functions *****************************************************/
+
+// save sql data ( ajax call, uses php function update_table() )
+function updateTable(table, col, id, value){
+	$.ajax({
+		// Your server script to process the upload
+		url: '/_code/php/admin/admin_ajax.php?updateTable&table='+table+'&col='+col+'&id='+id+'&value='+value,
+		type: 'GET',
+		// on success show message
+		success : function(msg) {
+			$('#done').html(msg);
+			return true;
+		}
+	});
+}
+
+// get upload fileName without 'fake' path
+function basename(path){
+	return path.replace(/\\/g,'/').replace( /.*\//, '' );
+}
+
+// return file size in bytes
+function getFileSize(){
+	if(window.ActiveXObject){	// old IE
+		var fso = new ActiveXObject("Scripting.FileSystemObject");
+		var filepath = document.getElementById('fileUpload').value;
+		var thefile = fso.getFile(filepath);
+		var sizeinbytes = thefile.size;
+	}else{						// modern browsers
+		var sizeinbytes = document.getElementById('fileUpload').files[0].size;
+	}
+	return sizeinbytes;
+}
+
+// return bytes size to human readable size
+function bytesToReadbale(sizeInBytes){
+	var fSExt = new Array('Bytes', 'KB', 'MB', 'GB');
+	fSize = sizeInBytes; i=0;
+	while(fSize>900){
+		fSize/=1024;
+		i++;
+	}
+	var humanSize = (Math.round(fSize*100)/100)+' '+fSExt[i];
+	return humanSize;
+}
+
+
+
+
+
+/***** behavior targets/calls *****************************************/
 
 // tables should be sortable
 $("table.data").tablesorter();
@@ -114,7 +164,23 @@ $("select[name='actions']").on('change', function(){
 	}
 });
 
+
+// categories and matieres select inputs on change must repopulate next select input in form with children correseponding sub-categories/matieres:
+$("select[name='categories_id'], select[name='matieres_id']").on('change', function(){
+	var id_parent = $(this).val();
+	var select_input = $(this).attr("name");
+	var sous_table = 'sous_'+select_input;
+	// $target: the next select input to be populated depending on the selected option. Make sure it belongs to the same form, hence going through the DOM parents(form)...
+	var $target = $(this).parents('form').find($("select[name='"+sous_table+"']"));
+	// if select name is 'categories_id', we want to look into 'categories' SQL table, if it is 'matieres_id', we want to look into 'matieres' table...
+	var table = select_input.replace("_id",'');
+	// call to _code/js/js.js: function get_children(), that will request via ajax call to _code/php/admin/admin_ajax.php?get_children the children of id_parent in table, and insert them as html <option> markup to $target
+	get_children($target, table, id_parent);
+});
+
+
 // show/hide longer text on mouse enter short text (for descriptif and observations)
+/*
 $("div.short").on('mouseenter', function(){
 	//alert('mouseenter');
 	$(this).children().show();
@@ -123,13 +189,16 @@ $("div.short").on('mouseenter', function(){
 $("div.short").on('mouseleave', function(){
 	$(this).children().hide();
 });
-
+*/
 
 // add .closeMessage to messages, so they can be closed (hidden)
 $('<a class="closeMessage">&times;</a>').appendTo('p.error, p.note, p.success, div.success');
 
 
-/* UPLOAD FUNCTIONS */
+
+
+
+/* UPLOAD BEHAVIORS */
 
 // #chooseFileLink onclick triggers #fileUpload click
 $('body').on('click', '#chooseFileLink', function(){
@@ -248,60 +317,4 @@ $('body').on('click', '#uploadFileSubmit', function(e){
 	
 });
 
-
-// save sql data ( ajax call, uses php function update_table() )
-function updateTable(table, col, id, value){
-	$.ajax({
-		// Your server script to process the upload
-		url: '/_code/php/admin/admin_ajax.php?updateTable&table='+table+'&col='+col+'&id='+id+'&value='+value,
-		type: 'GET',
-		// on success show message
-		success : function(msg) {
-			$('#done').html(msg);
-			return true;
-		}
-
-	});
-}
-
-// get upload fileName without 'fake' path
-function basename(path){
-	return path.replace(/\\/g,'/').replace( /.*\//, '' );
-}
-
-// return file size in bytes
-function getFileSize(){
-	if(window.ActiveXObject){	// old IE
-		var fso = new ActiveXObject("Scripting.FileSystemObject");
-		var filepath = document.getElementById('fileUpload').value;
-		var thefile = fso.getFile(filepath);
-		var sizeinbytes = thefile.size;
-	}else{						// modern browsers
-		var sizeinbytes = document.getElementById('fileUpload').files[0].size;
-	}
-	return sizeinbytes;
-}
-
-// return bytes size to human readable size
-function bytesToReadbale(sizeInBytes){
-	var fSExt = new Array('Bytes', 'KB', 'MB', 'GB');
-	fSize = sizeInBytes; i=0;
-	while(fSize>900){
-		fSize/=1024;
-		i++;
-	}
-	var humanSize = (Math.round(fSize*100)/100)+' '+fSExt[i];
-	return humanSize;
-}
-/* end upload functions */
-
-
-
-
-/*
-function is_touch_device() {
-	//return true;
-	return 'ontouchstart' in window		// works on most browsers 
-		|| 'onmsgesturechange' in window;  // works on IE10 with some false positives
-};
-*/
+/* end upload behaviors */

@@ -69,9 +69,9 @@ function log_custom_error($error, $errlvl){
 	$headers .= 'From: '.str_replace(array('.','/','http:','https:'), '', SITE).' <admin@'.$_SERVER['HTTP_HOST'].'>'."\r\n";
 
 	if( defined('SITE') ){
-		$message = '<p>An error has occurred on '.SITE.':</p>';
+		$message = '<p>----------------------------------<br>An error has occurred on '.SITE.':</p>';
 	}else{
-		$message = '<br>----------------------';
+		$message = '<p>----------------------------------</p>';
 	}
 
 	$message .= '<p>Error at '.date('Y-m-d H:i:s').': ';

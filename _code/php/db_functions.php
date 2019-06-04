@@ -112,16 +112,6 @@ function get_children($table, $id_parent){
 	}
 }
 
-// get categorie from sub-categorie
-function get_parent_categorie($cat){
-	return false;
-}
-
-// get sub categorie from parent categorie
-function get_child_categories($cat){
-	return false;
-}
-
 // get all item data
 function get_item_data($article_id, $fields = '*'){
 	global $db;
@@ -194,8 +184,13 @@ function get_items_data($fields = '*', $visible = 'all', $vendu = FALSE, $catego
 // get name from id
 function id_to_name($id, $table){
 	global $db;
+	// exception for sous_categories and sous_matieres (don't exist as real SQL tables)
+	if($table == 'sous_categories' || $table == 'sous_matieres'){
+		$table = substr($table, 5); // remove 'sous_' prefix
+	}
 	$q = "SELECT nom FROM $table WHERE id = '$id'";
-	//echo $q.'<br>';
+	// debug
+	//echo '<pre>'.$q.'</pre>';
 	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Query: '.$q.' Function: '.__FUNCTION__ );
 	$name = mysqli_fetch_row($query);
 	return $name[0];
@@ -636,10 +631,13 @@ function present($k, $v){
 		$v = '<select name="statut_id" style="min-width:50px;" class="ajax">'.$options.'</select>';
 
 	// show name of keys_id
-	}elseif( substr($k, -3) == '_id'){
+	}elseif( substr($k, -3) == '_id' && $v !== NULL){
+		// exception for sous_categories and sous_matieres (don't exist as real SQL tables)
+		if($k == 'sous_categories_id' || $k == 'sous_matieres_id'){
+			$k = substr($k, 5); // remove 'sous_' prefix
+		}
 		$name = id_to_name( $v, substr($k, 0, -3) );
 		$v = $name;
-		//$v .= '-'.$name;
 
 	// show select input for visible
 	}elseif($k == 'visible'){

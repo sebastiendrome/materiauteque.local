@@ -68,6 +68,22 @@ function checkModalHeight(elem){
 	  });
 }
 
+// get children of id_parent (for categories and matieres hierarchical SQL tables)
+function get_children($target, table, id_parent){
+	$.ajax({
+		// Server script to process the upload
+		url: '/_code/php/admin/admin_ajax.php?get_children&table='+table+'&id_parent='+id_parent,
+		type: 'GET',
+		// on success show message
+		success : function(msg){
+			if($target.prop('disabled') == true){
+				$target.prop('disabled', false);
+			}
+			$target.html(msg).focus()/*.attr('size', 5)*/;
+		}
+	});
+}
+
 
 // hide all modalContainer(s) and overlay
 $('body').on('click', 'div.overlay', function(){

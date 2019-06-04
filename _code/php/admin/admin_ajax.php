@@ -31,6 +31,18 @@ if( isset($_GET['updateTable']) ){
 	$result = update_table($table, $article_id, $update);
 }
 
+
+// get children (for categories_id and matiere_id hierarchical SQL tables)
+if( isset($_GET['get_children']) ){
+	$result = '<option value="">Choisir...</option>';
+	$table = urldecode($_GET['table']);
+	$id_parent = urldecode($_GET['id_parent']);
+	$children_array = get_children($table, $id_parent);
+	foreach($children_array as $ca){
+		$result .= '<option value="'.$ca['id'].'">'.$ca['nom'].'</option>';
+	}
+}
+
 // save 2 articles from 1 (original and copy are js arrays)
 if( isset($_POST['original']) ){
 	$original = $_POST['original'];
