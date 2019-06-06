@@ -171,7 +171,7 @@ form, .dpTable {
 
 
 input[type='text'], input[type='number'], input[type='password'], input[type='email'], select, textarea{min-width:300px;}
-textarea{height:100px;}
+textarea[name='descriptif'], textarea[name='observations']{height:70px;}
 
 
 div.short{position:relative;}

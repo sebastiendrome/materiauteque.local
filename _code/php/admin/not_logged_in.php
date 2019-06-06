@@ -39,7 +39,7 @@ if(
 	
 // wrong login
 }elseif( isset($_SESSION['kftgrnpoiu']) ){
-	$message .= '<p style="color:red;">Wrong Login! Please try again.</p>';
+	$message .= '<p class="error">Wrong Login! Please try again.</p>';
 }
 
 // form action: remove query string (for exemple ?logout)
@@ -55,7 +55,7 @@ if(!$logged_in){
 	<meta name="viewport" content="width=device-width, initial-scale=1">';
 	$rand = rand(0,100);
 	$login_form .= '<link href="/_code/css/common.css?v='.$rand.'" rel="stylesheet" type="text/css">';
-	$login_form .= '<link href="/_code/css/nav-left/css.css?v='.$rand.'" rel="stylesheet" type="text/css">
+	$login_form .= '
 	</head>
 	<body>
 
@@ -63,12 +63,18 @@ if(!$logged_in){
 	<div style="text-align:center;">
 	'.$message.'
 	<form name="l" id="l" action="'.$form_action.'" method="post">
-	Utilisateur: <input type="text" style="color:#000;" autocorrect="off" autocapitalize="none" name="userName" maxlength="50" autofocus><br><br>
-	Mot de passe: <input type="password" style="color:#000;" name="password"><br><br>
-	<input type="submit" name="login" style="color:#000;" value=" VALIDER ">
+	<p>
+	Utilisateur:<br>
+	<input type="text" style="color:#000;" autocorrect="off" autocapitalize="none" name="userName" maxlength="50" autofocus></p>
+	<p>
+	Mot de passe:<br>
+	<input type="password" style="color:#000;" name="password">
+	</p>
+	<input type="submit" name="login" value=" VALIDER ">
 	</form>
 
-	<noscript><p style="color:red;">JavaScript appears to be disabled on this browser.<br>
+	<noscript><p style="color:red;">Il semble que JavaScript ne soit pas autorisé par ce navigateur.<br>
+	La section administrative du site ne pouvant pas fonctionner sans JavaScript, veuillez l\'autoriser en changeant les paramètres de votre navigateur.</p><p style="color:red;">JavaScript appears to be disabled on this browser.<br>
 	In order to use the admin area you must enable JavaScript in your Browser preferences.</p></noscript>
 
 	</div>

@@ -18,9 +18,13 @@ if(!isset($categories)){
 if(!isset($matieres)){
 	$matieres = get_parents('matieres');
 }
+// set required fields, depending on context
 $required = array();
 if($context !== 'search'){
 	$required = array('titre', 'descriptif', 'categories_id', 'matieres_id', 'poids');
+}
+if($context == 'vente'){
+	$required[] = 'prix';
 }
 ?>
 
@@ -174,7 +178,7 @@ if($context !== 'search'){
 
 		
 		<tr>
-		<td>Prix:<td><input type="number" min="0" name="prix" step="any" value="<?= $item_data['prix'] ?? '' ?>">
+		<td>Prix:<td><input type="number" min="0" name="prix" step="any" value="<?= $item_data['prix'] ?? '' ?>"<?php echo in_array('prix', $required) ? " required" : ""; ?>>
 		
 		<tr>
 		<td>Poids (Kg):<td><input type="number" min="0" name="poids"  step="any" value="<?= $item_data['poids'] ?? '' ?>"<?php echo in_array('poids', $required) ? " required" : ""; ?>>
@@ -184,22 +188,26 @@ if($context !== 'search'){
 		<select name="statut_id">
 
 		<?php
-		$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
-		$options = '';
-		if($context == 'search'){
-			$options .= '<option value="">Tous statuts</option>';
-		}
-		foreach($statut_array as $st){ // loop through statut_array to output the options
-			$selected = '';
-			if( isset($item_data['statut_id']) ){
-				if($st['id'] == $item_data['statut_id']){
-					$selected = ' selected';
-				}
+		if($context == 'vente'){
+			$vendu_id = name_to_id('vendu', 'statut');
+			echo '<option value="'.$vendu_id.'" selected>vendu</option>';
+		}else{
+			$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
+			$options = '';
+			if($context == 'search'){
+				$options .= '<option value="">Tous statuts</option>';
 			}
-			$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
+			foreach($statut_array as $st){ // loop through statut_array to output the options
+				$selected = '';
+				if( isset($item_data['statut_id']) ){
+					if($st['id'] == $item_data['statut_id']){
+						$selected = ' selected';
+					}
+				}
+				$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
+			}
+			echo $options;
 		}
-		echo $options;
-
 		?>
 		</select>
 

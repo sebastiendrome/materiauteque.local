@@ -218,7 +218,7 @@ Si l'article n'existe pas ou est introuvable...
 <h3>Créer l'article à vendre:</h3>
 
 	<?php
-	$context = '';
+	$context = 'vente';
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
 	

@@ -170,7 +170,7 @@ a.imgMore:hover div.txt, a.imgMore:hover div.html{
 /* FORMS */
 /** buttons **/
 button, a.button, input, select{display:inline-block; padding:3px 10px; border:1px solid #888; border-radius:3px; margin:2px 0 2px 4px;background-color:#fff; color:#000; cursor: pointer;}
-button[type=submit], a.button.submit{background-color:rgb(1, 156, 27); color:#fff; border-color:#1c3b14;}
+button[type=submit], input[type=submit], a.button.submit{background-color:rgb(1, 156, 27); color:#fff; border-color:#1c3b14;}
 button.cancel, a.button.cancel{background-color:#bb0808; color:#fff; border-color:#7c0011;}
 button.cancel, a.button.cancel, button[type=submit], a.button.submit{text-shadow:-1px -1px rgb(0, 0, 0);}
 button.cancel:hover, a.cancel:hover, button[type=submit]:hover, a.submit:hover{text-shadow:1px 1px rgb(0, 0, 0);}
