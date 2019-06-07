@@ -86,7 +86,7 @@ if( isset($_SESSION['article_id']) ){
 
 <div class="adminHeader">
 
-<h1><a href="/admin/">Admin</a> : Matières</h1>
+<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a> Matières</h1>
 
 </div>
 

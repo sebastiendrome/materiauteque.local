@@ -13,14 +13,14 @@ if( isset($_GET['article_id']) ){
 }
 
 if( !isset($title) ){
-	$title = ' : Modifier un Article';
+	$title = ' Modifier un Article';
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
 	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin/">Admin</a>'.$title.' </h1>'.PHP_EOL;
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
 	echo ' <a href="javascript:;" class="button showModal" rel="prixVenteModal?article_id='.$article_id.'">€ Vendre cet article</a> ';
 	echo ' <a href="/_code/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
 	//scinderArticle.php

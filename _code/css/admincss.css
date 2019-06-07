@@ -8,6 +8,14 @@ input[type=text]:focus, textarea:focus{border-color:#777;}
 .adminHeader h1{display:inline-block; margin-right:20px;}
 
 .pagination a{display:inline-block; margin:3px;}
+div.tableContainer{max-width:100%; max-width:905px; overflow:auto;}
+div.tableContainer table{width:100%;}
+span.home{display:inline-block; margin-right:20px;}
+a.admin span.home{
+	transform-origin: 45% 58%;
+	transition:transform .2s;
+}
+a.admin:hover span.home{transform:rotate(-90deg);}
 
 .first{margin-top:0;}
 
@@ -50,6 +58,7 @@ a.delete:hover{color:#bb0808 !important;}
 .warning::before { 
 	content:"\26A0\00a0";
 }
+a.remove{color:rgb(194, 2, 2);}
 .remove::before{
 	content:"\02A02\00a0";
 }

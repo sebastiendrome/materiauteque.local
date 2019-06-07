@@ -180,7 +180,6 @@ $("select[name='categories_id'], select[name='matieres_id']").on('change', funct
 
 
 // show/hide longer text on mouse enter short text (for descriptif and observations)
-/*
 $("div.short").on('mouseenter', function(){
 	//alert('mouseenter');
 	$(this).children().show();
@@ -189,7 +188,6 @@ $("div.short").on('mouseenter', function(){
 $("div.short").on('mouseleave', function(){
 	$(this).children().hide();
 });
-*/
 
 // add .closeMessage to messages, so they can be closed (hidden)
 $('<a class="closeMessage">&times;</a>').appendTo('p.error, p.note, p.success, div.success');

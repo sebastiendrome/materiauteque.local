@@ -104,9 +104,9 @@ $items_table = items_table_output($articles);
 
 <!-- adminHeader start -->
 <div class="adminHeader">
-<h1>Admin</h1>
+<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button">€ Nouvelle vente</a> <a href="/admin/manage_categories.php" class="button edit">Catégories</a> <a href="/admin/manage_dechet_categories.php" class="button edit">Matières</a> <!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
+<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button">€ Nouvelle vente</a><!-- <a href="/admin/manage_categories.php" class="button edit">Catégories</a> <a href="/admin/manage_dechet_categories.php" class="button edit">Matières</a> --><!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
 
 
 <div class="clearBoth"></div>
@@ -242,7 +242,7 @@ if($pages >1){
 }
 
 
-echo '<div style="max-width:100%; overflow:auto;">';
+echo '<div class="tableContainer">';
 echo $navigation_output;
 echo $items_table;
 echo $navigation_output;

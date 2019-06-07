@@ -6,14 +6,14 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
 if( !isset($title) ){
-	$title = ' : Rechercher un Article';
+	$title = ' Rechercher un Article';
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
 	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
 	
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin/">Admin</a>'.$title.' </h1>'.PHP_EOL;
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	echo '<!-- start admin container -->

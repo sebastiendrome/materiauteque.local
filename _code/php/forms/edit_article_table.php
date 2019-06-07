@@ -24,7 +24,7 @@ if($context !== 'search'){
 	$required = array('titre', 'descriptif', 'categories_id', 'matieres_id', 'poids');
 }
 if($context == 'vente'){
-	$required[] = 'prix';
+	$required = array('titre', 'prix', 'categories_id', 'matieres_id', 'poids');
 }
 ?>
 
