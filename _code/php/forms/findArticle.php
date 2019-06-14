@@ -5,6 +5,10 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
+
+// set $article_form_context for edit_article_table.php vars
+$article_form_context = 'search';
+
 if( !isset($title) ){
 	$title = ' Rechercher un Article';
 	require(ROOT.'_code/php/doctype.php');
@@ -144,7 +148,6 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 <p class="below">Saisir au moins 1 des champs.</p>
 	
 	<?php
-	$context = 'search';
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
 

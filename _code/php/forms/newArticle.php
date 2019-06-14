@@ -5,6 +5,9 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
 
+// set $article_form_context for edit_article_table.php vars
+$article_form_context = 'new';
+
 if( !isset($title) ){
 	$title = ' Nouvel Article';
 	require(ROOT.'_code/php/doctype.php');

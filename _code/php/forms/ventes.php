@@ -5,6 +5,7 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
+
 if( !isset($title) ){
 	$title = ' Nouvelle vente';
 	require(ROOT.'_code/php/doctype.php');
@@ -196,7 +197,7 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 <span class="below">Saisir au moins 1 des champs.</span>
 
 	<?php
-	$context = 'search';
+	$article_form_context = 'search';
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
 
@@ -218,7 +219,7 @@ Si l'article n'existe pas ou est introuvable...
 <h3>Créer l'article à vendre:</h3>
 
 	<?php
-	$context = 'vente';
+	$article_form_context = 'vente';
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
 	

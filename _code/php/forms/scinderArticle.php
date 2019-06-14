@@ -5,6 +5,9 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
 
+// set $article_form_context for edit_article_table.php vars
+$article_form_context = 'scinder';
+
 if( isset($_GET['article_id']) ){
 	$article_id = urldecode($_GET['article_id']);
 	$_SESSION['article_id'] = $article_id;
