@@ -13,28 +13,40 @@ if( !isset($id) || empty($id) ){
 	exit;
 }
 
+// we'll need to know these fields for item
+$item_data =  get_item_data($id, 'statut_id, prix');
+
 // get the suggested 'prix' of the article, we'll pre-fill the 'prix_vente' input with it
 if( isset($_GET['prix']) && $_GET['prix']!=='undefined'){
 	$prix = urldecode($_GET['prix']);
 }else{
-	$it_data = get_item_data($id, 'prix');
-	$prix = $it_data['prix'];
+	$prix = $item_data['prix'];
 }
 
+// used for javascript at end of file
 $table = 'articles';
 
 // make sure we know the select input value previous to the change, so we can change it back if action is aborted
 if( isset($_GET['previous_id']) && !empty($_GET['previous_id']) && $_GET['previous_id']!=='undefined' && $_GET['previous_id']!=='null'){
 	$previous_statut_id = $_GET['previous_id'];
 }else{
-	$it_data = get_item_data($id, 'statut_id');
-	$previous_statut_id = $it_data['statut_id'];
+	$previous_statut_id = $item_data['statut_id'];
 }
 ?>
 
-	<!-- update to vendu, add prix de vente START -->
-	<div class="modal" id="prixVenteModal">
-		<a href="javascript:;" class="annuler closeBut">&times;</a>
+
+<!-- update to vendu, add prix de vente START -->
+<div class="modal" id="prixVenteModal">
+	<a href="javascript:;" class="annuler closeBut">&times;</a>
+
+<?php
+// if article is already 'vendu', just show message
+if($previous_statut_id == '4'){
+	echo '<h2 class="warning">Cet article a déjà été vendu...</h2>';
+}else{
+	// if not, show form
+?>
+
 	<form name="prixDeVente" id="prixDeVente" action="/_code/php/admin/admin_ajax.php" method="post">
 		<input type="hidden" name="id" value="<?php echo $id; ?>">
 		<input type="hidden" name="previous_id" value="<?php echo $previous_statut_id; ?>">
@@ -57,8 +69,9 @@ if( isset($_GET['previous_id']) && !empty($_GET['previous_id']) && $_GET['previo
 	</div>
 	-->
 	</form>
-	
-	<!-- update to vendu, add prix de vente END -->
+
+</div>
+<!-- update to vendu, add prix de vente END -->
 
 	
 <script type="text/javascript">
@@ -79,3 +92,4 @@ $('body').on('click', 'a.annuler, div.overlay', function(e){
 
 </script>
 
+<?php } ?>

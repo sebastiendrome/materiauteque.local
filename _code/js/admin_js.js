@@ -80,14 +80,14 @@ $(document).ajaxStart(function(){
 });
 
 
-// if (article) statut_id is changed to 6='vendu' (from within 'Modifier un article' page only), show prix_vente field, set visible = 0
+// if (article) statut_id is changed to 4 ='vendu' (from within 'Modifier un article' page only), show prix_vente field, set visible = 0
 $("select[name='statut_id']").on('change', function(){
 	var $table = $(this).parent().parent().parent();
 	if($table !== false){
 		var $tr = $table.find('tr#prixVente');
 		if($tr !== false){
 			var $prixVente = $table.find($("input[name='prix_vente']"));
-			if($(this).val() == 6){
+			if($(this).val() == 4){
 				$tr.show();
 				var $visibleZero = $table.find($("input[name='visible']#visibleZero"));
 				$prixVente.prop("required","required");
@@ -104,14 +104,14 @@ $("select[name='statut_id']").on('change', function(){
 
 // for 'statut_id' select inputs, store previous value before change, empty it on blur.
 var previous_id;
-$("table.data").on('keydown', "select[name='statut_id']", function(){
+$("table.data, table.editArticle").on('keydown', "select[name='statut_id']", function(){
 	previous_id = $(this).val();
-	//alert(previous);
+	//alert(previous_id);
 }).on('blur', "select[name='statut_id']", function(){
 	previous_id = '';
 });
 
-// handles all select drop-downs change via ajax, including article sale (opens prixVenteModal) if statut_id changed to 6 (vendu)
+// handles all select drop-downs change via ajax, including article sale (opens prixVenteModal) if statut_id changed to 4 (vendu)
 $("table.data").on('change', 'select.ajax', function(){
 	var $table = $(this).parents('table');
 	var table = $table.data('id'); // 'articles'
@@ -123,8 +123,8 @@ $("table.data").on('change', 'select.ajax', function(){
 	//alert(id);
 	//alert(previous);
 
-	// select[name='statut_id'] can be used to change statut_id to 6 = 'vendu', in this case, show prixVenteModal
-	if(value == 6){ // = vendu
+	// select[name='statut_id'] can be used to change statut_id to 4 = 'vendu', in this case, show prixVenteModal
+	if(value == 4){ // = vendu
 		var prix = $(this).parents('tr').find('td.prix').html();
 		showModal('prixVenteModal?article_id='+id+'&prix='+encodeURIComponent(prix)+'&previous_id='+previous_id);
 		
@@ -140,17 +140,39 @@ $("body").on('click', '#prixVenteSubmit', function(e){
 	var $form = $(this).parents('form');
 	var id = $form.find('input[name="id"]').val();
 	var prix_vente = $form.find('input[name="prix_vente"]').val();
-	var $payement = $form.find('input[name="payement_cheque"]');
+	var $payement_cheque = $form.find('input[name="payement_cheque"]');
 	//alert('id='+id+' prix_vente='+prix_vente);
 	hideModal($(this).parents('div.modal'));
+
 	updateTable('articles', 'prix_vente', id, prix_vente);
-	if($payement.prop('checked') == true){
-		//alert('checked');
+	// record payment by cheque if it is the case
+	if($payement_cheque.prop('checked') == true){
 		updateTable('articles', 'payement_id', id, '2');
+	}
+
+	// change select statut_id selection if edit_article_table.php was included
+	var $table = $('table.editArticle');
+	if($table){
+		$select_input = $table.find('select[name="statut_id"]');
+		if($select_input){
+			//alert('$select_input found!');
+			$select_input.val('4');
+			// show prix_vente tr (set to display:none)
+			var $prix_vente_tr = $table.find('tr#prixVente');
+			$prix_vente_tr.show();
+			// set its value to the prix_vente used above
+			var $prix_vente_input = $prix_vente_tr.find('input[name="prix_vente"]');
+			//alert(prix_vente);
+			prix_vente = prix_vente.replace(",", ".");
+			$prix_vente_input.val(parseFloat(prix_vente));
+
+		}else{
+			alert('$select_input not found!');
+		}
 	}
 });
 
-
+/*
 // if (article) action is selected, redirect to desired form or show desired modal
 $("select[name='actions']").on('change', function(){
 	var id = $(this).parent().data("id");
@@ -163,6 +185,7 @@ $("select[name='actions']").on('change', function(){
 		window.location.href = '/_code/php/forms/editArticle.php?article_id='+id;
 	}
 });
+*/
 
 
 // categories and matieres select inputs on change must repopulate next select input in form with children correseponding sub-categories/matieres:
@@ -183,9 +206,7 @@ $("select[name='categories_id'], select[name='matieres_id']").on('change', funct
 $("div.short").on('mouseenter', function(){
 	//alert('mouseenter');
 	$(this).children().show();
-});
-
-$("div.short").on('mouseleave', function(){
+}).on('mouseleave', function(){
 	$(this).children().hide();
 });
 

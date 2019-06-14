@@ -148,7 +148,7 @@ function get_items_data($fields = '*', $visible = 'all', $vendu = FALSE, $catego
 		$filter[] = " visible = ".$visible;
 	}
 	if(!$vendu){
-		$filter[] = " statut_id != 6";
+		$filter[] = " statut_id < 4";
 	}
 	if($categories_id !== 'all'){
 		$filter[] = " categories_id = ".$categories_id;
@@ -431,9 +431,9 @@ function find_articles($key_val_pairs, $include_vendus = FALSE){
 			$q = "SELECT id FROM articles WHERE $key = '$value'";
 		}
 
-		// include statut=6 (=vendu) or not
+		// include statut=4 (=vendu) or not
 		if(!$include_vendus){
-			$q .= " AND statut_id != 6";
+			$q .= " AND  statut_id < 4";
 		}
 
 		// assign values to search criterias
@@ -499,9 +499,9 @@ function search($keywords = '', $category = '', $visible = TRUE, $vendus = FALSE
 	if( $visible ){
 		$filters_array['visible'] = "`visible` = 1";
 	}
-	// vendus = FALSE > show only items where statut_id is NOT 6 (=vendu)
+	// vendus = FALSE > show only items where statut_id is NOT 4 (=vendu)
 	if( !$vendus ){
-		$filters_array['vendus'] = "`statut_id` != 6";
+		$filters_array['vendus'] = "`statut_id` < 4";
 	}
 	// if a category is specified show only this category
 	if($category !== ''){

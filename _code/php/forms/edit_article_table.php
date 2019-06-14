@@ -38,7 +38,7 @@ if(!isset($matieres)){
 ?>
 
 
-<table class="editArticle">
+<table class="editArticle" data-id="articles">
 
 	<tr>
 		<td><h3>Titre:</h3><td><h3><input type="text" name="titre" value="<?= $item_data['titre'] ?? '' ?>"<?php echo in_array('titre', $required) ? " required" : ""; ?><?php echo $autofocus; ?>></h3>
