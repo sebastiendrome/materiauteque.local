@@ -73,9 +73,8 @@ $(document).ajaxStart(function(){
 	if($('#done').html() != ''){
 		$('#done').show();
 		setTimeout(function(){
-			$('#done').hide();
-			$('#done').html('');
-		}, 2000);
+			$('#done').fadeOut(800, function(){$('#done').html('');});
+		}, 1700);
 	}
 });
 
@@ -134,13 +133,22 @@ $("table.data").on('change', 'select.ajax', function(){
 	}
 });
 
+// handle vente via 'vendre' button
+$("table.data").on('click', 'a.vendre', function(e){
+	e.preventDefault();
+	var id = $(this).parents('tr').data('id'); // '167'
+	var prix = $(this).parents('tr').find('td.prix').html();
+	showModal('prixVenteModal?article_id='+id+'&prix='+encodeURIComponent(prix));
+});
 
+// when article is sold via prixVenteModal.php
 $("body").on('click', '#prixVenteSubmit', function(e){
 	e.preventDefault();
 	var $form = $(this).parents('form');
 	var id = $form.find('input[name="id"]').val();
 	var prix_vente = $form.find('input[name="prix_vente"]').val();
 	var $payement_cheque = $form.find('input[name="payement_cheque"]');
+	
 	//alert('id='+id+' prix_vente='+prix_vente);
 	hideModal($(this).parents('div.modal'));
 
@@ -152,9 +160,10 @@ $("body").on('click', '#prixVenteSubmit', function(e){
 
 	// change select statut_id selection if edit_article_table.php was included
 	var $table = $('table.editArticle');
-	if($table){
+	if($table.length){
+		//alert('YES table.editArticle');
 		$select_input = $table.find('select[name="statut_id"]');
-		if($select_input){
+		if($select_input.length){
 			//alert('$select_input found!');
 			$select_input.val('4');
 			// show prix_vente tr (set to display:none)
@@ -163,11 +172,21 @@ $("body").on('click', '#prixVenteSubmit', function(e){
 			// set its value to the prix_vente used above
 			var $prix_vente_input = $prix_vente_tr.find('input[name="prix_vente"]');
 			//alert(prix_vente);
-			prix_vente = prix_vente.replace(",", ".");
-			$prix_vente_input.val(parseFloat(prix_vente));
+			$prix_vente_input.val(parseFloat(prix_vente.replace(",", ".")));
+		}
 
-		}else{
-			alert('$select_input not found!');
+	// change select statut_id selection, visible statut selection if article is vendu via table.data 
+	}else{
+		//alert('no table.editArticle');
+		var $table = $('table.data');
+		if($table.length){
+			//alert('table.data found');
+			var $tr = $table.find("tr[data-id='" + id + "']");
+			if($tr.length){
+				$tr.find('select[name="statut_id"]').val('4');
+				$tr.find('select[name="visible"]').val('0');
+				$tr.css('opacity', .4);
+			}
 		}
 	}
 });

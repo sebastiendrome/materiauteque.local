@@ -14,7 +14,7 @@ if( !isset($id) || empty($id) ){
 }
 
 // we'll need to know these fields for item
-$item_data =  get_item_data($id, 'statut_id, prix');
+$item_data =  get_item_data($id, 'titre, statut_id, prix');
 
 // get the suggested 'prix' of the article, we'll pre-fill the 'prix_vente' input with it
 if( isset($_GET['prix']) && $_GET['prix']!=='undefined'){
@@ -42,12 +42,24 @@ if( isset($_GET['previous_id']) && !empty($_GET['previous_id']) && $_GET['previo
 <?php
 // if article is already 'vendu', just show message
 if($previous_statut_id == '4'){
-	echo '<h2 class="warning">Cet article a déjà été vendu...</h2>';
+	echo '<form name="prixDeVente" id="prixDeVente" action="/_code/php/admin/admin_ajax.php" method="post" style="margin:0 !important;">
+	<h3 class="warning">Cet article a déjà été vendu.</h3>
+	<input type="hidden" name="previous_id" value="'.$previous_statut_id.'">
+	</form>
+	</div>';
 }else{
 	// if not, show form
-?>
-
+	$images_array = get_article_images($id, '_M');
+	if(!empty($images_array)){
+		$img = $images_array[0];
+		$class = "articleVente";
+	}else{
+		$class = 'articleVente noImg';
+		$img = '';
+	}
+	?>
 	<form name="prixDeVente" id="prixDeVente" action="/_code/php/admin/admin_ajax.php" method="post">
+	<?php echo '<div class="'.$class.'" style="background-image:url(/'.$img.');"><h3>'.$item_data['titre'].'</h3></div>'; ?>
 		<input type="hidden" name="id" value="<?php echo $id; ?>">
 		<input type="hidden" name="previous_id" value="<?php echo $previous_statut_id; ?>">
 		<input type="hidden" name="prix" value="<?php echo $prix; ?>">

@@ -734,24 +734,26 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 						$output .= '<th'.$class.'>'.str_replace('_id', '', $k).'</th>';
 					}
 				}
-				// th for edit button
-				$output .= '<th style="background-image:none; padding-left:5px;"><!--Actions--></th>';
+				// th for 'modifier' button
+				$output .= '<th style="background-image:none; padding-left:5px;">Modifier</th>';
+				// th for 'vendre' button
+				$output .= '<th style="background-image:none; padding-left:5px;">Vendre</th>';
 
 				$output .= '</tr>';
 				$output .= '</thead><tbody>'; 
 			}
 
-			// show results
-			$output .= '<tr data-id="'.$article_id.'">';
-
 			if($i % 2 == 0){
-				$style = ' style="background-color:#f5f5f5;"';
+				$tr_class = 'pair';
 			}else{
-				$style = '';
+				$tr_class = 'impair';
 			}
+			// show results
+			$output .= '<tr data-id="'.$article_id.'" class="'.$tr_class.'">';
+
 
 			// images
-			$output .= '<td'.$style.'>';
+			$output .= '<td>';
 			$output .= '<a href="javascript:;" title="ajouter" class="showModal" rel="newArticleImages?article_id='.$article_id.'">';
 			if(!empty($images_array)){
 				$output .= '<img src="/'.$images_array[0].'" style="display:block; width:70px; margin:-3px;">';
@@ -764,18 +766,18 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			foreach($value as $k => $v){
 
 				if( !in_array($k, $exclude) ){
-					$v = present($k, $v);
+					$v_present = present($k, $v);
 					if( in_array($k, $editable) ){
 						$data = ' class="'.$k.'" data-col="'.$k.'"';
 					}else{
 						$data = '';
 					}
-					$output .= '<td'.$style.$data.'>'.$v.'</td>';
+					$output .= '<td'.$data.'>'.$v_present.'</td>';
 				}
 			}
 			
 			// edit button
-			$output .= '<td'.$style.'>
+			$output .= '<td>
 			<!--<div data-id="'.$article_id.'">
 			<select name="actions" style="min-width:50px;">
 			<option name="" value="">Choisir...</option>
@@ -784,8 +786,16 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			<option name="modifier" value="modifier">modifier...</option>
 			</select>
 			</div>-->
-			<a href="/_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button edit" style="margin:0;">modifier</a>
+			<a href="/_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button edit">modifier</a> 
 			</td>';
+
+			$output .= '<td>';
+			if($value['statut_id'] < 4){
+				$output .= '<a href="/_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button submit vendre" style="margin:0 !important;">&rarr;&nbsp;€</a>';
+			}else{
+				$output .= '';
+			}
+			$output .= '</td>';
 			
 			$output .= '</tr>';
 			$i++;
