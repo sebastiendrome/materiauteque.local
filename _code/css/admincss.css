@@ -32,12 +32,29 @@ a.delete:hover{color:#bb0808 !important;}
 	display:none; 
 	text-align:center;
 	width:300px;
-	left: calc(50% - 150px);
-	position:fixed; top:-4px; z-index:100; 
-	height:auto; padding:10px;
+	/*left:45%;*/
+	position:fixed; 
+	left: calc(50% - 150px); top:-1px; 
+	z-index:100; 
+	height:auto; /*padding:10px;
 	background-color:#ffc; 
-	border:1px solid #7e6b00; border-radius: 3px;
+	border-top:6px solid #666;
+	border-radius: 3px;*/
 	box-shadow:0 3px 10px #aaa;
+}
+#done .closeBut, #done .closeMessage{display:none !important;}
+#done p{margin:0 !important; border-width:8px;}
+
+/* tooltips appear when span.question are clicked. */
+span#tooltip{
+	position:absolute; z-index:200;
+	display:none;
+	width:auto; padding:4px 6px; 
+	font-size:11px; font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight:normal; line-height:15px; text-align:left; color:#fff;
+	background-color: #2d2d2d;
+	opacity:.9;
+	border-radius:3px;
+	box-shadow:0 0 4px #fff;
 }
 
 
@@ -91,8 +108,8 @@ a.remove{color:rgb(194, 2, 2);}
 }
 
 div.editImageDiv{position:relative; margin:10px 0;}
-div.editImageDiv a{display:block; background-color:rgba(224, 172, 73, .5);}
-div.editImageDiv img{display:block; margin:0 auto;}
+div.editImageDiv a{display:block; background-color:#ddd;border:1px solid #fff;}
+div.editImageDiv img{display:block; margin:0 auto; border:1px solid #aaa;}
 div.editImageDiv a.button{position:absolute; opacity:.5; bottom:3px;}
 div.editImageDiv:hover a{opacity:1;}
 /*div.editImageDiv:hover img{opacity:.5;}*/
@@ -170,7 +187,8 @@ tr.top td{
 }
 tr.pair td{background-color:#fff;}
 tr.impair td{background-color:#f5f5f5;}
-tr.pair:hover td, tr.impair:hover td{background-color:#ffc;}
+tr.pair:hover td, tr.impair:hover td{background-color:#ffc; cursor: pointer;}
+tr.vendu{opacity:.4;}
 
 div.articleVente{
 	background-repeat:no-repeat;
@@ -210,8 +228,9 @@ form, .dpTable {
 input[type='text'], input[type='number'], input[type='password'], input[type='email'], select, textarea{min-width:300px;}
 textarea[name='descriptif'], textarea[name='observations']{height:70px;}
 
-a.vendre{font-weight:bold;}
+a.vendre{font-weight:bold; text-align:center; width:calc(100% - 21px);}
+a.vente{background-color:rgb(242,202,58); /*rgb(235, 203, 100);*/}
 
 
 div.short{position:relative;}
-div.short div.long{display:none; position:absolute; z-index:1; top:-3px; left:-3px; padding:2px; border:1px solid #ccc; background-color:#fff; width:auto; height:auto;}
+div.short div.long{display:none; position:absolute; z-index:1; top:-3px; left:-3px; padding:2px; border:1px solid #ccc; background-color:#ffc; width:auto; height:auto;}

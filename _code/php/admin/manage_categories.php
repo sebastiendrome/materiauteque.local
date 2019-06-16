@@ -59,8 +59,8 @@ require(ROOT.DYNO.INCLUDES.\'index_categories.php\');
 					}
 				}
 			}else{
-				$message .= '<p class="error">A directory named: <strong>'.$dir_name.'</strong> already exists!<br>
-				The category was NOT created.</p>';
+				$message .= '0|A directory named: <b>'.$dir_name.'</b> already exists!<br>
+				The category was NOT created.';
 			}
 		}
 		
@@ -71,15 +71,15 @@ require(ROOT.DYNO.INCLUDES.\'index_categories.php\');
 			// if valid, rename dir
 			if(!preg_match('/(:|,|;|\/|\||\\|&|#|\+|®|™)/', $v['name'])){
 				if(rename(ROOT.DYNO.'shop/'.str_replace(' ','-',$v['old_name']),ROOT.DYNO.'shop/'.str_replace(' ','-',$v['name']))){
-					$message .= '<p class="success">'.str_replace(' ','-',$v['old_name']).' has been renamed to '.str_replace(' ','-',$v['name']).'</p>';
+					$message .= '1|'.str_replace(' ','-',$v['old_name']).' has been renamed to '.str_replace(' ','-',$v['name']);
 				}else{
 					$skip['name'] = $v['name'];
-					$message .= '<p class="error"><strong>'.str_replace(' ','-',$v['old_name']).'</strong> could not be renamed to '.str_replace(' ','-',$v['name']).'</p>';
+					$message .= '0|<b>'.str_replace(' ','-',$v['old_name']).'</b> could not be renamed to '.str_replace(' ','-',$v['name']);
 				}
 			// else, echo error message
 			}else{
 				$skip['name'] = $v['name'];
-				$message .= '<p class="error">One or more categories could not be renamed, because they contain forbidden characters: <span style="color:#000; font-weight:normal;"> / \ | + , ; : & ® ™</span></p>';
+				$message .= '0|One or more categories could not be renamed, because they contain forbidden characters: <span style="color:#000;font-weight:normal;"> / \ | + , ; : & ® ™</span>';
 				
 			}
 			
@@ -92,15 +92,15 @@ require(ROOT.DYNO.INCLUDES.\'index_categories.php\');
 					if($value !== ''){
 						$value = filter($value);
 						$query = mysqli_query( $db,"UPDATE product_type SET $key = '$value' WHERE id = $k") or die(mysqli_error($db));
-						$database_message = '<p class="success">The database has been updated.</p>';
+						$database_message = '1|The database has been updated.';
 					}else{
-						$message .= '<p class="error"><strong>'.$key.'</strong> cannot be blank!</p>';
+						$message .= '0|<b>'.$key.'</b> cannot be blank!';
 					}
 				}
 			}
 		}
 		if(!isset($database_message)){
-			$database_message = '<p class="error">The database has not been updated.</p>';
+			$database_message = '0|The database has not been updated.';
 		}
 	}
 }
@@ -120,23 +120,23 @@ if(isset($_POST['create']) && !empty($_POST['newSection'])){
 	if(preg_match('/(:|,|;|\/|\||\\|&|#|\+|®|™)/',$newSection, $matches)){ // check section format
 		$error = true;
 		$m = implode(',',$matches);
-		$message .= '<p class="error">Section name contains forbidden characters: '.$m.'</p>';
+		$message .= '0|Section name contains forbidden characters: '.$m;
 	}
 	foreach($categories as $se){ // avoid overwritting existing section
 		if($newSection == id_to_name($se,'product_type')){
 			$error = true;
-			$message .= '<p class="error">A section named <strong>'.$newSection.'</strong> already exists!</p>';
+			$message .= '0|A section named <strong>'.$newSection.'</strong> already exists!';
 		}
 	}
 	
 	if($error == false){
 		if(create_category($newSection,$c_count+1)){
-			$message = '<p class="success">The new category <strong>'.$newSection.'</strong> has been created.</p>';
+			$message = '1|The new category <b>'.$newSection.'</b> has been created.';
 			unset($categories);
 			$categories = get_categories_admin();
 			$c_count = count($categories);
 		}else{
-			$message = '<p class="error">ERROR - The new category <strong>'.$newSection.'</strong> could not be created.</p>';
+			$message = '0|ERROR - The new category <b>'.$newSection.'</b> could not be created.';
 		}
 	}
 }

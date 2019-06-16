@@ -45,8 +45,36 @@ function bytesToReadbale(sizeInBytes){
 	return humanSize;
 }
 
+// show #done div to display message
+function showDone(){
+	$('#done').show();
+	setTimeout(function(){
+		$('#done').fadeOut(800, function(){
+			$('#done').html('');
+		});
+	}, 2700);
+}
 
 
+// tooltip show/hide functions
+if( $('span#tooltip').length == 0 ){
+	$('body').append('<span id="tooltip"></span>');
+}
+var $tooltip = $('span#tooltip');
+var timerLeave;
+var timerEnter;
+function hideToolTip(){
+	timerLeave = setTimeout(function(){
+		$tooltip.stop().fadeOut(500);
+	}, 1000);
+}
+function showToolTip(){
+	timerEnter = setTimeout(function(){
+		$tooltip.stop().fadeIn(20);
+	}, 200);
+}
+var wW = $(window).width();
+var wH = $(window).height();
 
 
 /***** behavior targets/calls *****************************************/
@@ -63,18 +91,13 @@ $('body').on('click', '.closeMessage', function(e){
 	e.preventDefault();
 });
 
-// display 'working' div while processing ajax requests
+// display 'working' div while processing ajax requests, display 'done' div if message
 $(document).ajaxStart(function(){
 	$('#working').show();
 }).ajaxStop(function(){
-	//setTimeout(function(){
-		$('#working').hide();
-	//}, 2000);
+	$('#working').hide();
 	if($('#done').html() != ''){
-		$('#done').show();
-		setTimeout(function(){
-			$('#done').fadeOut(800, function(){$('#done').html('');});
-		}, 1700);
+		showDone();
 	}
 });
 
@@ -123,12 +146,13 @@ $("table.data").on('change', 'select.ajax', function(){
 	//alert(previous);
 
 	// select[name='statut_id'] can be used to change statut_id to 4 = 'vendu', in this case, show prixVenteModal
-	if(value == 4){ // = vendu
+	if(col == 'statut_id' && value == 4){ // = vendu
 		var prix = $(this).parents('tr').find('td.prix').html();
 		showModal('prixVenteModal?article_id='+id+'&prix='+encodeURIComponent(prix)+'&previous_id='+previous_id);
 		
 	}else{
 		//alert('ID:'+id+' modifié pour "'+value+'" dans tableau '+table+', column '+col);
+		$(this).parents('tr').removeClass('vendu');
 		updateTable(table, col, id, value);
 	}
 });
@@ -158,36 +182,46 @@ $("body").on('click', '#prixVenteSubmit', function(e){
 		updateTable('articles', 'payement_id', id, '2');
 	}
 
-	// change select statut_id selection if edit_article_table.php was included
-	var $table = $('table.editArticle');
-	if($table.length){
-		//alert('YES table.editArticle');
-		$select_input = $table.find('select[name="statut_id"]');
-		if($select_input.length){
-			//alert('$select_input found!');
-			$select_input.val('4');
-			// show prix_vente tr (set to display:none)
-			var $prix_vente_tr = $table.find('tr#prixVente');
-			$prix_vente_tr.show();
-			// set its value to the prix_vente used above
-			var $prix_vente_input = $prix_vente_tr.find('input[name="prix_vente"]');
-			//alert(prix_vente);
-			$prix_vente_input.val(parseFloat(prix_vente.replace(",", ".")));
-		}
-
 	// change select statut_id selection, visible statut selection if article is vendu via table.data 
+	var $tableData = $('body table.data');
+	if($tableData.length){
+		//alert('table.data found');
+		var $tr = $tableData.find("tr[data-id='" + id + "']");
+		if($tr.length){
+			$tr.find('select[name="statut_id"]').val('4');
+			$tr.find('select[name="visible"]').val('0');
+			$tr.addClass('vendu');
+		}
 	}else{
-		//alert('no table.editArticle');
-		var $table = $('table.data');
-		if($table.length){
-			//alert('table.data found');
-			var $tr = $table.find("tr[data-id='" + id + "']");
-			if($tr.length){
-				$tr.find('select[name="statut_id"]').val('4');
-				$tr.find('select[name="visible"]').val('0');
-				$tr.css('opacity', .4);
+		// change select statut_id selection if edit_article_table.php was included
+		var $tableEdit = $('table.editArticle');
+		if($tableEdit.length){
+			//alert('YES table.editArticle');
+			$select_input = $tableEdit.find('select[name="statut_id"]');
+			if($select_input.length){
+				//alert('$select_input found!');
+				$select_input.val('4');
+				// show prix_vente tr (set to display:none)
+				var $prix_vente_tr = $tableEdit.find('tr#prixVente');
+				$prix_vente_tr.show();
+				// set its value to the prix_vente used above
+				var $prix_vente_input = $prix_vente_tr.find('input[name="prix_vente"]');
+				//alert(prix_vente);
+				$prix_vente_input.val(parseFloat(prix_vente.replace(",", ".")));
 			}
 		}
+	}
+});
+
+// modifier un article on tr.pair et tr.impair click
+$("table.data").on('click', 'tr.pair td, tr.pair td div, tr.impair td, tr.impair td div', function(e){
+	var id = $(this).parents('tr').data('id');
+	var $this = $(this);
+	var $origin = e.originalEvent.srcElement;
+	console.log($origin);
+	console.log($this[0]);
+	if($this[0] == $origin){
+		window.location.href="/_code/php/forms/editArticle.php?article_id="+id;
 	}
 });
 
@@ -232,7 +266,52 @@ $("div.short").on('mouseenter', function(){
 // add .closeMessage to messages, so they can be closed (hidden)
 $('<a class="closeMessage">&times;</a>').appendTo('p.error, p.note, p.success, div.success');
 
+/*
+// show tooltip below the span.question element on click (native title tooltip will show on moue hover)
+$('a, button, select, input, tr.pair, tr.impair').on('mouseenter', function(e){
 
+	// get tooltip message
+	//var msg = $(this).attr("title");
+	var msg = $(this).data("tooltip");
+	// if present,
+	if(msg.length){
+		clearTimeout(timerLeave);
+		// get mouse position
+		//var x = e.clientX;
+		//var y = e.clientY;
+		var off = $(this).offset();
+		var x = off.top;
+		var y = off.left;
+		var h = $(this).outerHeight();
+		var w = $(this).outerWidth();
+	
+		$tooltip.html(msg);
+		// calculate tooltip position relative element position
+		var tW = $tooltip.outerWidth();
+		//alert(tW);
+		if(x > (wH/2)){
+			$tooltip.css('top',(x-h)+'px');
+		}else{
+			$tooltip.css('top',(x+h)+'px');
+		}
+		if(y > (wW/2)){
+			$tooltip.css('left',(y-tW+20)+'px');
+		}else{
+			$tooltip.css('left',(y-20)+'px');
+		}
+		showToolTip(x, y, h, w);
+	}
+}).on('mouseleave', function(){
+	// get tooltip message
+	var msg = $(this).attr("title");
+	//var msg = $(this).data("tooltip");
+	// if present,
+	if(msg.length){
+		clearTimeout(timerEnter);
+		hideToolTip();
+	}
+});
+*/
 
 
 

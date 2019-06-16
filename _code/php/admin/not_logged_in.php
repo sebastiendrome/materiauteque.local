@@ -39,7 +39,7 @@ if(
 	
 // wrong login
 }elseif( isset($_SESSION['kftgrnpoiu']) ){
-	$message .= '<p class="error">Wrong Login! Please try again.</p>';
+	$message .= '<p class="error">Identifiants incorrects!</p>';
 }
 
 // form action: remove query string (for exemple ?logout)
@@ -59,8 +59,9 @@ if(!$logged_in){
 	</head>
 	<body>
 
-	<div id="admin" style="position:absolute;width:33%;left:33%;top:10%;">
+	<div id="admin" style="position:absolute;width:33%;left:33%;top:5%;">
 	<div style="text-align:center;">
+	<img src="/_code/images/logo-500px.png" style="width:100%;">
 	'.$message.'
 	<form name="l" id="l" action="'.$form_action.'" method="post">
 	<p>

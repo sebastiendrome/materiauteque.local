@@ -82,7 +82,7 @@ span.imgNav{position: absolute; right:10px; bottom:10px;}
 .imgNav a:hover{color:#fff; text-shadow:0 0 1px #000;}
 .imgNav a.selected{color:#000; text-shadow:0 0 1px #fff;}
 .article .imgContainer, .article .detail{min-width:300px; margin-right:20px; float:left; margin-bottom: 10px;}
-.article .imgContainer{background-color:rgba(199, 129, 0, 0.3);/*rgba(224, 172, 73, .5);*/}
+.article .imgContainer{background-color:rgba(199, 129, 0, 0.3);}
 .article .imgContainer img{display:block; margin:0 auto;}
 
 p.title{margin-top:0; font-size: larger; font-weight: bold;}

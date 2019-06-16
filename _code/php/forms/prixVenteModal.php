@@ -65,7 +65,7 @@ if($previous_statut_id == '4'){
 		<input type="hidden" name="prix" value="<?php echo $prix; ?>">
 		<h3>Prix de vente: <input type="text" style="width:60px; min-width:60px; text-align:right;" name="prix_vente" value="<?php echo str_replace('.' ,',' ,$prix); ?>" placeholder="0,00"> €</h3>
 		<input type="checkbox" id="payement_cheque" name="payement_cheque" value="2" style="margin-left:0;"> <label for="payement_cheque">Payement par chèque</label> 
-		<h3><button type="submit" name="prixVenteSubmit" id="prixVenteSubmit" style="width:100%; margin-left:0;">Enregistrer la vente</button></h3>
+		<h3><button type="submit" name="prixVenteSubmit" id="prixVenteSubmit" class="vente" style="width:100%; margin-left:0;">Enregistrer la vente</button></h3>
 		<!--<a href="javascript:;" class="annuler button left hideModal">Annuler</a>-->
 
 		<p>&nbsp;</p>

@@ -10,7 +10,7 @@ if( isset($_SESSION['article_id']) ){
 
 // make sure we get the needed data, if we don't have it already
 if( !isset($categories) || empty($categories) ){
-	$categories = get_table('categories');
+	$categories = get_table('categories', 'visible=1 AND id_parent=0');
 }
 
 // process form POST data (simple search)
@@ -29,8 +29,13 @@ if( isset($_POST['simpleSearch']) ){
 	}else{
 		$categories_id = '';
 	}
+	if( isset($_POST['sous_categories_id']) && is_numeric($_POST['sous_categories_id']) ){
+		$sous_categories_id = trim($_POST['sous_categories_id']);
+	}else{
+		$sous_categories_id = '';
+	}
 	if($keywords !== '' || $categories_id !== ''){
-		$ids = search($keywords, $categories_id, /*visible-only=*/FALSE, /*vendus=*/FALSE);
+		$ids = search($keywords, $categories_id, $sous_categories_id, /*visible-only=*/FALSE, /*vendus=*/FALSE);
 		if( !empty($ids) ){
 			foreach($ids as $id){
 				//echo 'Article #'.$key.'<br>';
@@ -97,16 +102,41 @@ $articles = get_items_data($fields, 'all', FALSE, 'all', 'date DESC', $limit, $o
 
 $items_table = items_table_output($articles);
 
+// result message passed via query string
+if( isset($message) && !empty($message) ){
+	$message = str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $message).'</p>';
+	$message_script = '<script type="text/javascript">showDone();</script>';
+}else{
+	$message = $message_script = '';
+}
+
 ?>
 
 <!-- admin css -->
 <link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
 
+<?php
+if( isset($_GET['upload_result']) ){
+	$message = urldecode($_GET['upload_result']);
+}elseif( isset($_GET['message']) ){
+	$message = urldecode($_GET['message']);
+}
+if( isset($message) && !empty($message) ){
+	$message = str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $message).'</p>';
+	$message_script = '<script type="text/javascript">showDone();</script>';
+}else{
+	$message = $message_script = '';
+}
+
+echo '<div id="working"><div class="note">working...</div></div>';
+echo '<div id="done">'.$message.'</div>';
+?>
+
 <!-- adminHeader start -->
 <div class="adminHeader">
 <h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button">€ Nouvelle vente</a><!-- <a href="/admin/manage_categories.php" class="button edit">Catégories</a> <a href="/admin/manage_dechet_categories.php" class="button edit">Matières</a> --><!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
+<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button vente">€ Nouvelle vente</a><!-- <a href="/admin/manage_categories.php" class="button edit">Catégories</a> <a href="/admin/manage_dechet_categories.php" class="button edit">Matières</a> --><!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
 
 
 <div class="clearBoth"></div>
@@ -130,7 +160,13 @@ foreach($categories as $c){
 	echo '>'.$c['nom'].'</option>'.PHP_EOL;
 }
 ?>
-</select><button type="submit" name="searchSubmit">Rechercher</button> <a href="/_code/php/forms/findArticle.php">&nbsp;>Recherche détaillée</a>
+</select>
+<!--
+<select name="sous_categories_id" style="min-width:auto;" disabled>
+<option value="">Toutes matières</option>
+</select>
+-->
+<button type="submit" name="searchSubmit">Rechercher</button> <a href="/_code/php/forms/findArticle.php">&nbsp;>Recherche détaillée</a>
 </form>
 <!-- recherche simple end -->
 
@@ -180,32 +216,19 @@ if( isset($search_items) && !empty($search_items)){
 ?>
 
 
-<?php
-if( isset($_GET['upload_result']) ){
-	echo urldecode($_GET['upload_result']);
-}
-?>
-
-
-<div id="working">working...</div>
-<div id="done"></div>
-
-
-
-<div id="result"></div>
-
 <div class="clearBoth" style="margin-top:35px;">
 
-<h2 style="display:inline-block;">Articles</h2> 
-
-&nbsp;&nbsp;&nbsp;Voir <input type="text" name="limit" value="<?php echo $limit; ?>" style="min-width:25px; width:25px; text-align:right;" onClick="this.select();" onChange="window.location.href='?limit='+this.value;"> articles par page.&nbsp;&nbsp;Sauter à la page <input type="text" name="p" value="" style="min-width:25px; width:25px; text-align:right;" onClick="this.select();" onChange="window.location.href='?limit=<?php echo $limit; ?>&p='+this.value;">
+<h2 style="display:inline-block; margin-right:10px;">Articles</h2> 
+<span style="white-space:nowrap;"><?php echo ($offset+1).'-'.$w_end.' sur '.$count; ?>&nbsp;&nbsp;</span>
+<span style="white-space:nowrap;">Voir <input type="text" name="limit" value="<?php echo $limit; ?>" style="min-width:25px; width:25px; text-align:right;" onClick="this.select();" onChange="window.location.href='?limit='+this.value;"> articles par page.&nbsp;&nbsp;</span>
+<span style="white-space:nowrap;">Sauter à la page <input type="text" name="p" value="" style="min-width:25px; width:25px; text-align:right;" onClick="this.select();" onChange="window.location.href='?limit=<?php echo $limit; ?>&p='+this.value;"></span>
 <a name="pp"></a>
 <?php 
 $navigation_output = '';
 
 if($pages >1){
 	$navigation_output .= '<div class="pagination" style="text-align:center; margin:10px 0;">'.PHP_EOL;
-	$navigation_output .= '<a href="?limit='.$limit.'&p='.$prev.'#pp" class="butLink navPrev">❮&nbsp;&nbsp;&nbsp;</a>';
+	$navigation_output .= '<a href="?limit='.$limit.'&p='.$prev.'#pp" class="butLink navPrev" title="Préc.">❮&nbsp;&nbsp;&nbsp;</a>';
 
 	$p_loop = 1;
 	while( $p_loop <= $pages ){
@@ -235,7 +258,7 @@ if($pages >1){
 		}
 		$p_loop++;
 	}
-	$navigation_output .= '<a href="?limit='.$limit.'&p='.$next.'#pp" class="butLink navNext">&nbsp;&nbsp;&nbsp;❯</a>'.PHP_EOL;
+	$navigation_output .= '<a href="?limit='.$limit.'&p='.$next.'#pp" class="butLink navNext" title="Suiv.">&nbsp;&nbsp;&nbsp;❯</a>'.PHP_EOL;
 	
 	$navigation_output .= '</div>'.PHP_EOL;
 
@@ -259,6 +282,8 @@ echo '</div>';
 
 <?php
 require(ROOT.'/_code/php/admin/admin_footer.php');
+
+echo $message_script;
 ?>
 
 <script type="text/javascript">

@@ -172,25 +172,25 @@ function delete_file($delete_file){
 			$l_file = str_replace('/_S/', '/_L/', $delete_file);
 			
 			if( unlink(ROOT.$delete_file) ){
-				$message .= '<p class="success">Le fichier a été éffacé.</p>';
+				$message .= '1|Le fichier a été éffacé.';
 				// delete all sizes
 				unlink(ROOT.$xl_file);
 				unlink(ROOT.$m_file);
 				unlink(ROOT.$l_file);
 			}else{
-				$message .= '<p class="error">ERROR: The file could not be deleted.</p>';
+				$message .= '0|ERROR: The file could not be deleted.';
 			}
 			
 		}else{ // not an image... no sizes.
 			if( unlink(ROOT.$delete_file) ){
-				$message .= '<p class="success">Le fichier a été éffacé.</p>';
+				$message .= '1|Le fichier a été éffacé.';
 			}else{
-				$message .= '<p class="error">ERREUR: Le fichier n\'a pas pu être éffacé.</p>';
+				$message .= '0|ERREUR: Le fichier n\'a pas pu être éffacé.';
 			}
 		}
 		
 	}else{
-		$message .= '<p class="error">ERROR: File does not exist: '.$delete_file.'</p>';
+		$message .= '0|ERROR: File does not exist: '.$delete_file;
 	}
 	return $message;
 }
@@ -317,7 +317,7 @@ function upload_file($path, $replace=''){
 	
 	// check against extension if file type is supported
 	if (!preg_match($types['supported_types'], $ext)){
-		$upload_message .= '<p class="error">Ce type de fichier n\'est pas autorisé: '.$ext.'<br>Le fichier n\'a pas été mis en ligne.</p>';
+		$upload_message .= '0|Ce type de fichier n\'est pas autorisé: '.$ext.'<br>Le fichier n\'a pas été mis en ligne.';
 	
 	// UPLOAD FILE
 	}else{
@@ -343,7 +343,7 @@ function upload_file($path, $replace=''){
 			$replace_ext = file_extension($replace);
 			if( $replace_ext != $ext){
 				if( !unlink(ROOT.$replace) ){
-					$upload_message .= '<p class="note warning">Impossible d\'effacer '.$replace.'</p>';
+					$upload_message .= '2|Impossible d\'effacer '.$replace;
 				}
 			}
 		// if we're uploading to add a new file
@@ -380,7 +380,7 @@ function upload_file($path, $replace=''){
 					// cannot read image orientation. (commented out because somehow the message always display for jpg uploads?...)
 					}/*else{
 						
-						$upload_message .= '<p class="note warning">Could not read image orientation for file: '.filename(basename($upload_dest), 'decode').'</p>';
+						$upload_message .= '2|Could not read image orientation for file: '.filename(basename($upload_dest), 'decode');
 					}*/
 				}
 				
@@ -389,15 +389,15 @@ function upload_file($path, $replace=''){
 
 				$resize_result .= resize_all($root_upload_dest, $w, $h);
 				if(substr($resize_result, 0, 1) === '0'){
-					$upload_message .= '<p class="error">'.$resize_result.'</p>';
+					$upload_message .= '0|'.$resize_result;
 				}
 			}
 
 			$new_file_name = basename($upload_dest);
-			$upload_message .= '<p class="success">Fichier mis en ligne: '.filename($new_file_name, 'decode').'</p>';
+			$upload_message .= '1|Fichier mis en ligne: '.filename($new_file_name, 'decode');
 			
 		}else{
-			$upload_message .= '<p class="error">Erreur: Assurez-vous que le poids du fichier ne dépasse pas '.MAX_UPLOAD_SIZE.'!</p>';
+			$upload_message .= '0|Erreur: Assurez-vous que le poids du fichier ne dépasse pas '.MAX_UPLOAD_SIZE.'!';
 		}
 	}
 

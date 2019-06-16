@@ -49,12 +49,12 @@ if(isset($_POST['create']) && !empty($_POST['newCategory'])){
 	if(preg_match('/(:|,|;|\/|\||\\|&|#|\+|®|™)/',$newCategory, $matches)){ // check section format
 		$error = true;
 		$m = implode(',',$matches);
-		$message .= '<p class="error">Le nom de la catégorie contient des signes interdits: '.$m.'</p>';
+		$message .= '0|Le nom de la catégorie contient des signes interdits: '.$m;
 	}
 	foreach($categories as $cat){ // avoid overwritting existing section
 		if($newCategory == $cat['nom']){
 			$error = true;
-			$message .= '<p class="error">Une catégorie nommée <strong>'.$newCategory.'</strong> existe déjà!</p>';
+			$message .= '0|Une catégorie nommée <b>'.$newCategory.'</b> existe déjà!';
 		}
 	}
 	
@@ -62,12 +62,12 @@ if(isset($_POST['create']) && !empty($_POST['newCategory'])){
 		$item_data['nom'] = $newCategory;
 		$item_data['visible'] = 0;
 		if( insert_new($table, $item_data) ){
-			$message = '<p class="success">La nouvelle '.str_replace(array('_','s'),' ',$table).' <strong>'.$newCategory.'</strong> has been created.</p>';
+			$message = '0|La nouvelle '.str_replace(array('_','s'),' ',$table).' <b>'.$newCategory.'</b> has been created.';
 			unset($categories);
 			$categories = get_table($table);
 			$c_count = count($categories);
 		}else{
-			$message = '<p class="error">ERROR - The new category <strong>'.$newCategory.'</strong> could not be created.</p>';
+			$message = '0|ERROR - The new category <b>'.$newCategory.'</b> could not be created.';
 		}
 	}
 }

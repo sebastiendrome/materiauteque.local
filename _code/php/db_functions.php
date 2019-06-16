@@ -474,7 +474,7 @@ function find_articles($key_val_pairs, $include_vendus = FALSE){
  * search articles. Search by keywords, category, and with/out invisible and sold items.
  * returns: array[][id]
  */
-function search($keywords = '', $category = '', $visible = TRUE, $vendus = FALSE){
+function search($keywords = '', $category = '', /*$sous_category = '', */$visible = TRUE, $vendus = FALSE){
 	global $db;
 	
 	$items = array();
@@ -507,7 +507,12 @@ function search($keywords = '', $category = '', $visible = TRUE, $vendus = FALSE
 	if($category !== ''){
 		$filters_array['category'] = "`categories_id` = '".$category."'";
 	}
-
+	/*
+	// if a sous_category is specified show only this category
+	if($sous_category !== ''){
+		$filters_array['category'] = "(".$filters_array['category']." OR `categories_id` = '".$sous_category."')";
+	}
+	*/
 	// implode filters array into string separated with " AND " 
 	if( !empty($filters_array) ){
 		$filters_string = implode(" AND ", $filters_array);
@@ -626,9 +631,14 @@ function present($k, $v){
 			}else{
 				$selected = '';
 			}
-			$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
+			if($st['nom'] == 'vendu'){
+				$op_style = ' style="background-color:rgb(235, 203, 100);"';
+			}else{
+				$op_style = '';
+			}
+			$options .= '<option value="'.$st['id'].'"'.$op_style.$selected.'>'.$st['nom'].'</option>';
 		}
-		$v = '<select name="statut_id" style="min-width:50px;" class="ajax">'.$options.'</select>';
+		$v = '<select name="statut_id" style="min-width:50px;" class="ajax" title="Modifier le statut">'.$options.'</select>';
 
 	// show name of keys_id
 	}elseif( substr($k, -3) == '_id' && $v !== NULL){
@@ -647,12 +657,12 @@ function present($k, $v){
 		}else{
 			$selected_2 = ' selected';
 		}
-		$v = '<select name="visible" style="min-width:50px;" class="ajax">
+		$v = '<select name="visible" style="min-width:50px;" class="ajax" title="Modifier la visibilité">
 		<option value="1"'.$selected_1.'>oui</option>
 		<option value="0"'.$selected_2.'>non</option>
 		</select>';
 
-	// show delect input for vrac
+	// show select input for vrac
 	}elseif($k == 'vrac'){
 		$selected_1 = $selected_2 = '';
 		if($v == '1'){
@@ -660,7 +670,7 @@ function present($k, $v){
 		}else{
 			$selected_2 = ' selected';
 		}
-		$v = '<select name="vrac" style="min-width:50px;" class="ajax">
+		$v = '<select name="vrac" style="min-width:50px;" class="ajax" title="Choisir...">
 		<option value="1"'.$selected_1.'>oui</option>
 		<option value="0"'.$selected_2.'>non</option>
 		</select>';
@@ -675,9 +685,9 @@ function present($k, $v){
 
 	// show short descriptif, long on mouse enter
 	}elseif( ($k == 'descriptif' || $k == 'observations') && !empty($v) ){
-		$less = substr($v, 0, 15);
+		$less = mb_substr($v, 0, 15);
 		if($less !== $v){
-			$v = '<div class="short">'.$less.'...<div class="long">'.$v.'</div></div>';
+			$v = '<div class="short">'.$less.'…<div class="long">'.$v.'</div></div>';
 		}else{
 			$v = $less;
 		}
@@ -735,7 +745,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 					}
 				}
 				// th for 'modifier' button
-				$output .= '<th style="background-image:none; padding-left:5px;">Modifier</th>';
+				//$output .= '<th style="background-image:none; padding-left:5px;">Modifier</th>';
 				// th for 'vendre' button
 				$output .= '<th style="background-image:none; padding-left:5px;">Vendre</th>';
 
@@ -749,12 +759,12 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 				$tr_class = 'impair';
 			}
 			// show results
-			$output .= '<tr data-id="'.$article_id.'" class="'.$tr_class.'">';
+			$output .= '<tr data-id="'.$article_id.'" class="'.$tr_class.'" title="Modifier cet article">';
 
 
 			// images
 			$output .= '<td>';
-			$output .= '<a href="javascript:;" title="ajouter" class="showModal" rel="newArticleImages?article_id='.$article_id.'">';
+			$output .= '<a href="javascript:;" title="Modifier ou ajouter une image" class="showModal" rel="newArticleImages?article_id='.$article_id.'">';
 			if(!empty($images_array)){
 				$output .= '<img src="/'.$images_array[0].'" style="display:block; width:70px; margin:-3px;">';
 			}else{
@@ -777,7 +787,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			}
 			
 			// edit button
-			$output .= '<td>
+			/*$output .= '<td>
 			<!--<div data-id="'.$article_id.'">
 			<select name="actions" style="min-width:50px;">
 			<option name="" value="">Choisir...</option>
@@ -787,11 +797,11 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			</select>
 			</div>-->
 			<a href="/_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button edit">modifier</a> 
-			</td>';
+			</td>';*/
 
 			$output .= '<td>';
 			if($value['statut_id'] < 4){
-				$output .= '<a href="/_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button submit vendre" style="margin:0 !important;">&rarr;&nbsp;€</a>';
+				$output .= '<a href="/_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button vente vendre" style="margin:0 !important;" title="vendre cet article">&rarr;&nbsp;€</a>';
 			}else{
 				$output .= '';
 			}

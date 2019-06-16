@@ -6,33 +6,7 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
 
-if( !isset($title) ){
-	$title = ' Nouvelle vente';
-	require(ROOT.'_code/php/doctype.php');
-	echo '<!-- admin css -->
-	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
-
-	echo '<!-- adminHeader start -->
-	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
-	echo '</div><!-- adminHeader end -->'.PHP_EOL;
-
-	echo '<!-- start admin container -->
-	<div id="adminContainer">'.PHP_EOL;
-
-	echo '<div id="working">working...</div>
-		<div id="done"></div>
-		<div id="result"></div>';
-	$footer = true;
-}else{
-	$footer = false;
-}
-
-?>
-
-
-<?php
-
+/*
 // process form POST data (simple search)
 if( isset($_POST['simpleSearch']) ){
 
@@ -50,7 +24,7 @@ if( isset($_POST['simpleSearch']) ){
 		$categories_id = '';
 	}
 	if($keywords !== '' || $categories_id !== ''){
-		$ids = search($keywords, $categories_id, /*visible-only=*/TRUE, /*vendus=*/FALSE);
+		$ids = search($keywords, $categories_id, TRUE, FALSE);
 		if( !empty($ids) ){
 			foreach($ids as $id){
 				//echo 'Article #'.$key.'<br>';
@@ -61,7 +35,7 @@ if( isset($_POST['simpleSearch']) ){
 }else{
 	$keywords = $categories_id = '';
 }
-
+*/
 
 // process form POST data (detailed search)
 if( isset($_POST['findArticleSubmitted']) ){
@@ -89,9 +63,63 @@ if( isset($_POST['findArticleSubmitted']) ){
 		}
 	}
 }
+
+// process form POST data (create article)
+if( isset($_POST['newArticleSubmitted']) ){
+	foreach($_POST as $k => $v){
+		if($k !== 'newArticleSubmitted' && $k !== 'newArticleSubmit' && $k !== 'types' && $k !== 'sizes'){
+			$new_item_data[$k] = trim($v);
+		}
+	}
+	if($article_id = insert_new('articles', $new_item_data)){
+		$_SESSION['article_id'] = $article_id;
+		$new_item[0] = get_item_data($article_id);
+		$items_table = items_table_output($new_item);
+		$message = '1|Nouvel Article créé. ID: '.$article_id;
+		$path = 'uploads/'.$article_id;
+		
+	}else{
+		$message = '0|'.mysqli_error($db);
+	}
+}
+
+
+// result message passed via query string
+if( isset($message) && !empty($message) ){
+	$message = str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $message).'</p>';
+	$message_script = '<script type="text/javascript">showDone();</script>';
+}else{
+	$message = $message_script = '';
+}
+
+if( !isset($title) ){
+	$title = ' Nouvelle Vente';
+	require(ROOT.'_code/php/doctype.php');
+	echo '<!-- admin css -->
+	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
+
+	echo '<div id="working"><div class="note">working...</div></div>';
+	echo '<div id="done">'.$message.'</div>';
+
+	echo '<!-- adminHeader start -->
+	<div class="adminHeader">
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
+	echo '</div><!-- adminHeader end -->'.PHP_EOL;
+
+	echo '<!-- start admin container -->
+	<div id="adminContainer">'.PHP_EOL;
+		
+	$footer = true;
+}else{
+	echo $message;
+	$footer = false;
+}
+
 ?>
 
+
 <?php
+// search results
 if( isset($items) && !empty($items)){
 	echo '<p class="success" style="overflow:auto;">
 	<span style="display:block; margin: 10px 0;">';
@@ -154,30 +182,6 @@ if( isset($items) && !empty($items)){
 	echo '<p class="note">Aucun résultat...</p>'.PHP_EOL;
 }
 
-// process form POST data
-if( isset($_POST['newArticleSubmitted']) ){
-	foreach($_POST as $k => $v){
-		if($k !== 'newArticleSubmitted' && $k !== 'newArticleSubmit' && $k !== 'types' && $k !== 'sizes'){
-			$item_data[$k] = trim($v);
-		}
-	}
-	if($article_id = insert_new('articles', $item_data)){
-		$_SESSION['article_id'] = $article_id;
-		$new_item[0] = get_item_data($article_id);
-		$items_table = items_table_output($new_item);
-		$message = '<p class="success">Nouvel Article créé. ID: '.$article_id.'</p>';
-		$path = 'uploads/'.$article_id;
-		
-	}else{
-		$message = '<p class="error">'.mysqli_error($db).'</p>';
-	}
-}
-
-// if standalone, show result message passed via query string
-if( isset($message) ){
-	echo $message;
-}
-
 ?>
 
 <a name="recherche"></a>
@@ -230,7 +234,7 @@ Si l'article n'existe pas ou est introuvable...
 	<button type="submit" name="newArticleSubmit" id="newArticleSubmit" class="right" >Enregistrer la vente</button>
 
 </form>
-<!-- créer qrticle à vendre end -->
+<!-- créer article à vendre end -->
 
 
 
@@ -239,8 +243,9 @@ Si l'article n'existe pas ou est introuvable...
 if($footer){
 	echo '</div><!-- end admin container -->'.PHP_EOL;
 	require(ROOT.'/_code/php/admin/admin_footer.php');
-	echo '
-	</body>
-	</html>';
+	echo $message_script;
+	echo '</body></html>';
+}else{
+	echo $message_script;
 }
 ?>

@@ -111,14 +111,16 @@ if(!isset($matieres)){
 					$options .= '<option value="">Choisir...</option>';
 				}
 			}
-			foreach($sous_cats as $s_cat){
-				$selected = '';
-				if( isset($item_data['categories_id']) ){
-					if($item_data['categories_id'] == $s_cat['id']){
-						$selected = ' selected';
+			if( !empty($sous_cats) ){
+				foreach($sous_cats as $s_cat){
+					$selected = '';
+					if( isset($item_data['categories_id']) ){
+						if($item_data['categories_id'] == $s_cat['id']){
+							$selected = ' selected';
+						}
 					}
+					$options .= '<option value="'.$s_cat['id'].'"'.$selected.'>'.$s_cat['nom'].'</option>';
 				}
-				$options .= '<option value="'.$s_cat['id'].'"'.$selected.'>'.$s_cat['nom'].'</option>';
 			}
 			echo $options;
 			?>
@@ -172,14 +174,16 @@ if(!isset($matieres)){
 					$options .= '<option value="">Choisir...</option>';
 				}
 			}
-			foreach($sous_mats as $s_mat){
-				$selected = '';
-				if( isset($item_data['sous_matieres_id']) ){
-					if($item_data['sous_matieres_id'] == $s_mat['id']){
-						$selected = ' selected';
+			if( !empty($sous_mats) ){
+				foreach($sous_mats as $s_mat){
+					$selected = '';
+					if( isset($item_data['sous_matieres_id']) ){
+						if($item_data['sous_matieres_id'] == $s_mat['id']){
+							$selected = ' selected';
+						}
 					}
+					$options .= '<option value="'.$s_mat['id'].'"'.$selected.'>'.$s_mat['nom'].'</option>';
 				}
-				$options .= '<option value="'.$s_mat['id'].'"'.$selected.'>'.$s_mat['nom'].'</option>';
 			}
 			echo $options;
 			?>

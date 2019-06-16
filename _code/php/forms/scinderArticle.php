@@ -15,41 +15,6 @@ if( isset($_GET['article_id']) ){
 	$article_id = $_SESSION['article_id'];
 }
 
-if( !isset($title) ){
-	$title = ' Scinder un article en 2';
-	require(ROOT.'_code/php/doctype.php');
-	echo '<!-- admin css -->
-	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
-
-	echo '<!-- adminHeader start -->
-	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
-	echo '</div><!-- adminHeader end -->'.PHP_EOL;
-
-	echo '<!-- start admin container -->
-	<div id="adminContainer">'.PHP_EOL;
-	
-	echo '<div id="working">working...</div>
-		<div id="done"></div>
-		<div id="result"></div>';
-
-	
-	$footer = true;
-}else{
-	$footer = false;
-}
-
-// article ID:
-if( !isset($article_id) || empty($article_id) ){
-	unset($_SESSION['article_id']);
-	//exit;
-}else{
-	$item_data = get_item_data($article_id); 
-	$item_data_copy = $item_data;
-	?>
-
-<?php
-
 // process form POST data (save original article, create new one)
 if( isset($_POST['formSubmitted']) ){
 	// unset all item data (we must use the $_POST vars instead), except for images
@@ -72,14 +37,46 @@ if( isset($_POST['formSubmitted']) ){
 }elseif( isset($_GET['message']) ){
 	$message = urldecode($_GET['message']);
 }
-?>
 
-<?php
-// if standalone, show result message passed via query string
-if( isset($message) ){
-	echo $message;
+// result message passed via query string
+if( isset($message) && !empty($message) ){
+	$message = str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $message).'</p>';
+	$message_script = '<script type="text/javascript">showDone();</script>';
+}else{
+	$message = $message_script = '';
 }
-?>
+
+if( !isset($title) ){
+	$title = ' Scinder un article en 2';
+	require(ROOT.'_code/php/doctype.php');
+	echo '<!-- admin css -->
+	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
+
+	echo '<div id="working"><div class="note">working...</div></div>';
+	echo '<div id="done">'.$message.'</div>';
+
+	echo '<!-- adminHeader start -->
+	<div class="adminHeader">
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
+	echo '</div><!-- adminHeader end -->'.PHP_EOL;
+
+	echo '<!-- start admin container -->
+	<div id="adminContainer">'.PHP_EOL;
+		
+	$footer = true;
+}else{
+	echo $message;
+	$footer = false;
+}
+
+// article ID:
+if( !isset($article_id) || empty($article_id) ){
+	unset($_SESSION['article_id']);
+	//exit;
+}else{
+	$item_data = get_item_data($article_id); 
+	$item_data_copy = $item_data;
+	?>
 
 <!-- formsContainer start -->
 <div id="formsContainer" style="display:inline-block;">
@@ -137,6 +134,7 @@ if( isset($message) ){
 if($footer){
 	echo '</div><!-- end admin container -->'.PHP_EOL;
 	require(ROOT.'/_code/php/admin/admin_footer.php');
+	echo $message_script;
 }
 ?>
 <script type="text/javascript">
@@ -163,7 +161,13 @@ $("form#dualForm").on("submit", function(e){
 	});
 });
 </script>
-<?php } ?>
 
-</body>
-</html>
+<?php
+if($footer){
+	echo '</body></html>';
+}else{
+	echo $message_script;
+}
+?>
+<?php } 
+?>

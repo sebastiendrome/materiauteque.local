@@ -8,39 +8,11 @@ if( !defined("ROOT") ){
 // set $article_form_context for edit_article_table.php vars
 $article_form_context = 'edit';
 
-if( isset($_GET['article_id']) ){
+if( isset($_GET['article_id']) && $_GET['article_id'] !== 'undefined' && !empty($_GET['article_id']) ){
 	$article_id = urldecode($_GET['article_id']);
 	$_SESSION['article_id'] = $article_id;
 }elseif( isset($_SESSION['article_id']) ){
 	$article_id = $_SESSION['article_id'];
-}
-
-if( !isset($title) ){
-	$title = ' Modifier un Article';
-	require(ROOT.'_code/php/doctype.php');
-	echo '<!-- admin css -->
-	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
-
-	echo '<!-- adminHeader start -->
-	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
-	echo ' <a href="javascript:;" class="button showModal" rel="prixVenteModal?article_id='.$article_id.'">€ Vendre cet article</a> ';
-	echo ' <a href="/_code/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
-	//scinderArticle.php
-	echo ' <a href="javascript:;" class="showModal button remove" rel="deleteArticleModal?article_id='.$article_id.'">Supprimer cet article</a>';
-	echo '</div><!-- adminHeader end -->'.PHP_EOL;
-
-	echo '<!-- start admin container -->
-	<div id="adminContainer">'.PHP_EOL;
-	
-	echo '<div id="working">working...</div>
-		<div id="done"></div>
-		<div id="result"></div>';
-
-	
-	$footer = true;
-}else{
-	$footer = false;
 }
 
 /*
@@ -81,19 +53,46 @@ if( isset($_POST['editArticleSubmitted']) ){
 		}
 	}
 	$message = update_table('articles', $article_id, $item_data);
-	//echo $message;
 
 }elseif( isset($_GET['upload_result']) ){
 	$message = urldecode($_GET['upload_result']);
 }elseif( isset($_GET['message']) ){
 	$message = urldecode($_GET['message']);
 }
-?>
 
-<?php
-// if standalone, show result message passed via query string
-if( isset($message) ){
+// result message passed via query string
+if( isset($message) && !empty($message) ){
+	$message = str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $message).'</p>';
+	$message_script = '<script type="text/javascript">showDone();</script>';
+}else{
+	$message = $message_script = '';
+}
+
+if( !isset($title) ){
+	$title = ' Modifier un Article';
+	require(ROOT.'_code/php/doctype.php');
+	echo '<!-- admin css -->
+	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
+
+	echo '<div id="working"><div class="note">working...</div></div>';
+	echo '<div id="done">'.$message.'</div>';
+
+	echo '<!-- adminHeader start -->
+	<div class="adminHeader">
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
+	echo ' <a href="javascript:;" class="button vente showModal" rel="prixVenteModal?article_id='.$article_id.'">€ Vendre cet article</a> ';
+	echo ' <a href="/_code/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
+	//scinderArticle.php
+	echo ' <a href="javascript:;" class="showModal button remove" rel="deleteArticleModal?article_id='.$article_id.'">Supprimer cet article</a>';
+	echo '</div><!-- adminHeader end -->'.PHP_EOL;
+
+	echo '<!-- start admin container -->
+	<div id="adminContainer">'.PHP_EOL;
+	
+	$footer = true;
+}else{
 	echo $message;
+	$footer = false;
 }
 ?>
 
@@ -117,10 +116,12 @@ if( isset($message) ){
 if($footer){
 	echo '</div><!-- end admin container -->'.PHP_EOL;
 	require(ROOT.'/_code/php/admin/admin_footer.php');
+	echo $message_script;
+	echo '</body></html>';
+}else{
+	echo $message_script;
 }
 ?>
 
 <?php } ?>
 
-</body>
-</html>
