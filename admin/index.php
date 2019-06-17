@@ -88,6 +88,9 @@ if(isset($_GET['p'])){
 
 $offset = ($p-1)*$limit;
 $w_end = $offset+$limit;
+if($w_end > $count){
+	$w_end = $count;
+}
 $next = $p+1;
 $prev = $p-1;
 if($next >$pages){
@@ -136,7 +139,7 @@ echo '<div id="done">'.$message.'</div>';
 <div class="adminHeader">
 <h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button vente">€ Nouvelle vente</a><!-- <a href="/admin/manage_categories.php" class="button edit">Catégories</a> <a href="/admin/manage_dechet_categories.php" class="button edit">Matières</a> --><!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
+<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button vente">€ Nouvelle vente</a> <a href="/admin/manage_categories.php?table=categories" class="button edit">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit">Matières</a><!-- <a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
 
 
 <div class="clearBoth"></div>
@@ -219,7 +222,7 @@ if( isset($search_items) && !empty($search_items)){
 <div class="clearBoth" style="margin-top:35px;">
 
 <h2 style="display:inline-block; margin-right:10px;">Articles</h2> 
-<span style="white-space:nowrap;"><?php echo ($offset+1).'-'.$w_end.' sur '.$count; ?>&nbsp;&nbsp;</span>
+<span style="white-space:nowrap;"><?php echo ($offset+1).'—'.$w_end.' sur '.$count; ?>&nbsp;&nbsp;</span>
 <span style="white-space:nowrap;">Voir <input type="text" name="limit" value="<?php echo $limit; ?>" style="min-width:25px; width:25px; text-align:right;" onClick="this.select();" onChange="window.location.href='?limit='+this.value;"> articles par page.&nbsp;&nbsp;</span>
 <span style="white-space:nowrap;">Sauter à la page <input type="text" name="p" value="" style="min-width:25px; width:25px; text-align:right;" onClick="this.select();" onChange="window.location.href='?limit=<?php echo $limit; ?>&p='+this.value;"></span>
 <a name="pp"></a>

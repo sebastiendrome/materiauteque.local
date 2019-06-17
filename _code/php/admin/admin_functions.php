@@ -88,7 +88,7 @@ function display_file_admin($path, $file_name){
 	// various ways to display file depending on extension
 	// 1. resizable types (jpg, png, gif)
 	if( preg_match($_POST['types']['resizable_types'], $ext) ){
-		$item = $path.'/_S/'.$file_name;
+		$item = $path.'/_M/'.$file_name;
 		// url link to file
 		if(substr($item, 0, 1) != '/'){
 			$file_link = '/'.$item;
@@ -96,7 +96,7 @@ function display_file_admin($path, $file_name){
 			$file_link = $item;
 		}
 		
-		$display_file = '<a href="'.str_replace('/_S/', '/_XL/', $file_link).'" title="view image in a new window" target="_blank"><img src="'.$file_link.'?rand='.rand(111,999).'" id="'.$file_name.'"></a>';
+		$display_file = '<a href="'.str_replace('/_S/', '/_L/', $file_link).'" title="view image in a new window" target="_blank"><img src="'.$file_link.'?rand='.rand(111,999).'" id="'.$file_name.'"></a>';
 		
 	}else{
 		// if not an image, the file is in the _XL directory (no various sizes)
@@ -282,8 +282,7 @@ function fix_image_orientation($path_to_jpg, $image_orientation){
 }
 
 
-/* upload file (under manage content) - requires updating menu.txt
-uses update_menu_file
+/* upload file
 */
 function upload_file($path, $replace=''){
 	// initialize upload results
@@ -368,7 +367,7 @@ function upload_file($path, $replace=''){
 					// get image orientation from exif metadata, or return false
 					$image_orientation = get_image_orientation($root_upload_dest);
 					
-					// could not read image orientation...
+					// could read image orientation...
 					if($image_orientation !== false){
 
 						// fix image orientation (and return true) or return error message
@@ -394,6 +393,7 @@ function upload_file($path, $replace=''){
 			}
 
 			$new_file_name = basename($upload_dest);
+			//unlink(ROOT.$upload_dest); // get rid of original file in _XL dir (usually very big)
 			$upload_message .= '1|Fichier mis en ligne: '.filename($new_file_name, 'decode');
 			
 		}else{

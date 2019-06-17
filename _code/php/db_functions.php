@@ -214,6 +214,10 @@ function get_article_images($article_id = '', $size = '_M', $path = 'uploads'){
 	}
 	$img_dir = $path.'/'.$article_id.'/'.$size.'/';
 	$scan_dir = preg_replace('/\/+/', '/', ROOT.$img_dir);
+	// make sure the directory exists
+	if( !is_dir($scan_dir) ){
+		copyr(ROOT.'templates/img_dir', ROOT.'uploads/'.$article_id);
+	}
 	$img_dir = preg_replace('/\/+/', '/', $img_dir); // make sure there are no duplicate slashes
 	$files = scandir($scan_dir);
 	foreach($files as $f){
@@ -245,9 +249,9 @@ function update_table($table, $article_id, $update){
 	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
 	
 	if( $query = mysqli_query($db, $q) ){
-		$result = '<p class="success">Modifications enregistrées.</p>';
+		$result = '1|Modifications enregistrées.';
 	}else{
-		$result = '<p class="error">Erreur: '.mysqli_error($db).'</p>';
+		$result = '0|Erreur: '.mysqli_error($db);
 		log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
 	}
 	return $result;
@@ -283,10 +287,10 @@ function insert_article($item_data){
 	//echo $string_keys.'<br>'.$string_values.'<br>'; exit;
 	
 	if(mysqli_query($db, "INSERT INTO articles (".$string_keys.") VALUES (".$string_values.")")){
-		echo '<p class="success">L\'article #'.mysqli_insert_id($db).' a été ajouté.</p>';
+		echo '1|L\'article #'.mysqli_insert_id($db).' a été ajouté.';
 		return true;
 	}else{
-		echo '<p class="error">'.mysqli_error($db).'</p>';
+		echo '0|'.mysqli_error($db);
 		return false;
 	}
 }
@@ -350,9 +354,9 @@ function delete_item($table, $article_id){
 	
 	// delete database col
 	if( $delete = mysqli_query($db, "DELETE FROM $table WHERE id = '$article_id'") ){
-		$result = '<p class="success">Élément #'.$article_id.' éffacé du tableau <b>'.$table.'</b></p>';
+		$result = '1|Élément #'.$article_id.' éffacé du tableau <b>'.$table.'</b>';
 	}else{
-		$result = '<p class="error">L\'élément #'.$article_id.' n\'a pas pu être éffacé du tableau <b>'.$table.'</b></p>';
+		$result = '0|L\'élément #'.$article_id.' n\'a pas pu être éffacé du tableau <b>'.$table.'</b>';
 	}
 	// delete image directory
 	$dir = ROOT.'uploads/'.$article_id;
@@ -423,7 +427,7 @@ function find_articles($key_val_pairs, $include_vendus = FALSE){
 				// get DB orders within date range
 				$q = "SELECT id FROM articles WHERE date >= $time_start AND date <= $time_end";
 			}else{
-				echo '<p class="error">Date mal formée! Le correct format est:  31-05-2018</p>';
+				echo '0|Date mal formée! Le correct format est:  31-05-2018';
 			}
 			
 		// default
@@ -865,9 +869,9 @@ function scinde_article($original, $copy){
 	}
 	// attempt to create new article
 	if( $new_id = insert_new('articles', $c_array) ){
-		$result = '<p class="success">Nouvel article crée, ID:'.$new_id.'</p>';
+		$result = '1|Nouvel article crée, ID:'.$new_id;
 	}else{
-		$result = '<p class="error">Erreur: Le nouvel article n\'a pas pu être créé!</p>';
+		$result = '0|Erreur: Le nouvel article n\'a pas pu être créé!';
 	}
 	// save original article
 	$result .= update_table('articles', $o_array['id'], $o_array);

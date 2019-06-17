@@ -141,14 +141,14 @@ if(!isset($matieres)){
 			}else{
 				$sous_mats = get_children('matieres', $item_data['matieres_id']);
 			}
-			foreach($matieres as $cat){
+			foreach($matieres as $mat){
 				$selected = '';
 				if( isset($item_data['matieres_id']) ){
-					if($item_data['matieres_id'] == $cat['id']){
+					if($item_data['matieres_id'] == $mat['id']){
 						$selected = ' selected';
 					}
 				}
-				$options .= '<option value="'.$cat['id'].'"'.$selected.'>'.$cat['nom'].'</option>';
+				$options .= '<option value="'.$mat['id'].'"'.$selected.'>'.$mat['nom'].'</option>';
 			}
 			echo $options;
 			?>

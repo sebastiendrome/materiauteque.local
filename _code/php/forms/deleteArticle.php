@@ -32,7 +32,8 @@ if( isset($_POST['deleteArticleSubmitted']) ){
 if( isset($article_id) && !empty($article_id) ){
 	$table = 'articles';
 	$result = delete_item($table, $article_id);
-	echo $result;
+	$message = str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $result).'</p>';
+	echo $message;
 }
 ?>
 
