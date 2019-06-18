@@ -152,7 +152,7 @@ function display_file_admin($path, $file_name){
 	return $display_file;
 }
 
-/*********** 3: ACTIVE FUNCTIONS (FUNCTIONS THAT CHANGE THE CONTENT) ***************/
+/*********** 3: ACTIVE FUNCTIONS (FUNCTIONS THAT CHANGE THE Content) ***************/
 
 
 

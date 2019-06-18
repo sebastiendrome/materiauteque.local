@@ -111,10 +111,15 @@ $("select[name='statut_id']").on('change', function(){
 			var $prixVente = $table.find($("input[name='prix_vente']"));
 			if($(this).val() == 4){
 				$tr.show();
-				var $visibleZero = $table.find($("input[name='visible']#visibleZero"));
-				$prixVente.prop("required","required");
-				$prixVente.focus();
-				$visibleZero.prop("checked", true);
+				var pageName = document.location.pathname.match(/[^\/]+$/)[0];
+				//alert(pageName);
+				// make prix_vente required, only if NOT in search mode (findArticle.php)
+				if(pageName !== 'findArticle.php'){
+					var $visibleZero = $table.find($("input[name='visible']#visibleZero"));
+					$prixVente.prop("required","required");
+					$visibleZero.prop("checked", true);
+					$prixVente.focus();
+				}
 			}else{
 				$prixVente.val('');
 				$tr.hide();

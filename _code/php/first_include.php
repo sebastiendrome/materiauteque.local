@@ -20,8 +20,6 @@ define("PROTOCOL", $protocol);
 define("ROOT", realpath($_SERVER['DOCUMENT_ROOT']).'/');
 // reference to site author...
 define("AUTHOR_REF", 'sebdedie@gmail.com');
-// content directory (which contains all user files)
-define("CONTENT", '_content/');
 
 // php root and error reporting, local vs. remote
 if( strstr(SITE,'.local') ){ 					// local server
@@ -41,9 +39,9 @@ if( strstr(SITE,'.local') ){ 					// local server
 	$db_user = "materiautequedb";
 	$db_pass = "dKy-UzMo!@qlJk";
 	$db_name = 'materiauteque';
+	define("SEND_ERRORS_TO", AUTHOR_REF);
 }
 
-define("SEND_ERRORS_TO", AUTHOR_REF);
 define("LOG_ERRORS", $log_errors);
 define("DISPLAY_DEBUG", $display_debug);
 define("DB_HOST", $db_host);

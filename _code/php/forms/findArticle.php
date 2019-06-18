@@ -57,7 +57,12 @@ if( isset($_POST['findArticleSubmitted']) ){
 	echo '</pre>';
 	*/
 	if( !empty($key_val_pairs) ){
-		if( $results = find_articles($key_val_pairs) ){
+		if( isset($key_val_pairs['statut_id']) && $key_val_pairs['statut_id'] == '4'){
+			$include_vendus = TRUE;
+		}else{
+			$include_vendus = FALSE;
+		}
+		if( $results = find_articles($key_val_pairs, $include_vendus) ){
 			foreach($results as $key => $val){
 				//echo 'Article #'.$key.'<br>';
 				$items[] = get_item_data($key);
