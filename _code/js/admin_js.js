@@ -9,6 +9,14 @@ function updateTable(table, col, id, value){
 		type: 'GET',
 		// on success show message
 		success : function(msg) {
+			var ty = msg.substr(0, 2);
+			if(ty == '0|'){
+				msg = '<p class="error">'+msg.substr(2)+'</p>';
+			}else if(ty == '1|'){
+				msg = '<p class="success">'+msg.substr(2)+'</p>';
+			}else if(ty == '2|'){
+				msg = '<p class="note">'+msg.substr(2)+'</p>';
+			}
 			$('#done').html(msg);
 			return true;
 		}

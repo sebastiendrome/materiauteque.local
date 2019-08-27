@@ -1,5 +1,6 @@
 .DS_Store
 _content/
+_extra/
 *.psd
 .vscode/settings.json
 _uploads/
