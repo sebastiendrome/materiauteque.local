@@ -9,7 +9,7 @@ session_start();
 date_default_timezone_set('Europe/Paris');
 
 // set version, to load fresh css and js
-$version = 13;
+$version = 14;
 
 // initialize site 
 define("SITE", $_SERVER['HTTP_HOST'].'/');

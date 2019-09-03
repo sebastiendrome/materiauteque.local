@@ -164,6 +164,7 @@ if( isset($items) && !empty($items)){
 
 	echo '</p>';
 
+// search was done but with no results
 }elseif(isset($_POST['findArticleSubmitted']) ){
 	echo '<p class="note">Aucun article trouvé pour: ';
 	foreach($key_val_pairs as $rk => $rv){
@@ -177,7 +178,9 @@ if( isset($items) && !empty($items)){
 		echo $rk.' = '.$rv.'<br>';
 	}
 	echo '</p>'.PHP_EOL;
-		
+
+	
+// simple search (not used at the moment, syill here just in case...)
 }elseif( isset($_POST['simpleSearch']) ){
 	echo '<p class="note">Aucun résultat...</p>'.PHP_EOL;
 }
@@ -227,7 +230,6 @@ Si l'article n'existe pas ou est introuvable...
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
 	
-	<input type="hidden" name="statut_id" value="6">
 	<input type="hidden" name="visible" value="0">
 	<input type="hidden" name="date_vente" value="<?php echo time(); ?>">
 	<input type="hidden" name="newArticleSubmitted" id="newArticleSubmitted" value="newArticleSubmitted">

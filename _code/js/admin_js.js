@@ -4,7 +4,7 @@
 // save sql data ( ajax call, uses php function update_table() )
 function updateTable(table, col, id, value){
 	$.ajax({
-		// Your server script to process the upload
+		// Server script to process the upload
 		url: '/_code/php/admin/admin_ajax.php?updateTable&table='+table+'&col='+col+'&id='+id+'&value='+value,
 		type: 'GET',
 		// on success show message
@@ -117,7 +117,7 @@ $("select[name='statut_id']").on('change', function(){
 		var $tr = $table.find('tr#prixVente');
 		if($tr !== false){
 			var $prixVente = $table.find($("input[name='prix_vente']"));
-			if($(this).val() == 4){
+			if($(this).val() == statut_table['vendu']){
 				$tr.show();
 				var pageName = document.location.pathname.match(/[^\/]+$/)[0];
 				//alert(pageName);
@@ -154,12 +154,8 @@ $("table.data").on('change', 'select.ajax', function(){
 	var value = $(this).val();
 	var col = $(this).attr('name'); // 'statut_id'
 
-	//alert(table);
-	//alert(id);
-	//alert(previous);
-
 	// select[name='statut_id'] can be used to change statut_id to 4 = 'vendu', in this case, show prixVenteModal
-	if(col == 'statut_id' && value == 4){ // = vendu
+	if(col == 'statut_id' && value == statut_table['vendu']){ // = vendu
 		var prix = $(this).parents('tr').find('td.prix').html();
 		showModal('prixVenteModal?article_id='+id+'&prix='+encodeURIComponent(prix)+'&previous_id='+previous_id);
 		
@@ -184,16 +180,26 @@ $("body").on('click', '#prixVenteSubmit', function(e){
 	var $form = $(this).parents('form');
 	var id = $form.find('input[name="id"]').val();
 	var prix_vente = $form.find('input[name="prix_vente"]').val();
+	var poids = $form.find('input[name="poids"]').val();
 	var $payement_cheque = $form.find('input[name="payement_cheque"]');
+	var vrac = $form.find('input[name="vrac"]').val();
 	
 	//alert('id='+id+' prix_vente='+prix_vente);
 	hideModal($(this).parents('div.modal'));
 
+	// update prix_vente and poids
 	updateTable('articles', 'prix_vente', id, prix_vente);
+	updateTable('articles', 'poids', id, poids);
+
 	// record payment by cheque if it is the case
 	if($payement_cheque.prop('checked') == true){
-		updateTable('articles', 'payement_id', id, '2');
+		updateTable('articles', 'payement_id', id, payement_table['chèque']);
 	}
+
+	// if vrac, duplicate article, minus poids
+	/*if(vrac == 1){
+		alert('vrac! article doit être copié!');
+	}*/
 
 	// change select statut_id selection, visible statut selection if article is vendu via table.data 
 	var $tableData = $('body table.data');
@@ -201,7 +207,7 @@ $("body").on('click', '#prixVenteSubmit', function(e){
 		//alert('table.data found');
 		var $tr = $tableData.find("tr[data-id='" + id + "']");
 		if($tr.length){
-			$tr.find('select[name="statut_id"]').val('4');
+			$tr.find('select[name="statut_id"]').val(statut_table['vendu']);
 			$tr.find('select[name="visible"]').val('0');
 			$tr.addClass('vendu');
 		}
@@ -213,7 +219,7 @@ $("body").on('click', '#prixVenteSubmit', function(e){
 			$select_input = $tableEdit.find('select[name="statut_id"]');
 			if($select_input.length){
 				//alert('$select_input found!');
-				$select_input.val('4');
+				$select_input.val(statut_table['vendu']);
 				// show prix_vente tr (set to display:none)
 				var $prix_vente_tr = $tableEdit.find('tr#prixVente');
 				$prix_vente_tr.show();

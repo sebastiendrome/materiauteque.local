@@ -5,7 +5,26 @@
 var supported_types = new RegExp("^\.(jpe?g?|png|gif|s?html?|txt|mp3|m4a|oga?g?|wav|mp4|m4v|webm|ogv|pdf|docx?|msword|odt)$","i");
 var max_upload_size = '<?php echo MAX_UPLOAD_SIZE; ?>';
 var max_upload_bytes = <?php echo MAX_UPLOAD_BYTES; ?>;
+// statut table array, so that relation statut[id]->statut[name] is not hardcoded anywhere and can be changed in DB:
+var statut_table = new Array;
+<?php 
+$statut_table = get_table('statut');
+foreach($statut_table as $k => $v){
+	echo 'statut_table["'.$v['nom'].'"] = "'.$v['id'].'"'.PHP_EOL;
+}
+?>
+
+//alert(statut_table['vendu']);
+var payement_table = new Array;
+<?php 
+$payement_table = get_table('payement');
+foreach($payement_table as $k => $v){
+	echo 'payement_table["'.$v['nom'].'"] = "'.$v['id'].'"'.PHP_EOL;
+}
+?>
+//alert(payement_table['chèque']);
 </script>
+
 <!-- jQuery -->
 <script type="text/javascript" src="/_code/js/jquery-3.2.1.min.js" charset="utf-8"></script>
 <!-- table sorter -->

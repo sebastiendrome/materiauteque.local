@@ -14,7 +14,8 @@ if( !isset($id) || empty($id) ){
 }
 
 // we'll need to know these fields for item
-$item_data =  get_item_data($id, 'titre, statut_id, prix');
+$item_data =  get_item_data($id, 'titre, statut_id, prix, poids, vrac');
+
 
 // get the suggested 'prix' of the article, we'll pre-fill the 'prix_vente' input with it
 if( isset($_GET['prix']) && $_GET['prix']!=='undefined'){
@@ -41,7 +42,7 @@ if( isset($_GET['previous_id']) && !empty($_GET['previous_id']) && $_GET['previo
 
 <?php
 // if article is already 'vendu', just show message
-if($previous_statut_id == '4'){
+if($previous_statut_id == name_to_id('vendu', 'statut') ){
 	echo '<form name="prixDeVente" id="prixDeVente" action="/_code/php/admin/admin_ajax.php" method="post" style="margin:0 !important;">
 	<h3 class="warning">Cet article a déjà été vendu.</h3>
 	<input type="hidden" name="previous_id" value="'.$previous_statut_id.'">
@@ -63,7 +64,17 @@ if($previous_statut_id == '4'){
 		<input type="hidden" name="id" value="<?php echo $id; ?>">
 		<input type="hidden" name="previous_id" value="<?php echo $previous_statut_id; ?>">
 		<input type="hidden" name="prix" value="<?php echo $prix; ?>">
-		<h3>Prix de vente: <input type="text" style="width:60px; min-width:60px; text-align:right;" name="prix_vente" value="<?php echo str_replace('.' ,',' ,$prix); ?>" placeholder="0,00"> €</h3>
+		<input type="hidden" name="vrac" value="<?php echo $item_data['vrac']; ?>">
+		<table>
+		<tr>
+		<td>Prix de vente:</h3></td>
+		<td><input type="text" style="width:60px; min-width:60px; text-align:right;" name="prix_vente" value="<?php echo str_replace('.' ,',' ,$prix); ?>" placeholder="0,00" required> €</td>
+		</tr>
+		<tr>
+		<td>Poids:</td>
+		<td><input type="text" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo str_replace('.' ,',' ,$item_data['poids']); ?>" placeholder="0,000" required> Kg</td>
+		</tr>
+		</table>
 		<input type="checkbox" id="payement_cheque" name="payement_cheque" value="2" style="margin-left:0;"> <label for="payement_cheque">Payement par chèque</label> 
 		<h3><button type="submit" name="prixVenteSubmit" id="prixVenteSubmit" class="vente" style="width:100%; margin-left:0;">Enregistrer la vente</button></h3>
 		<!--<a href="javascript:;" class="annuler button left hideModal">Annuler</a>-->
@@ -72,7 +83,7 @@ if($previous_statut_id == '4'){
 		<h3 style="text-align:center; margin:20px 0; clear:both;"> —— OU —— </h3>
 
 	<span style="color:#383838; font-weight:bold; font-size:larger;">Vente partielle:</span> 
-	<a href="/_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>" class="button left">Scinder l'article en deux</a>
+	<a href="/_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left">Scinder l'article en deux</a>
 
 	<!--
 	<div style="border-top:1px solid #ddd; margin:20px 0;"></div>

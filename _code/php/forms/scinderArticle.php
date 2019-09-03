@@ -6,7 +6,17 @@ if( !defined("ROOT") ){
 }
 
 // set $article_form_context for edit_article_table.php vars
-$article_form_context = 'scinder';
+$context_1 = $context_2 = 'scinder'; // = $article_form_context for each form
+$pour_la_vente = $vente_style = '';
+$part_1 = 'Partie 1 (Original)';
+$part_2 = 'Partie 2 (Copie)';
+if( isset($_GET['vendre']) ){
+	$context_2 = 'vente'; // $article_form_context for 2nd form
+	$pour_la_vente = ' pour la vente';
+	$vente_style = ' style="background-color:rgb(242,202,58);"';
+	$part_1 = 'Partie <u>Restante</u>';
+	$part_2 = 'Partie <u>Vendue</u>';
+}
 
 if( isset($_GET['article_id']) ){
 	$article_id = urldecode($_GET['article_id']);
@@ -47,7 +57,7 @@ if( isset($message) && !empty($message) ){
 }
 
 if( !isset($title) ){
-	$title = ' Scinder un article en 2';
+	$title = ' Scinder un article en 2'.$pour_la_vente;
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
 	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
@@ -83,9 +93,10 @@ if( !isset($article_id) || empty($article_id) ){
 
 
 <form name="article_original" id="original" action="?article_id=<?php echo $article_id; ?>" method="post">
-<h3>Partie 1 (Original)</h3>
+<h3><?php echo $part_1; ?></h3>
 	
 	<?php
+	$article_form_context = $context_1;
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
 
@@ -99,11 +110,12 @@ if( !isset($article_id) || empty($article_id) ){
 
 
 
-<form name="article_copy" id="copy" action="?article_id=<?php echo $article_id; ?>" method="post">
-	<h3>Partie 2 (Copie)</h3>
+<form name="article_copy" id="copy" action="?article_id=<?php echo $article_id; ?>" method="post"<?php echo $vente_style; ?>>
+	<h3><?php echo $part_2; ?></h3>
 
 	<?php
 	$item_data = $item_data_copy;
+	$article_form_context = $context_2;
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
 

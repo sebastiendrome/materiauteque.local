@@ -182,6 +182,12 @@ table td{
 	padding:3px;
 	vertical-align: top;
 }
+
+/* table in prixVenteModal, showing "prix de vente" et "poids" user inputs */ 
+div#prixVenteModal table{width:100%; font-size:larger; margin-bottom:10px;}
+div#prixVenteModal table td{width:50%;}
+div#prixVenteModal table tr td:first-child{text-align:right;}
+
 tr.top td{
 	font-weight:bold;
 }

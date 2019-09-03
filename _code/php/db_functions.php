@@ -325,7 +325,8 @@ function insert_new($table, $item_data){
 		$string_keys = implode(',', $array_keys);
 		$string_values = implode(',', $array_values);
 	}
-		
+	
+	// debug
 	//echo '<pre>'.__FUNCTION__.PHP_EOL.$string_keys.PHP_EOL.$string_values.'</pre>';
 	
 	if(mysqli_query($db, "INSERT INTO $table (".$string_keys.") VALUES (".$string_values.")")){
@@ -924,11 +925,11 @@ function show_article($item_array){
 		$poids = str_replace($matches[0], '', $poids);
 	}
 	// item statut
-	if($item_array['statut_id'] == 1){ 		// disponible
+	if( $item_array['statut_id'] == name_to_id('disponible', 'statut') ){ 	// disponible
 		$statut = 'success';
-	}elseif($item_array['statut_id'] == 2){ // réservé
+	}elseif($item_array['statut_id'] == name_to_id('réservé', 'statut') ){ 	// réservé
 		$statut = 'note';
-	}else{ 									// vendu, transféré, rejeté
+	}else{ 																	// vendu, transféré, rejeté
 		$statut = 'error';
 	}
 	

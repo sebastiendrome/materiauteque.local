@@ -9,10 +9,12 @@ if(!isset($article_form_context)){
 }
 
 // set required fields, depending on article_form_context
+$prix_input_name = 'prix';
 if($article_form_context == 'search'){
 	$required = array(); // nothing is required
 }elseif($article_form_context == 'vente'){
-	$required = array('titre', 'prix', 'categories_id', 'matieres_id', 'poids');
+	$prix_input_name = 'prix_vente';
+	$required = array('titre', 'prix_vente', 'categories_id', 'matieres_id', 'poids');
 }else{
 	$required = array('titre', 'descriptif', 'categories_id', 'matieres_id', 'poids'); // default
 }
@@ -191,10 +193,10 @@ if(!isset($matieres)){
 
 		
 		<tr>
-		<td>Prix:<td><input type="number" min="0" name="prix" step="any" value="<?= $item_data['prix'] ?? '' ?>"<?php echo in_array('prix', $required) ? " required" : ""; ?>>
+		<td><?php echo ucwords($prix_input_name); ?>:<td><input type="number" min="0" step="any" name="<?php echo $prix_input_name; ?>" value="<?= $item_data['prix'] ?? '' ?>"<?php echo in_array($prix_input_name, $required) ? " required" : ""; ?>>
 		
 		<tr>
-		<td>Poids (Kg):<td><input type="number" min="0" name="poids"  step="any" value="<?= $item_data['poids'] ?? '' ?>"<?php echo in_array('poids', $required) ? " required" : ""; ?>>
+		<td>Poids (Kg):<td><input type="number" min="0" step="any" name="poids" value="<?= $item_data['poids'] ?? '' ?>"<?php echo in_array('poids', $required) ? " required" : ""; ?>>
 		
 		<tr>
 		<td>Statut:<td>
@@ -224,8 +226,13 @@ if(!isset($matieres)){
 		?>
 		</select>
 
-		<tr id="prixVente"<?php if(!isset($item_data['statut_id']) || (isset($item_data['statut_id']) && $item_data['statut_id'] !== 6)){echo ' style="display:none;"';} ?>>
-		<td>Prix de vente:<td><input type="number" name="prix_vente" step="any" value="<?= $item_data['prix_vente'] ?? '' ?>">
+		<?php
+		// don't output this prix_vente input if the above defined $prix_input_name is actually already prix_vente! (for scinder un article et créer nouvel article pour le vendre)
+		if($prix_input_name !== 'prix_vente'){ ?>
+			<tr id="prixVente"<?php if(!isset($item_data['statut_id']) || (isset($item_data['statut_id']) && $item_data['statut_id'] !== name_to_id('vendu', 'statut'))){echo ' style="display:none;"';} ?>>
+			<td>Prix de vente:<td><input type="number" name="prix_vente" min="0" step="any" value="<?= $item_data['prix_vente'] ?? '' ?>">
+		<?php }
+		?>
 		
 		<tr>
 		<td>Visible:<td><input type="radio" id="visibleZero" name="visible" value="0"<?php if(isset($item_data['visible']) && $item_data['visible'] == 0){echo ' checked';}?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="visibleOne" name="visible" value="1"<?php if((!isset($item_data['visible']) && $article_form_context !== 'search') || (isset($item_data['visible']) && $item_data['visible'] == 1)){echo ' checked';}?>><label for="1"> oui</label>

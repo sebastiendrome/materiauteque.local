@@ -57,7 +57,7 @@ if( isset($_POST['findArticleSubmitted']) ){
 	echo '</pre>';
 	*/
 	if( !empty($key_val_pairs) ){
-		if( isset($key_val_pairs['statut_id']) && $key_val_pairs['statut_id'] == '4'){
+		if( isset($key_val_pairs['statut_id']) && $key_val_pairs['statut_id'] == name_to_id('vendu', 'statut') ){
 			$include_vendus = TRUE;
 		}else{
 			$include_vendus = FALSE;
