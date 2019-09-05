@@ -70,15 +70,15 @@ if(isset($_POST['create']) && !empty($_POST['newCategory'])){
 	
 	if($error == false){
 		$item_data['nom'] = $newCategory;
-		$item_data['visible'] = 0;
-		$item_data['id_parent'] = $_POST['id_parent'];;
+		$item_data['visible'] = $_POST['visible'];
+		$item_data['id_parent'] = $_POST['id_parent'];
 		if( insert_new($table, $item_data) ){
-			$message = '1|La nouvelle '.$singulier.' <b>'.$newCategory.'</b> has been created.';
+			$message = '1|La nouvelle '.$singulier.' <b>'.$newCategory.'</b> a été créée.';
 			//unset($categories);
 			$categories = get_table($table, 'id_parent=0');
 			$c_count = count($categories);
 		}else{
-			$message = '0|ERROR - La '.$singulier.' <b>'.$newCategory.'</b> n\'a pas pu être créée.';
+			$message = '0|ERREUR - La '.$singulier.' <b>'.$newCategory.'</b> n\'a pas pu être créée.';
 		}
 	}
 }

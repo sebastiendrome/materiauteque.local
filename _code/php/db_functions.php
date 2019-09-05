@@ -265,36 +265,6 @@ function update_table($table, $article_id, $update){
 
 /**** 3. INSERTERS ****/
 
-/*
-function insert_article($item_data){
-	global $db;
-
-	$array_keys = array();
-	foreach($item_data as $k => $v){
-		if( !in_array(strtolower($k), $array_keys) ){
-			$array_keys[] = strtolower($k);
-			if($v !== ''){
-				$array_values[] = "'".filter($v)."'";
-			}else{
-				$array_values[] = 'NULL';
-			}
-		}
-		
-		$string_keys = implode(',', $array_keys);
-		$string_values = implode(',', $array_values);
-	}
-		
-	//echo $string_keys.'<br>'.$string_values.'<br>'; exit;
-	
-	if(mysqli_query($db, "INSERT INTO articles (".$string_keys.") VALUES (".$string_values.")")){
-		echo '1|L\'article #'.mysqli_insert_id($db).' a été ajouté.';
-		return true;
-	}else{
-		echo '0|'.mysqli_error($db);
-		return false;
-	}
-}
-*/
 
 function insert_new($table, $item_data){
 	global $db;
@@ -308,28 +278,24 @@ function insert_new($table, $item_data){
 	}
 
 	foreach($item_data as $k => $v){
-		//if( !in_array(strtolower($k), $array_keys) ){
+		if( ( !empty($v) && !is_numeric($v) ) || $v === '0' ){ // string values that are not empty or '0'
 			$array_keys[] = strtolower($k);
-			if($v !== ''){
-				if( is_numeric($v) ){
-					$array_values[] = $v;
-				}else{
-					$array_values[] = "'".filter($v)."'";
-				}
-				
-			}else{
-				$array_values[] = 'NULL';
-			}
-		//}
-		
-		$string_keys = implode(',', $array_keys);
-		$string_values = implode(',', $array_values);
+			$array_values[] = "'".filter($v)."'";
+		}elseif( !empty($v) || $v === 0 ){		// numeric values that are not empty or = 0
+			$array_keys[] = strtolower($k);
+			$array_values[] = $v;
+		}										// other fields will be skiped (and assumed to be 'allowed NULL' in db table)
 	}
 	
-	// debug
-	//echo '<pre>'.__FUNCTION__.PHP_EOL.$string_keys.PHP_EOL.$string_values.'</pre>';
+	$string_keys = implode(',', $array_keys);
+	$string_values = implode(',', $array_values);
+
+	$q = "INSERT INTO $table (".$string_keys.") VALUES (".$string_values.")";
 	
-	if(mysqli_query($db, "INSERT INTO $table (".$string_keys.") VALUES (".$string_values.")")){
+	// debug
+	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
+
+	if( mysqli_query($db, $q) ){
 		// create images directory if article
 		$new_id = mysqli_insert_id($db);
 		if($table == 'articles'){
@@ -337,6 +303,7 @@ function insert_new($table, $item_data){
 		}
 		return $new_id;
 	}else{
+		log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
 		return false;
 	}
 }
@@ -875,7 +842,25 @@ function scinde_article($original, $copy){
 		$result = '0|Erreur: Le nouvel article n\'a pas pu être créé!';
 	}
 	// save original article
-	$result .= update_table('articles', $o_array['id'], $o_array);
+	$result .= '<br>'.update_table('articles', $o_array['id'], $o_array);
+	return $result;
+}
+
+/* scinde un article vrac en deux pour la vente (from prixVenteModal, #prixVenteSubmit on click) */
+function create_vrac_vente($original_id, $poids_vente, $prix_vente, $payement_id){
+	$item_data = get_item_data($original_id);
+	unset($item_data['id']);
+	unset($item_data['date']);
+	$item_data['prix_vente'] = $prix_vente;
+	$item_data['poids'] = $poids_vente;
+	$item_data['statut_id'] = name_to_id('vendu', 'statut');
+	$item_data['visible'] = 0;
+	$item_data['payement_id'] = $payement_id;
+	if( $new_id = insert_new('articles', $item_data) ){
+		$result = '1|Nouvel article crée, ID:'.$new_id;
+	}else{
+		$result = '0|Erreur: La vente de vrac n\'a pas pu être enregistrée!';
+	}
 	return $result;
 }
 

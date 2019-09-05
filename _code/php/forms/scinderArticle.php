@@ -153,6 +153,7 @@ if($footer){
 $('form#original, form#copy').on("submit", function(e){
 	e.preventDefault();
 });
+
 $("form#dualForm").on("submit", function(e){
 	e.preventDefault();
 	
@@ -165,9 +166,30 @@ $("form#dualForm").on("submit", function(e){
 		url: '/_code/php/admin/admin_ajax.php',
 		type: "POST",
 		data: {original, copy},
-		// on success show message
+		
+		// on success show message 
+		// db_function.php scinde_article() returns 2 results separated with <br>, so split them into 2 to format each one...
 		success : function(msg) {
-			$('#formsContainer').html(msg);
+			var ms = msg.split("<br>");
+			var msg_1; 
+			var msg_2;
+			var m_1 = ms[0].substr(0, 2);
+			if(m_1 == '0|'){
+				msg_1 = '<p class="error">'+ms[0].substr(2)+'</p>';
+			}else if(m_1 == '1|'){
+				msg_1 = '<p class="success">'+ms[0].substr(2)+'</p>';
+			}else if(m_1 == '2|'){
+				msg_1 = '<p class="note">'+ms[0].substr(2)+'</p>';
+			}
+			var m_2 = ms[1].substr(0, 2);
+			if(m_2 == '0|'){
+				msg_2 = '<p class="error">'+ms[1].substr(2)+'</p>';
+			}else if(m_2 == '1|'){
+				msg_2 = '<p class="success">'+ms[1].substr(2)+'</p>';
+			}else if(m_2 == '2|'){
+				msg_2 = '<p class="note">'+ms[1].substr(2)+'</p>';
+			}
+			$('#formsContainer').html(msg_2+msg_1);
 			return true;
 		}
 	});

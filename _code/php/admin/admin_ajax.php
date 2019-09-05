@@ -50,6 +50,15 @@ if( isset($_POST['original']) ){
 	$result = scinde_article($original, $copy);
 }
 
+// create varc vente
+if( isset($_GET['vrac_vente']) ){
+	$original_id = $_GET['original_id'];
+	$poids_vente = $_GET['poids_vente'];
+	$prix_vente = $_GET['prix_vente'];
+	$payement_id = $_GET['payement_id'];
+	$result = create_vrac_vente($original_id, $poids_vente, $prix_vente, $payement_id);
+}
+
 // show popup to edit table content
 if( isset($_GET['editPopup']) ){
 	$table = urldecode($_GET['table']);

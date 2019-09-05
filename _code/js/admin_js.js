@@ -1,7 +1,8 @@
 
 /***** functions *****************************************************/
 
-// save sql data ( ajax call, uses php function update_table() )
+// save sql data ( ajax call, uses php function update_table() ) 
+/*  !!!!! allows only one update per call - should pass arrays in col(s) and value(s)? */
 function updateTable(table, col, id, value){
 	$.ajax({
 		// Server script to process the upload
@@ -179,56 +180,102 @@ $("body").on('click', '#prixVenteSubmit', function(e){
 	e.preventDefault();
 	var $form = $(this).parents('form');
 	var id = $form.find('input[name="id"]').val();
-	var prix_vente = $form.find('input[name="prix_vente"]').val();
-	var poids = $form.find('input[name="poids"]').val();
 	var $payement_cheque = $form.find('input[name="payement_cheque"]');
 	var vrac = $form.find('input[name="vrac"]').val();
+	var prix_vente = $form.find('input[name="prix_vente"]').val();
+	prix_vente = prix_vente.replace(',','.');
+	var poids = $form.find('input[name="poids"]').val();
+	poids = poids.replace(',','.');
+	var old_poids = $form.find('input[name="old_poids"]').val();
+	old_poids= old_poids.replace(',','.');
+	var new_poids = parseFloat(old_poids)-parseFloat(poids);
+
+	if($payement_cheque.prop('checked') == true){
+		var payement_id = payement_table['chèque'];
+	}else{
+		var payement_id = payement_table['espèces'];
+	}
 	
-	//alert('id='+id+' prix_vente='+prix_vente);
+	//alert(new_poids);
+	
+	// hide modal
 	hideModal($(this).parents('div.modal'));
 
-	// update prix_vente and poids
-	updateTable('articles', 'prix_vente', id, prix_vente);
-	updateTable('articles', 'poids', id, poids);
+	// if vrac, duplicate article vendu, update original minus poids vente
+	if(vrac == 1/* && new_poids > 0*/){
+		// ajax call (that will use db_function create_vrac_vente() to create new artcile vendu)
+		$.ajax({
+			// Server script to process the upload
+			url: '/_code/php/admin/admin_ajax.php?vrac_vente&original_id='+id+'&poids_vente='+poids+'&prix_vente='+prix_vente+'&payement_id='+payement_id,
+			type: 'GET',
 
-	// record payment by cheque if it is the case
-	if($payement_cheque.prop('checked') == true){
-		updateTable('articles', 'payement_id', id, payement_table['chèque']);
-	}
+			// on success
+			success : function(msg) {
 
-	// if vrac, duplicate article, minus poids
-	/*if(vrac == 1){
-		alert('vrac! article doit être copié!');
-	}*/
+				// see if message is success (1|) ou error (0|)
+				var ms = msg.substr(0,2);
+				if(ms == '1|'){
+					updateTable('articles', 'poids', id, new_poids);
+				}else{
+					if(ms == '0|'){
+						msg = '<p class="error">'+msg.substr(2)+'</p>';
+					}else if(ms == '2|'){
+						msg = '<p class="note">'+msg.substr(2)+'</p>';
+					}
+					$('#done').html(msg);
+				}
+			},
 
-	// change select statut_id selection, visible statut selection if article is vendu via table.data 
-	var $tableData = $('body table.data');
-	if($tableData.length){
-		//alert('table.data found');
-		var $tr = $tableData.find("tr[data-id='" + id + "']");
-		if($tr.length){
-			$tr.find('select[name="statut_id"]').val(statut_table['vendu']);
-			$tr.find('select[name="visible"]').val('0');
-			$tr.addClass('vendu');
-		}
+			// Custom XMLHttpRequest
+			xhr: function() {
+				var myXhr = $.ajaxSettings.xhr();
+				//alert(myXhr);
+				return myXhr;
+			}
+		});
+
+
 	}else{
-		// change select statut_id selection if edit_article_table.php was included
-		var $tableEdit = $('table.editArticle');
-		if($tableEdit.length){
-			//alert('YES table.editArticle');
-			$select_input = $tableEdit.find('select[name="statut_id"]');
-			if($select_input.length){
-				//alert('$select_input found!');
-				$select_input.val(statut_table['vendu']);
-				// show prix_vente tr (set to display:none)
-				var $prix_vente_tr = $tableEdit.find('tr#prixVente');
-				$prix_vente_tr.show();
-				// set its value to the prix_vente used above
-				var $prix_vente_input = $prix_vente_tr.find('input[name="prix_vente"]');
-				//alert(prix_vente);
-				$prix_vente_input.val(parseFloat(prix_vente.replace(",", ".")));
+
+		// update prix_vente and poids
+		updateTable('articles', 'prix_vente', id, prix_vente);
+		updateTable('articles', 'poids', id, poids);
+
+		// record payment by cheque if it is the case
+		if($payement_cheque.prop('checked') == true){
+			updateTable('articles', 'payement_id', id, payement_id);
+		}
+
+		// DOM updates in html: select statut_id selection, visible statut selection if article is vendu via table.data 
+		var $tableData = $('body table.data');
+		if($tableData.length){
+			//alert('table.data found');
+			var $tr = $tableData.find("tr[data-id='" + id + "']");
+			if($tr.length){
+				$tr.find('select[name="statut_id"]').val(statut_table['vendu']);
+				$tr.find('select[name="visible"]').val('0');
+				$tr.addClass('vendu');
+			}
+		}else{
+			// change select statut_id selection if edit_article_table.php was included
+			var $tableEdit = $('table.editArticle');
+			if($tableEdit.length){
+				//alert('YES table.editArticle');
+				$select_input = $tableEdit.find('select[name="statut_id"]');
+				if($select_input.length){
+					//alert('$select_input found!');
+					$select_input.val(statut_table['vendu']);
+					// show prix_vente tr (set to display:none)
+					var $prix_vente_tr = $tableEdit.find('tr#prixVente');
+					$prix_vente_tr.show();
+					// set its value to the prix_vente used above
+					var $prix_vente_input = $prix_vente_tr.find('input[name="prix_vente"]');
+					//alert(prix_vente);
+					$prix_vente_input.val(parseFloat(prix_vente.replace(",", ".")));
+				}
 			}
 		}
+
 	}
 });
 
@@ -406,26 +453,7 @@ $('body').on('click', '#uploadFileSubmit', function(e){
 		// on success, reload page with upload_result message
 		success : function(msg) {
 			var url = window.location.protocol+'//'+window.location.hostname+window.location.pathname;
-			
-			// for inserting uploaded image in edit_text.php, call insertImg function and hide Modal
-			/*if(window.location.pathname == '/_code/php/admin/article_id.php'){
-				var error = msg.match(/^0\|/);
-				if(error == null){
-					insertImg(msg);
-					hideModal($('#uploadFileInsertContainer'));
-				}else{
-					msg = msg.replace("0|", 'Error: ');
-					$('#result').html('<p class="error">'+msg+'</p>');
-				}
-				$('button#uploadFileSubmit').css({'opacity':1,'cursor':'pointer'}); 
-				$('div.progress').hide();
-
-				return true;
-			
-			// for uploading file (both in manage_contents and preferences-bg-image), reload page with message
-			}else{*/
-				window.location = url+'?upload_result='+encodeURIComponent(msg);
-			//}
+			window.location = url+'?upload_result='+encodeURIComponent(msg);
 		},
 
 		// Custom XMLHttpRequest

@@ -65,6 +65,7 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 		<input type="hidden" name="previous_id" value="<?php echo $previous_statut_id; ?>">
 		<input type="hidden" name="prix" value="<?php echo $prix; ?>">
 		<input type="hidden" name="vrac" value="<?php echo $item_data['vrac']; ?>">
+		<input type="hidden" name="old_poids" value="<?php echo $item_data['poids']; ?>">
 		<table>
 		<tr>
 		<td>Prix de vente:</h3></td>

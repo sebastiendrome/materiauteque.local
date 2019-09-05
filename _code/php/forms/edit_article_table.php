@@ -235,7 +235,8 @@ if(!isset($matieres)){
 		?>
 		
 		<tr>
-		<td>Visible:<td><input type="radio" id="visibleZero" name="visible" value="0"<?php if(isset($item_data['visible']) && $item_data['visible'] == 0){echo ' checked';}?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="visibleOne" name="visible" value="1"<?php if((!isset($item_data['visible']) && $article_form_context !== 'search') || (isset($item_data['visible']) && $item_data['visible'] == 1)){echo ' checked';}?>><label for="1"> oui</label>
+		<td>Visible:
+			<td><input type="radio" id="visibleZero" name="visible" value="0"<?php if( (isset($item_data['visible']) && $item_data['visible'] == 0) || (!isset($item_data['visible']) &&  $article_form_context == 'vente') ){echo ' checked';}?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="visibleOne" name="visible" value="1"<?php if( (!isset($item_data['visible']) && $article_form_context !== 'search' && $article_form_context !== 'vente') || (isset($item_data['visible']) && $item_data['visible'] == 1) ){echo ' checked';}?>><label for="1"> oui</label>
 		</select>
 		
 		<tr>
