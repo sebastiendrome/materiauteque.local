@@ -1,0 +1,11 @@
+CREATE TABLE `paniers` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `date` int(11) DEFAULT NULL,
+  `nom` text NOT NULL,
+  `paiement_id` int(11) NOT NULL DEFAULT '1',
+  `total` decimal(19,2) DEFAULT NULL,
+  `poids` decimal(19,3) DEFAULT NULL,
+  `date_vente` int(11) DEFAULT NULL,
+  `statut` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0=en attente, 1=vendu',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

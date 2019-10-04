@@ -1,0 +1,21 @@
+CREATE TABLE `articles` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `titre` text NOT NULL,
+  `descriptif` text,
+  `vrac` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0=non, 1=oui',
+  `categories_id` int(3) NOT NULL,
+  `sous_categories_id` int(3) DEFAULT NULL,
+  `matieres_id` int(3) NOT NULL,
+  `sous_matieres_id` int(3) DEFAULT NULL,
+  `statut_id` int(2) NOT NULL DEFAULT '1',
+  `poids` decimal(19,3) NOT NULL,
+  `prix` decimal(19,2) DEFAULT NULL COMMENT 'prix conséillé, ou vide=prix libre',
+  `visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0=invisible, 1=visible',
+  `observations` text,
+  `panier_id` int(11) DEFAULT NULL,
+  `date` int(11) NOT NULL,
+  `date_vente` int(11) DEFAULT NULL,
+  `etiquette` varchar(20) DEFAULT NULL COMMENT 'pas utilisé, pour plus tard',
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `titre` (`titre`,`descriptif`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
