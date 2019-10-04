@@ -14,8 +14,8 @@ if( isset($_GET['vendre']) ){
 	$context_2 = 'vente'; // $article_form_context for 2nd form
 	$pour_la_vente = ' pour la vente';
 	$vente_style = ' style="background-color:rgb(242,202,58);"';
-	$part_1 = 'Partie <u>Restante</u>';
-	$part_2 = 'Partie <u>Vendue</u>';
+	$part_1 = 'Partie <u>restante</u>';
+	$part_2 = 'Partie <u>à vendre</u>';
 }
 
 if( isset($_GET['article_id']) ){
@@ -69,6 +69,9 @@ if( !isset($title) ){
 	<div class="adminHeader">
 	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
+
+	$paniers = get_table('paniers', 'statut=0', 'date DESC');
+	include(ROOT.'_code/php/forms/paniersModal.php');
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
@@ -129,10 +132,10 @@ if( !isset($article_id) || empty($article_id) ){
 <div class="clearBoth"></div>
 
 <div style="text-align:center;">
-	<form name="dualForm" id="dualForm" action="" method="post">
+	<form name="dualForm" id="dualForm" action="" method="post" style="display:block;">
 	<input type="hidden" name="scinderFormSubmitted" id="scinderFormSubmitted" value="submitted">
-	<a href="" class="button">Annuler</a>
-	<button type="submit" name="editArticleSubmit" id="editArticleSubmit">Enregistrer les modifications</button>
+	<!--<a href="" class="button">Annuler</a>-->
+	<button type="submit" name="editArticleSubmit" id="editArticleSubmit" style="margin-left:0; width: calc( 100% - 22px );">Enregistrer les modifications<?php if( isset($_GET['vendre']) ){echo ' + vendre la partie de droite';} ?></button>
 	</form>
 </div>
 
@@ -156,12 +159,45 @@ $('form#original, form#copy').on("submit", function(e){
 
 $("form#dualForm").on("submit", function(e){
 	e.preventDefault();
+
+	var error = false;
+	// make sure all required fields have a value (original article)
+	$required_1 = $('form#original').find('input, select, textarea').filter('[required]');
+	$required_1.each(function( index ) {
+		if( !$(this).val().length ){
+			error = true;
+			$(this).focus();
+			return false; // break the loop
+		}
+	});
+
+	if(error){
+		return false; // stop the execution of the function
+	}
+
+	// make sure all required fields have a value (article to copy)
+	$required_2 = $('form#copy').find('input, select, textarea').filter('[required]');
+	$required_2.each(function( index ) {
+		if( !$(this).val().length ){
+			error = true;
+			$(this).focus();
+			return false; // break the loop
+		}
+	});
+	
+	if(error){
+		return false; // stop the execution of the function
+	}
 	
 	var original = $('form#original').serializeArray();
 	var copy = $('form#copy').serializeArray();
-	//console.log( original );
-	//console.log('--------------------------------------------------------------');
-	//console.log(copy);
+	
+	// debug
+	/*
+	console.log( original );
+	console.log('--------------------------------------------------------------');
+	console.log(copy);
+	*/
 	$.ajax({
 		url: '/_code/php/admin/admin_ajax.php',
 		type: "POST",
@@ -170,26 +206,64 @@ $("form#dualForm").on("submit", function(e){
 		// on success show message 
 		// db_function.php scinde_article() returns 2 results separated with <br>, so split them into 2 to format each one...
 		success : function(msg) {
-			var ms = msg.split("<br>");
-			var msg_1; 
-			var msg_2;
-			var m_1 = ms[0].substr(0, 2);
-			if(m_1 == '0|'){
-				msg_1 = '<p class="error">'+ms[0].substr(2)+'</p>';
-			}else if(m_1 == '1|'){
-				msg_1 = '<p class="success">'+ms[0].substr(2)+'</p>';
-			}else if(m_1 == '2|'){
-				msg_1 = '<p class="note">'+ms[0].substr(2)+'</p>';
+			var error = false;
+			var msg_1, msg_2;
+			var ms_array = msg.split("<br>");
+			var err_1 = ms_array[0].substr(0, 2);
+			if(err_1 == '0|'){
+				error = true;
+				msg_1 = '<p class="error">'+ms_array[0].substr(2)+'</p>';
+			}else if(err_1 == '1|'){
+				msg_1 = '<p class="success">'+ms_array[0].substr(2)+'</p>';
+				// match new article ID from result message
+				var newId = ms_array[0].match(/\d*$/);
+				//alert(newId);
+			}else if(err_1 == '2|'){
+				msg_1 = '<p class="note">'+ms_array[0].substr(2)+'</p>';
 			}
-			var m_2 = ms[1].substr(0, 2);
-			if(m_2 == '0|'){
-				msg_2 = '<p class="error">'+ms[1].substr(2)+'</p>';
-			}else if(m_2 == '1|'){
-				msg_2 = '<p class="success">'+ms[1].substr(2)+'</p>';
-			}else if(m_2 == '2|'){
-				msg_2 = '<p class="note">'+ms[1].substr(2)+'</p>';
+			var err_2 = ms_array[1].substr(0, 2);
+			if(err_2 == '0|'){
+				error = true;
+				msg_2 = '<p class="error">'+ms_array[1].substr(2)+'</p>';
+			}else if(err_2 == '1|'){
+				msg_2 = '<p class="success">'+ms_array[1].substr(2)+'</p>';
+			}else if(err_2 == '2|'){
+				msg_2 = '<p class="note">'+ms_array[1].substr(2)+'</p>';
 			}
-			$('#formsContainer').html(msg_2+msg_1);
+
+			/* we need to know if
+			we're just duplicating an article
+			or 
+			duplicating an article FOR SELLING IT
+			If we're duplicating FOR SELLING, we need to know 
+				- the ID of the article to sale
+				- display vente-paniers.php
+			*/
+			<?php
+			if( isset($_GET['vendre']) ){ // we're selling, show vente-paniers.php, perpend new article creation message ('Nouvel article crée, ID:XXXX')
+			?>
+				if(!error){
+					// now we need to display a forms that will allow us to sell the new article
+					$('form#original').remove();
+					$('form#dualForm').remove();
+					$('form#copy h3').after(msg_1);
+					$('form#copy').append('<input type="hidden" name="old_poids" value="0">');
+					// update article id in form!
+					$('form#copy input[name="id"]').val(newId);
+					$('form#copy table.editArticle').hide();
+					$('form#copy div#loader').load('/_code/php/forms/vente-paniers.php', function(){
+						$(this).css('padding', '10px');
+					});
+				}else{
+					$('#formsContainer').html(msg_1+msg_2);
+				}
+			<?php
+			}else{ // we're not
+			?>
+			$('#formsContainer').html(msg_1+msg_2);
+			<?php
+			}
+			?>
 			return true;
 		}
 	});

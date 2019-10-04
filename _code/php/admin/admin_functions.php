@@ -78,7 +78,6 @@ function FileSizeConvert($bytes){
 
 
 
-
 /*********** 2: DISPLAY FUNCTIONS (FUNCTIONS THAT OUTPUT HTML MARKUP) ***************/
 
 // display file
@@ -150,6 +149,63 @@ function display_file_admin($path, $file_name){
 		$display_file = '<p class="error">Cannot display '.$path.$file_name.'</p>';
 	}
 	return $display_file;
+}
+
+function display_paniers($paniers){
+	if( empty($paniers) ){
+		return false;
+	}
+	$output = $last = '';
+	$i = 0;
+	$p_count = count($paniers);
+	foreach($paniers as $p){
+		$i++;
+		if($i == $p_count){
+			$last = ' last'; // css class that will change the last drop-down ul
+		}
+		$poids_total = $a_count = 1;
+		$a_out = '';
+		if( $articles = get_panier_articles($p['id']) ){
+			$a_count = count($articles);
+			foreach($articles as $a){
+				$ima = get_article_images($a['id'],'_S');
+				if( !empty($ima) ){
+					$imgCont = '<div class="imgCont" style="background-image:url(/'.$ima[0].');">&nbsp;</div>';
+					$particle_style = '';
+				}else{
+					$imgCont = '';
+					$particle_style = ' style="border-left-width:51px; padding-left:7px;"';
+				}
+				$a_out .= '<div class="particle"'.$particle_style.' data-articleid="'.$a['id'].'">'.$imgCont.$a['titre'].', '.str_replace('.', ',', $a['poids']).' kg</div>';
+				$poids_total =+ $a['poids'];
+			}
+
+			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-poids="'.$poids_total.'">';
+			$output .= '<div class="title"><b class="n">'.$p['nom'].'</b></div>
+			'.$a_count.' articles, '. str_replace('.', ',', $poids_total).' kg<br>
+			'.$a_out;
+			$output .= '<p class="n">Prix:<input type="text" style="width:60px; min-width:60px; text-align:right;" name="prix" id="prixVentePanier" value="" placeholder="0,00" required>&nbsp;€&nbsp;&nbsp;
+			<span style="white-space:nowrap;"><input type="checkbox" id="paiement_id" name="paiement_id" value="2"> <label for="paiement_id">paiement par chèque</label></span></p>';
+			$output .= '<div class="moreOptions"><a href="javascript:;" class="dots">• • •</a><ul class="statutActions'.$last.'">';
+			if( !isset($statut_array) ){
+				$statut_array = get_table('statut');
+			}
+			foreach($statut_array as $st){
+				if($st['nom'] !== 'disponible' && $st['nom'] !== 'vendu'){
+					$output .= '<li><a href="javascript:;" data-statut="'.$st['id'].'">'.$st['nom'].'</a></li>';
+				}
+			}
+			$output .= '</ul></div>';
+			$output .= '<a href="javascript:;" class="button vente right ventePanierSubmit disabled">Enregistrer la vente</a>';
+			
+		}else{
+			$output .= '<div class="title"><b>'.$p['nom'].'</b></div>
+			<i>vide</i> <a href="javascript:;" class="button remove right">supprimer</a>';
+		}
+		$output .= '<div class="clearBoth"></div>
+		</div>';
+	}
+	return $output;
 }
 
 /*********** 3: ACTIVE FUNCTIONS (FUNCTIONS THAT CHANGE THE Content) ***************/

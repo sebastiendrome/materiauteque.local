@@ -52,14 +52,7 @@ if( isset($social_image) && !empty($social_image) ){ ?>
 
 <!-- generic css -->
 <link href="/_code/css/common.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
-<!-- generic css -->
-<link href="/_code/css/layout.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
 
-
-<style type="text/css">
-/* limit container width depending on screen size and resulting SIZE var defined in first_include. */
-#content{max-width:<?php echo $_POST['sizes'][substr(SIZE,1)]['width']; ?>px;}
-</style>
 
 <!-- load responsive design style sheets -->
 <link rel="stylesheet" media="(max-width: 980px)" href="/_code/css/max-980px.css?v=<?php echo $version; ?>">

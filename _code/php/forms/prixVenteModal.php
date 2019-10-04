@@ -13,6 +13,8 @@ if( !isset($id) || empty($id) ){
 	exit;
 }
 
+$paniers = get_table('paniers', 'statut=0', 'date DESC');
+
 // we'll need to know these fields for item
 $item_data =  get_item_data($id, 'titre, statut_id, prix, poids, vrac');
 
@@ -60,60 +62,34 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 	}
 	?>
 	<form name="prixDeVente" id="prixDeVente" action="/_code/php/admin/admin_ajax.php" method="post">
-	<?php echo '<div class="'.$class.'" style="background-image:url(/'.$img.');"><h3>'.$item_data['titre'].'</h3></div>'; ?>
+	<?php 
+	echo '<div class="'.$class.'" style="background-image:url(/'.$img.');">
+	<h3>'.$item_data['titre'].'</h3>
+	</div>'; ?>
 		<input type="hidden" name="id" value="<?php echo $id; ?>">
-		<input type="hidden" name="previous_id" value="<?php echo $previous_statut_id; ?>">
-		<input type="hidden" name="prix" value="<?php echo $prix; ?>">
 		<input type="hidden" name="vrac" value="<?php echo $item_data['vrac']; ?>">
 		<input type="hidden" name="old_poids" value="<?php echo $item_data['poids']; ?>">
-		<table>
-		<tr>
-		<td>Prix de vente:</h3></td>
-		<td><input type="text" style="width:60px; min-width:60px; text-align:right;" name="prix_vente" value="<?php echo str_replace('.' ,',' ,$prix); ?>" placeholder="0,00" required> €</td>
-		</tr>
-		<tr>
-		<td>Poids:</td>
-		<td><input type="text" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo str_replace('.' ,',' ,$item_data['poids']); ?>" placeholder="0,000" required> Kg</td>
-		</tr>
-		</table>
-		<input type="checkbox" id="payement_cheque" name="payement_cheque" value="2" style="margin-left:0;"> <label for="payement_cheque">Payement par chèque</label> 
-		<h3><button type="submit" name="prixVenteSubmit" id="prixVenteSubmit" class="vente" style="width:100%; margin-left:0;">Enregistrer la vente</button></h3>
-		<!--<a href="javascript:;" class="annuler button left hideModal">Annuler</a>-->
+		<input type="hidden" name="old_prix" value="<?php echo $item_data['prix']; ?>">
+		<input type="hidden" name="titre" value="<?php echo $item_data['titre']; ?>">
+		
+		<p>
+		Poids:
+		<input type="text" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo str_replace('.' ,',' ,$item_data['poids']); ?>" placeholder="0,000" required> Kg</p>
 
+		
+		<?php require(ROOT.'_code/php/forms/vente-paniers.php'); ?>
+		
+		
 		<p>&nbsp;</p>
 		<h3 style="text-align:center; margin:20px 0; clear:both;"> —— OU —— </h3>
 
 	<span style="color:#383838; font-weight:bold; font-size:larger;">Vente partielle:</span> 
-	<a href="/_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left">Scinder l'article en deux</a>
+	<a href="/_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left scinder">Scinder l'article en 2</a>
 
-	<!--
-	<div style="border-top:1px solid #ddd; margin:20px 0;"></div>
-	<a href="javascript:;" class="button annuler left">Annuler</a>
-
-	</div>
-	-->
 	</form>
 
 </div>
 <!-- update to vendu, add prix de vente END -->
 
-	
-<script type="text/javascript">
-// when 'annuler' or the div.overlay are clicked, put the select input back to its previous state
-$('body').on('click', 'a.annuler, div.overlay', function(e){
-	e.preventDefault();
-	$tr = $("table.data[data-id=<?php echo $table; ?>]").find("tr[data-id=<?php echo $id; ?>]");
-	if( $tr ){
-		var $select = $tr.find('select[name=statut_id]');
-		if( $select ){
-			var prev = $('form#prixDeVente input[name=previous_id]').val();
-			//alert('current: '+$select.val()+', previous: '+prev);
-			$select.val(prev);
-		}
-	}
-	hideModal($(this));
-});
-
-</script>
 
 <?php } ?>

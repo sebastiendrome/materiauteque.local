@@ -6,6 +6,8 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
 
+$paniers = get_table('paniers', 'statut=0', 'date DESC');
+
 /*
 // process form POST data (simple search)
 if( isset($_POST['simpleSearch']) ){
@@ -65,9 +67,9 @@ if( isset($_POST['findArticleSubmitted']) ){
 }
 
 // process form POST data (create article)
-if( isset($_POST['newArticleSubmitted']) ){
+if( isset($_POST['form2Submitted']) ){
 	foreach($_POST as $k => $v){
-		if($k !== 'newArticleSubmitted' && $k !== 'newArticleSubmit' && $k !== 'types' && $k !== 'sizes'){
+		if($k !== 'form2Submitted' && $k !== 'types' && $k !== 'sizes'){
 			$new_item_data[$k] = trim($v);
 		}
 	}
@@ -105,6 +107,10 @@ if( !isset($title) ){
 	<div class="adminHeader">
 	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
+
+	
+	include(ROOT.'_code/php/forms/paniersModal.php');
+
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
@@ -223,17 +229,17 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 <!-- créer article à vendre start -->
 <form name="newArticle" id="newArticle" action="" method="post" style="display:inline-block; float:left;">
 Si l'article n'existe pas ou est introuvable...
-<h3>Créer l'article vendu:</h3>
+<h3>Créer l'article à vendre:</h3>
 
 	<?php
 	$article_form_context = 'vente';
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
-	
 	<input type="hidden" name="visible" value="0">
 	<input type="hidden" name="date_vente" value="<?php echo time(); ?>">
-	<input type="hidden" name="newArticleSubmitted" id="newArticleSubmitted" value="newArticleSubmitted">
-	<button type="submit" name="newArticleSubmit" id="newArticleSubmit" class="right" >Enregistrer la vente</button>
+	
+	<?php require(ROOT.'_code/php/forms/vente-paniers.php'); ?>
+	
 
 </form>
 <!-- créer article à vendre end -->
@@ -251,3 +257,23 @@ if($footer){
 	echo $message_script;
 }
 ?>
+
+<script type="text/javascript">
+
+// highlight/dim forms
+var $NaForm = $('form#newArticle');
+var $SaForm = $('form#findArticle');
+$NaForm.on('mouseenter', function(){
+	$(this).css('opacity', 1);
+	$SaForm.css('opacity', .5);
+}).on('mouseleave', function(){
+	$SaForm.css('opacity', 1);
+});
+$SaForm.on('mouseenter', function(){
+	$(this).css('opacity', 1);
+	$NaForm.css('opacity', .5);
+}).on('mouseleave', function(){
+	$NaForm.css('opacity', 1);
+});
+
+</script>

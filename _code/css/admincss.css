@@ -1,8 +1,5 @@
 @charset "UTF-8";
 
-input[type=text], textarea{color:#000; border:1px solid #ccc; padding:3px; margin:0;}
-input[type=text]:focus, textarea:focus{border-color:#777;}
-
 #adminContainer{padding:20px; padding-top:10px; clear:both;}
 .adminHeader{position:relative; padding:0 20px;}
 .adminHeader h1{display:inline-block; margin-right:20px;}
@@ -173,15 +170,19 @@ table.data td a.selected{color:#fff;}
 
 
 table{
-	background-color:#ddd;
+	/*background-color:#ddd;*/
 	margin-bottom:15px;
-	border-spacing:1px; border-collapse:separate;
+	border-spacing:0;
+	border:1px solid #ddd;
+	border-bottom:none;
 }
 table td{
 	background-color:#f5f5f5;
 	padding:3px;
 	vertical-align: top;
+	border-bottom:1px solid #ddd;
 }
+table.editArticle tr td:first-of-type{text-align:right;}
 
 /* table in prixVenteModal, showing "prix de vente" et "poids" user inputs */ 
 div#prixVenteModal table{width:100%; font-size:larger; margin-bottom:10px;}
@@ -231,12 +232,92 @@ form, .dpTable {
 }
 
 
-input[type='text'], input[type='number'], input[type='password'], input[type='email'], select, textarea{min-width:300px;}
+/*input[type=text]:focus, textarea:focus{border-color:#777;}*/
+input[type='text'], input[type='number'], input[type='password'], input[type='email'], select, textarea{min-width:300px; color:#000; border:1px solid #ccc; padding:3px; margin:2px 0 2px 4px;}
 textarea[name='descriptif'], textarea[name='observations']{height:70px;}
 
-a.vendre{font-weight:bold; text-align:center; width:calc(100% - 21px);}
-a.vente{background-color:rgb(242,202,58); /*rgb(235, 203, 100);*/}
 
+a.vendre, button.vendre{font-weight:bold; text-align:center; width:calc(100% - 21px);}
+a.vente, button.vente{background-color:rgb(242,202,58); color:#000; text-shadow:none;/*rgb(235, 203, 100);*/}
+button.vente:hover{text-shadow:none;}
 
 div.short{position:relative;}
 div.short div.long{display:none; position:absolute; z-index:1; top:-3px; left:-3px; padding:2px; border:1px solid #ccc; background-color:#ffc; width:auto; height:auto;}
+
+/* paniers */
+div#paniersContainer{
+	position:fixed; z-index:30; top:-1px; right:-1px; 
+	padding:10px; 
+	background-color:#fff; 
+	border:1px solid #888; 
+	border-bottom-left-radius: 3px; 
+	box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+	max-height: calc( 100% - 32px ); 
+	overflow-y:auto;
+	overflow-x:hidden;
+}
+div#paniersContainer a.closeBut{
+	position:fixed; top:10px; right:15px;
+}
+div#paniersContainer a.showPaniers{
+	display: inline-block; padding: 10px; margin: -10px; margin-right:0;
+}
+/*div#paniersTarget{padding:0 5px;}*/
+div.pCont{
+	margin-top:20px; 
+	padding:4px 10px 10px 10px; 
+	border:1px solid #ddd; 
+	min-width:270px;
+	max-width:340px;
+	border-radius:3px; 
+	background-color:#f5f5f5; 
+	clear:both;
+}
+div.pCont div.title{padding:2px 0 10px 2px;}
+div.pCont div.title b{border-bottom:1px solid #000;}
+div.pCont .n{color:#000;}
+div.pCont div.particle{font-size:smaller; border:1px solid #ddd; background-color:#eee; padding:2px 0 2px 57px; margin-bottom:-1px; overflow:auto; clear:both;}
+div.pCont div.imgCont{
+	display:block; float:left; 
+	width:50px; height:40px; 
+	margin:-2px 0 -2px -57px; 
+	background-color:#ccc;
+	background-position:50%; 
+	background-repeat:no-repeat;
+}
+div.pCont div.moreOptions{
+	position:relative;
+	float:right;
+	/*margin-right:10px;*/
+}
+div.moreOptions a.dots{
+	display:inline-block;
+	padding:4px 2px 0 10px; 
+	width:5px; height:31px;
+	font-size:15px; 
+	line-height:7px; 
+	color:#777;
+}
+ul.statutActions{
+	display:none;
+	position:absolute; z-index:30;
+	top:31px; right:-11px;
+	background-color:#fff;border:1px solid #ccc; border-radius:3px;
+	width:auto;
+}
+ul.statutActions.last{
+	top: unset;
+	bottom:31px;
+	/*background-color:red;*/
+}
+ul.statutActions li a{display:block; padding:2px 15px 3px 15px; white-space:nowrap;}
+ul.statutActions li a:hover{background-color: #444; color:#fff; text-decoration:none;}
+a.dots:hover{color:#000; text-decoration:none;}
+/*div.moreOptions:hover ul.statutActions{display:block;}*/ /* done on.click with javascript */
+div.moreOptions:hover a.dots{color:#000;}
+
+span.count{display:inline-block; width:18px; height:18px; line-height:18px; border:1px solid #000; border-radius:18px; text-align:center; background-color: rgb(242,202,58); margin-right:4px;}
+
+
+a.discarded{opacity:.6;}
+a.discarded:hover{opacity:1;}

@@ -7,6 +7,7 @@ if( isset($_SESSION['article_id']) ){
 	unset($_SESSION['article_id']);
 }
 
+$paniers = get_table('paniers', 'statut=0', 'date DESC');
 
 // make sure we get the needed data, if we don't have it already
 if( !isset($categories) || empty($categories) ){
@@ -100,7 +101,7 @@ if($prev ==0){
 	$prev = $pages;
 }
 
-$fields = array('date', 'titre', 'descriptif', 'categories_id', 'observations', 'statut_id', 'visible');
+$fields = array('date', 'titre', 'descriptif', 'categories_id', 'observations', 'statut_id'/*, 'visible'*/);
 $articles = get_items_data($fields, 'all', FALSE, 'all', 'date DESC', $limit, $offset);
 
 $items_table = items_table_output($articles);
@@ -139,12 +140,16 @@ echo '<div id="done">'.$message.'</div>';
 <div class="adminHeader">
 <h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<a href="/_code/php/forms/newArticle.php" class="button add left">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button vente">€ Nouvelle vente</a> <a href="/admin/manage_categories.php?table=categories" class="button edit">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit">Matières</a><!-- <a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
-
+<a href="/_code/php/forms/newArticle.php" class="button add left" title="créer un article">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button vente" title="rechercher ou créer un article à vendre">€ Nouvelle vente</a> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a><!-- <a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
 
 <div class="clearBoth"></div>
 </div>
 <!-- adminHeader end -->
+
+<?php 
+include(ROOT.'_code/php/forms/paniersModal.php');
+?>
+
 
 <!-- start admin container -->
 <div id="adminContainer">

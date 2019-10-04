@@ -66,12 +66,12 @@ if(!$logged_in){
 	<form name="l" id="l" action="'.$form_action.'" method="post">
 	<p>
 	Utilisateur:<br>
-	<input type="text" style="color:#000;" autocorrect="off" autocapitalize="none" name="userName" maxlength="50" autofocus></p>
+	<input type="text" name="userName" style="color:#000; width:240px;" autocorrect="off" autocapitalize="none" maxlength="50" autofocus required></p>
 	<p>
 	Mot de passe:<br>
-	<input type="password" style="color:#000;" name="password">
+	<input type="password" name="password" style="color:#000; width:240px;" required>
 	</p>
-	<input type="submit" name="login" value=" VALIDER ">
+	<input type="submit" name="login" style="width:260px;" value=" VALIDER ">
 	</form>
 
 	<noscript><p style="color:red;">Il semble que JavaScript ne soit pas autorisé par ce navigateur.<br>

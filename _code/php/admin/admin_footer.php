@@ -15,14 +15,21 @@ foreach($statut_table as $k => $v){
 ?>
 
 //alert(statut_table['vendu']);
-var payement_table = new Array;
+var paiement_table = new Array;
 <?php 
-$payement_table = get_table('payement');
-foreach($payement_table as $k => $v){
-	echo 'payement_table["'.$v['nom'].'"] = "'.$v['id'].'"'.PHP_EOL;
+$paiement_table = get_table('paiement');
+foreach($paiement_table as $k => $v){
+	echo 'paiement_table["'.$v['nom'].'"] = "'.$v['id'].'"'.PHP_EOL;
+}
+
+// paniers or not
+if(isset($paniers) && $paniers){
+	echo 'var paniers = true;'.PHP_EOL;
+}else{
+	echo 'var paniers = false;'.PHP_EOL;
 }
 ?>
-//alert(payement_table['chèque']);
+//alert(paiement_table['chèque']);
 </script>
 
 <!-- jQuery -->

@@ -1,26 +1,38 @@
 <?php 
-if(!isset($item_data)){
+if( !isset($item_data) ){
 	$item_data = array();
 }
 // $article_form_context will differentiqte between search, edit or create article
-if(!isset($article_form_context)){
+// edit, search, new, vente, scinder
+if( !isset($article_form_context) ){
 	//echo '<pre>Erreur! Pas de contexte...</pre>';
 	$article_form_context = '';
 }
 
-// set required fields, depending on article_form_context
-$prix_input_name = 'prix';
+$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
+// remove statut 'vendu' from array, only if not in search mode
+if($article_form_context !== 'search'){
+	foreach($statut_array as $k => $v){
+		if( $v['nom'] == 'vendu' ){
+			unset($statut_array[$k]);
+			break;
+		}
+	}
+}
+
+// set required, visible and editable fields, depending on article_form_context
 if($article_form_context == 'search'){
 	$required = array(); // nothing is required
+
 }elseif($article_form_context == 'vente'){
-	$prix_input_name = 'prix_vente';
-	$required = array('titre', 'prix_vente', 'categories_id', 'matieres_id', 'poids');
+	$required = array('titre', 'categories_id', 'matieres_id', 'poids');
+
 }else{
 	$required = array('titre', 'descriptif', 'categories_id', 'matieres_id', 'poids'); // default
 }
 
 // set autofocus on first field (title)
-if($article_form_context == 'new'){
+if( $article_form_context == 'new' && !isset($_GET['upload_result']) ){
 	$autofocus = ' autofocus';
 }else{
 	$autofocus = '';
@@ -37,17 +49,25 @@ if(!isset($categories)){
 if(!isset($matieres)){
 	$matieres = get_parents('matieres');
 }
+
+if( isset($item_data['id']) && !empty($item_data['id']) ){
+	echo '<input type="hidden" name="id" value="'.$item_data['id'].'">';
+}
 ?>
 
-
 <table class="editArticle" data-id="articles">
+
+
 
 	<tr>
 		<td><h3>Titre:</h3><td><h3><input type="text" name="titre" value="<?= $item_data['titre'] ?? '' ?>"<?php echo in_array('titre', $required) ? " required" : ""; ?><?php echo $autofocus; ?>></h3>
 
+		<?php
+		if($article_form_context !== 'vente'){ 
+		?>
 		<tr>
 		<td>Descriptif:<td><textarea name="descriptif"<?php echo in_array('descriptif', $required) ? " required" : ""; ?>><?= $item_data['descriptif'] ?? '' ?></textarea>
-		
+		<?php } ?>
 
 		<tr>
 		<td>Vrac:<td><input type="radio" name="vrac" value="0"<?php if((!isset($item_data['vrac']) && $article_form_context !== 'search') || (isset($item_data['vrac']) && $item_data['vrac'] == 0)){echo ' checked';}?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="vrac" value="1"<?php if(isset($item_data['vrac']) && $item_data['vrac'] == 1){echo ' checked';}?>><label for="1"> oui</label>
@@ -60,8 +80,9 @@ if(!isset($matieres)){
 		<?php 
 		if($article_form_context == 'search'){
 		?>
-		<tr>
-			<td colspan="2">Créé entre le: <input type="text" name="date[start]" id="startDate" value="<?php if(isset($key_val_pairs['date']['start'])){echo $key_val_pairs['date']['start'];} ?>" style="min-width:75px; width:100px;" placeholder="25-12-1970"> et le: <input type="text" name="date[end]" id="endDate" value="<?php if(isset($key_val_pairs['date']['end'])){echo $key_val_pairs['date']['end'];} ?>" style="min-width:75px; width:100px;" placeholder="<?php echo date('d-m-Y'); ?>"></td>
+		<!--
+			<tr>
+			<td colspan="2">Créé entre le: <input type="text" name="date[start]" id="startDate" value="<?php if(isset($key_val_pairs['date']['start'])){echo $key_val_pairs['date']['start'];} ?>" style="min-width:75px; width:100px;" placeholder="25-12-1970"> et le: <input type="text" name="date[end]" id="endDate" value="<?php if(isset($key_val_pairs['date']['end'])){echo $key_val_pairs['date']['end'];} ?>" style="min-width:75px; width:100px;" placeholder="<?php echo date('d-m-Y'); ?>"></td> -->
 		<?php 
 		}
 		?>
@@ -101,6 +122,8 @@ if(!isset($matieres)){
 			$sous_cats = array();
 		}	
 		?>
+
+
 		<tr>
 		<td>Sous-catégorie:<td>
 		<select name="sous_categories_id"<?php echo in_array('sous_categories_id', $required) ? " required" : ""; ?><?php echo $sous_cats_enabled; ?>>
@@ -156,6 +179,8 @@ if(!isset($matieres)){
 			?>
 		</select>
 		
+
+
 		<?php
 		if(isset($sous_mats)){ 
 			$sous_mats_enabled = '';
@@ -191,23 +216,34 @@ if(!isset($matieres)){
 			?>
 		</select>
 
-		
-		<tr>
-		<td><?php echo ucwords($prix_input_name); ?>:<td><input type="number" min="0" step="any" name="<?php echo $prix_input_name; ?>" value="<?= $item_data['prix'] ?? '' ?>"<?php echo in_array($prix_input_name, $required) ? " required" : ""; ?>>
-		
+
 		<tr>
 		<td>Poids (Kg):<td><input type="number" min="0" step="any" name="poids" value="<?= $item_data['poids'] ?? '' ?>"<?php echo in_array('poids', $required) ? " required" : ""; ?>>
 		
+		<?php
+		if($article_form_context !== 'vente'){
+		?>
 		<tr>
-		<td>Statut:<td>
-		<select name="statut_id">
+		<td>Prix :<td><input type="number" min="0" step="any" name="prix" value="<?= $item_data['prix'] ?? '' ?>"<?php echo in_array('prix', $required) ? " required" : ""; ?>>
+		<?php 
+		} 
+		?>
 
 		<?php
+		// if context = 'vente', let's not show the statut_id to the user, and set it to vendu (or réservé if in of scinderArticle.php)
 		if($article_form_context == 'vente'){
-			$vendu_id = name_to_id('vendu', 'statut');
-			echo '<option value="'.$vendu_id.'" selected>vendu</option>';
+			if( isset($_GET['vendre']) ){ // we're in scinderArticle.php and the statut_id should be 'réservé': it is about to be sold, either directly or added to an existing panier
+				$st_id = name_to_id('réservé', 'statut');
+			}else{
+				$st_id = name_to_id('vendu', 'statut');
+			}
+			echo '<input type="hidden" name="statut_id" value="'.$st_id.'">';
 		}else{
-			$statut_array = get_table('statut'); // get contents of statut table ('id, nom)
+
+			echo '<tr>
+			<td>Statut:<td>
+			<select name="statut_id">';
+
 			$options = '';
 			if($article_form_context == 'search'){
 				$options .= '<option value="">Tous statuts</option>';
@@ -222,24 +258,27 @@ if(!isset($matieres)){
 				$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
 			}
 			echo $options;
+			echo '</select>';
 		}
 		?>
-		</select>
-
-		<?php
-		// don't output this prix_vente input if the above defined $prix_input_name is actually already prix_vente! (for scinder un article et créer nouvel article pour le vendre)
-		if($prix_input_name !== 'prix_vente'){ ?>
-			<tr id="prixVente"<?php if(!isset($item_data['statut_id']) || (isset($item_data['statut_id']) && $item_data['statut_id'] !== name_to_id('vendu', 'statut'))){echo ' style="display:none;"';} ?>>
-			<td>Prix de vente:<td><input type="number" name="prix_vente" min="0" step="any" value="<?= $item_data['prix_vente'] ?? '' ?>">
-		<?php }
-		?>
 		
+		
+		<?php
+		if($article_form_context !== 'vente'){ 
+		?>
 		<tr>
 		<td>Visible:
 			<td><input type="radio" id="visibleZero" name="visible" value="0"<?php if( (isset($item_data['visible']) && $item_data['visible'] == 0) || (!isset($item_data['visible']) &&  $article_form_context == 'vente') ){echo ' checked';}?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="visibleOne" name="visible" value="1"<?php if( (!isset($item_data['visible']) && $article_form_context !== 'search' && $article_form_context !== 'vente') || (isset($item_data['visible']) && $item_data['visible'] == 1) ){echo ' checked';}?>><label for="1"> oui</label>
 		</select>
+		<?php
+		}
+		?>
 		
 		<tr>
 		<td>Observations:<td><textarea name="observations"><?= $item_data['observations'] ?? '' ?></textarea>
 	
 	</table>
+	
+	<!-- the following div is used to load vente-paniers.php in the context of scinderArticle.php, when the scission of an article to be sold has been succesfully made. vente-paniers.php allows us to finalize the sale, by choosing between 'Vendre directement' & 'Ajouter au panier'
+	-->
+	<div id="loader" style="background-color:#f5f5f5;"></div>

@@ -10,6 +10,15 @@ if( !defined("ROOT") ){
 // for creating sub-sections, we need the parent section:
 if(isset($_GET['article_id']) && !empty($_GET['article_id']) ){
 	$article_id = urldecode($_GET['article_id']);
+	$item_data = get_item_data($article_id, 'titre');
+	$images_array = get_article_images($article_id, '_M');
+	if(!empty($images_array)){
+		$img = $images_array[0];
+		$class = "articleVente";
+	}else{
+		$class = 'articleVente noImg';
+		$img = '';
+	}
 }else{
 	exit;
 }
@@ -18,6 +27,7 @@ if(isset($_GET['article_id']) && !empty($_GET['article_id']) ){
 <div class="modal" id="deleteArticleContainer">
 	<a href="javascript:;" class="closeBut closeModal">&times;</a>
 	<h3 class="first">Êtes vous sûr.e de vouloir supprimer cet article?</h3>
+	<?php echo '<div class="'.$class.'" style="background-image:url(/'.$img.');"><h3>'.$item_data['titre'].'</h3></div>'; ?>
 	<p>Article ID: <?php echo $article_id; ?></p>
 	
 	<form name="deleteArticle" id="deleteArticle" action="/_code/php/forms/deleteArticle.php" method="post">

@@ -81,7 +81,7 @@ if( !isset($title) ){
 	<div class="adminHeader">
 	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
 	echo ' <a href="javascript:;" class="button vente showModal" rel="prixVenteModal?article_id='.$article_id.'">€ Vendre cet article</a> ';
-	echo ' <a href="/_code/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
+	echo ' <a href="/_code/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button scinder" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
 	//scinderArticle.php
 	echo ' <a href="javascript:;" class="showModal button remove" rel="deleteArticleModal?article_id='.$article_id.'">Supprimer cet article</a>';
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
@@ -94,6 +94,9 @@ if( !isset($title) ){
 	echo $message;
 	$footer = false;
 }
+
+$paniers = get_table('paniers', 'statut=0', 'date DESC');
+include(ROOT.'_code/php/forms/paniersModal.php');
 ?>
 
 <form name="newArticle" id="newArticle" action="?article_id=<?php echo $article_id; ?>" method="post" style="display:inline-block; float:left; margin-right:10px;">

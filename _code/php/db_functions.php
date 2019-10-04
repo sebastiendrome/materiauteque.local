@@ -112,6 +112,23 @@ function get_children($table, $id_parent){
 	}
 }
 
+// get panier articles
+function get_panier_articles($panier_id){
+	global $db;
+	$q = "SELECT id, titre, poids FROM articles WHERE panier_id = '$panier_id' ORDER BY date_vente DESC";
+	//debug
+	//echo '<pre>'.$q.'</pre>';
+	$query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
+	while($row = mysqli_fetch_assoc($query)){
+		$articles[] = $row;
+	}
+	if(!empty($articles)){
+		return($articles);
+	}else{
+		return FALSE;
+	}
+}
+
 // get all item data
 function get_item_data($article_id, $fields = '*'){
 	global $db;
@@ -206,28 +223,6 @@ function name_to_id($name, $table){
 	return $id[0];
 }
 
-// get article images
-function get_article_images($article_id = '', $size = '_M', $path = 'uploads'){
-	$images_array = array();
-	if( preg_match('/\/(_L|_M|_XL|_S)\//', $path) ){
-		$size = '';
-	}
-	$img_dir = $path.'/'.$article_id.'/'.$size.'/';
-	$scan_dir = preg_replace('/\/+/', '/', ROOT.$img_dir);
-	// make sure the directory exists
-	if( !is_dir($scan_dir) ){
-		copyr(ROOT.'templates/img_dir', ROOT.'uploads/'.$article_id);
-	}
-	$img_dir = preg_replace('/\/+/', '/', $img_dir); // make sure there are no duplicate slashes
-	$files = scandir($scan_dir);
-	foreach($files as $f){
-		if(substr($f, 0, 1) !== '.'){
-			$images_array[] = $img_dir.$f;
-		}
-	}
-	return $images_array;
-}
-
 
 
 
@@ -239,11 +234,11 @@ function get_article_images($article_id = '', $size = '_M', $path = 'uploads'){
 /**** 2. UPDATERS ****/
 
 // UPDATE TABLE DATA (generic)
-function update_table($table, $article_id, $update){
+function update_table($table, $id, $update){
 	global $db;
 	$q = "UPDATE $table SET ";
 	$q .= update_sql($update);
-	$q .= " WHERE id = $article_id";
+	$q .= " WHERE id = $id";
 	
 	// debug
 	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
@@ -272,7 +267,7 @@ function insert_new($table, $item_data){
 	$array_keys = $array_values = array();
 
 	// add date (php timestamp) for certain tables
-	if($table == 'adhesions' || $table == 'articles' || $table == 'passages' || $table == 'ventes'){
+	if($table == 'adhesions' || $table == 'articles' || $table == 'passages' || $table == 'ventes' || $table == 'paniers'){
 		$array_keys[] = 'date';
 		$array_values[] = time();
 	}
@@ -309,8 +304,47 @@ function insert_new($table, $item_data){
 }
 
 
+/* scinde un article en deux (save first one, create second one)
+$original and $copy are arrays containing each article data */
+function scinde_article($original, $copy){
 
+	// original reste, copy est vendu
+	// reformat both arrays
+	foreach($original as $o){
+		$o_array[$o['name']] = $o['value'];
+	}
+	foreach($copy as $c){
+		$c_array[$c['name']] = $c['value'];
+	}
+	// make sure we don't pass the article id to insert_new function
+	if( isset($c_array['id']) ){
+		unset($c_array['id']);
+	}
+	// attempt to create new article
+	if( $new_id = insert_new('articles', $c_array) ){
+		$result = '1|Nouvel article crée, ID:'.$new_id;
+	}else{
+		$result = '0|Erreur: Le nouvel article n\'a pas pu être créé!';
+	}
+	// save original article
+	$result .= '<br>'.update_table('articles', $o_array['id'], $o_array);
+	return $result;
+}
 
+/* scinde un article vrac en deux pour la vente (from prixVenteModal, #directeVenteSubmit on click) */
+function duplicate_vrac_article($original_id, $old_poids, $old_prix){
+	$item_data = get_item_data($original_id);
+	unset($item_data['id']);
+	unset($item_data['date']);
+	$item_data['prix'] = $old_prix;
+	$item_data['poids'] = $old_poids;
+	if( $new_id = insert_new('articles', $item_data) ){
+		$result = '1|Vrac article copié, ID:'.$new_id;
+	}else{
+		$result = '0|Erreur: L\'article vrac n\'a pas pu être dupliqué!';
+	}
+	return $result;
+}
 
 
 
@@ -598,17 +632,15 @@ function present($k, $v){
 		$options = '';
 
 		foreach($statut_array as $st){ // loop through statut_array to output the options
-			if($st['id'] == $v){
-				$selected = ' selected';
-			}else{
-				$selected = '';
+			// exclude 'vendu' statut
+			if($st['nom'] !== 'vendu'){
+				if($st['id'] == $v){
+					$selected = ' selected';
+				}else{
+					$selected = '';
+				}
+				$options .= '<option value="'.$st['id'].'"'.$selected.'>'.$st['nom'].'</option>';
 			}
-			if($st['nom'] == 'vendu'){
-				$op_style = ' style="background-color:rgb(235, 203, 100);"';
-			}else{
-				$op_style = '';
-			}
-			$options .= '<option value="'.$st['id'].'"'.$op_style.$selected.'>'.$st['nom'].'</option>';
 		}
 		$v = '<select name="statut_id" style="min-width:50px;" class="ajax" title="Modifier le statut">'.$options.'</select>';
 
@@ -672,9 +704,37 @@ function present($k, $v){
 	return $v;
 }
 
+
+// get article images
+function get_article_images($article_id = '', $size = '_M', $path = 'uploads'){
+	$images_array = array();
+	if( preg_match('/\/(_L|_M|_XL|_S)\//', $path) ){
+		$size = '';
+	}
+	$img_dir = $path.'/'.$article_id.'/'.$size.'/';
+	$scan_dir = preg_replace('/\/+/', '/', ROOT.$img_dir);
+	// make sure the directory exists
+	if( !is_dir($scan_dir) ){
+		copyr(ROOT.'templates/img_dir', ROOT.'uploads/'.$article_id);
+	}
+	$img_dir = preg_replace('/\/+/', '/', $img_dir); // make sure there are no duplicate slashes
+	$files = scandir($scan_dir);
+	foreach($files as $f){
+		if(substr($f, 0, 1) !== '.'){
+			$images_array[] = $img_dir.$f;
+		}
+	}
+	return $images_array;
+}
+
+
 /* echo interactive items table (uses present() function above) for admin */
 function items_table_output($result_array, $limit = NULL, $offset = 0){
 
+	if( empty($result_array) ){
+		return false;
+	}
+	
 	if($limit === NULL){
 		$limit = count($result_array);
 	}
@@ -685,7 +745,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 	//echo '<pre>'.__FUNCTION__.PHP_EOL;print_r($result_array);echo '</pre>';
 	
 	$editable = array('categories_id', 'matieres_id', 'titre', 'descriptif', 'observations', 'prix', 'poids', 'statut_id', 'visible');
-	$exclude = array('id', 'date', 'date_vente', 'vrac', 'etiquette', 'prix_vente', 'payement_id');
+	$exclude = array('id', 'date', 'date_vente', 'vrac', 'etiquette', 'panier_id', 'visible', 'paiement_id');
 
 	$output = '';
 	$i = $n = 0;
@@ -698,7 +758,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 
 			// get images
 			$images_array = get_article_images($article_id, '_S');
-			$img_count = count($images_array);
+			//$img_count = count($images_array);
 			
 			// first iteration, show top row = key name
 			if($i == 0){
@@ -824,47 +884,6 @@ function valid_date($date){
 		return $valid_date;
 	}
 }
-
-/* scinde un article en deux (save first one, create second one)
-$original and $copy are an array containing article data */
-function scinde_article($original, $copy){
-	// reformat both arrays
-	foreach($original as $o){
-		$o_array[$o['name']] = $o['value'];
-	}
-	foreach($copy as $c){
-		$c_array[$c['name']] = $c['value'];
-	}
-	// attempt to create new article
-	if( $new_id = insert_new('articles', $c_array) ){
-		$result = '1|Nouvel article crée, ID:'.$new_id;
-	}else{
-		$result = '0|Erreur: Le nouvel article n\'a pas pu être créé!';
-	}
-	// save original article
-	$result .= '<br>'.update_table('articles', $o_array['id'], $o_array);
-	return $result;
-}
-
-/* scinde un article vrac en deux pour la vente (from prixVenteModal, #prixVenteSubmit on click) */
-function create_vrac_vente($original_id, $poids_vente, $prix_vente, $payement_id){
-	$item_data = get_item_data($original_id);
-	unset($item_data['id']);
-	unset($item_data['date']);
-	$item_data['prix_vente'] = $prix_vente;
-	$item_data['poids'] = $poids_vente;
-	$item_data['statut_id'] = name_to_id('vendu', 'statut');
-	$item_data['visible'] = 0;
-	$item_data['payement_id'] = $payement_id;
-	if( $new_id = insert_new('articles', $item_data) ){
-		$result = '1|Nouvel article crée, ID:'.$new_id;
-	}else{
-		$result = '0|Erreur: La vente de vrac n\'a pas pu être enregistrée!';
-	}
-	return $result;
-}
-
-
 
 
 /* echo item (article) data in a table */

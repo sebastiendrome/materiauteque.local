@@ -65,6 +65,9 @@ if( !isset($title) ){
 	$footer = false;
 }
 
+$paniers = get_table('paniers', 'statut=0', 'date DESC');
+include(ROOT.'_code/php/forms/paniersModal.php');
+
 if(isset($items_table)){
 	echo $items_table;
 }

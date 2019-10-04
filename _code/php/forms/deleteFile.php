@@ -25,7 +25,7 @@ if(isset($_GET['file']) && !empty($_GET['file']) ){
 ?>
 <div class="modal" id="deleteFileContainer">
 	<a href="javascript:;" class="closeBut closeModal">&times;</a>
-	<h3 class="first">Êtes vous sûr.e de vouloir supprimer ce fichier?</h3>
+	<h3 class="first">Êtes vous sûr.e de vouloir supprimer cette image?</h3>
 	<?php echo $display_file; ?>
 	<p><?php echo filename($path, 'decode').'/'.filename($file_name, 'decode'); ?></p>
 	<form name="deleteFileForm" action="/_code/php/admin/delete_file.php" method="post">
