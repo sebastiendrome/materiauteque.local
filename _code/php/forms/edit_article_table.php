@@ -10,8 +10,8 @@ if( !isset($article_form_context) ){
 }
 
 $statut_array = get_table('statut'); // get contents of statut table ('id, nom)
-// remove statut 'vendu' from array, only if not in search mode
-if($article_form_context !== 'search'){
+// remove statut 'vendu' from array, only if not in search mode, and if article statut is not vendu
+if($article_form_context !== 'search' && ( isset($item_data['statut_id']) && id_to_name($item_data['statut_id'], 'statut') !== 'vendu' ) ){
 	foreach($statut_array as $k => $v){
 		if( $v['nom'] == 'vendu' ){
 			unset($statut_array[$k]);
@@ -28,7 +28,7 @@ if($article_form_context == 'search'){
 	$required = array('titre', 'categories_id', 'matieres_id', 'poids');
 
 }else{
-	$required = array('titre', 'descriptif', 'categories_id', 'matieres_id', 'poids'); // default
+	$required = array('titre', 'categories_id', 'matieres_id', 'poids'); // default
 }
 
 // set autofocus on first field (title)

@@ -1,6 +1,6 @@
 <?php
 if($paniers){
-	$output = display_paniers($paniers);
+	$output = display_paniers_en_cours($paniers);
 }else{
 	$output = '<p style="color:#aaa;">Pas de paniers...</p>';
 }

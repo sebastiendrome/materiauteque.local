@@ -35,10 +35,10 @@ function get_table($table, $where = '', $order = ''){
 	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
 
 	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
-	while($row = mysqli_fetch_assoc($query)){
+	while( $row = mysqli_fetch_assoc($query) ){
 		$data[] = $row;
 	}
-	if(!empty($data)){
+	if( !empty($data) ){
 		return($data);
 	}else{
 		return FALSE;
@@ -115,7 +115,7 @@ function get_children($table, $id_parent){
 // get panier articles
 function get_panier_articles($panier_id){
 	global $db;
-	$q = "SELECT id, titre, poids FROM articles WHERE panier_id = '$panier_id' ORDER BY date_vente DESC";
+	$q = "SELECT id, titre, poids, prix FROM articles WHERE panier_id = '$panier_id' ORDER BY date_vente DESC";
 	//debug
 	//echo '<pre>'.$q.'</pre>';
 	$query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
@@ -334,12 +334,15 @@ function scinde_article($original, $copy){
 /* scinde un article vrac en deux pour la vente (from prixVenteModal, #directeVenteSubmit on click) */
 function duplicate_vrac_article($original_id, $old_poids, $old_prix){
 	$item_data = get_item_data($original_id);
+	$id = $item_data['id'];
 	unset($item_data['id']);
 	unset($item_data['date']);
 	$item_data['prix'] = $old_prix;
 	$item_data['poids'] = $old_poids;
+
+	// insert new copied article into articles DB table
 	if( $new_id = insert_new('articles', $item_data) ){
-		$result = '1|Vrac article copié, ID:'.$new_id;
+		$result = '1|'.$new_id;
 	}else{
 		$result = '0|Erreur: L\'article vrac n\'a pas pu être dupliqué!';
 	}
@@ -351,19 +354,21 @@ function duplicate_vrac_article($original_id, $old_poids, $old_prix){
 
 /**** 4. DELETERS ****/
 
-function delete_item($table, $article_id){
+function delete_item($table, $item_id){
 	global $db;
 	
 	// delete database col
-	if( $delete = mysqli_query($db, "DELETE FROM $table WHERE id = '$article_id'") ){
-		$result = '1|Élément #'.$article_id.' éffacé du tableau <b>'.$table.'</b>';
+	if( $delete = mysqli_query($db, "DELETE FROM $table WHERE id = '$item_id'") ){
+		$result = '1|Élément #'.$item_id.' éffacé du tableau <b>'.$table.'</b>';
 	}else{
-		$result = '0|L\'élément #'.$article_id.' n\'a pas pu être éffacé du tableau <b>'.$table.'</b>';
+		$result = '0|L\'élément #'.$item_id.' n\'a pas pu être éffacé du tableau <b>'.$table.'</b>';
 	}
-	// delete image directory
-	$dir = ROOT.'uploads/'.$article_id;
-	if( is_dir($dir) ){
-		rmdirr($dir);
+	// delete image directory from articles dir=id
+	if($table == 'articles'){
+		$dir = ROOT.'uploads/'.$item_id;
+		if( is_dir($dir) ){
+			rmdirr($dir);
+		}
 	}
 	return $result;
 }
@@ -439,7 +444,8 @@ function find_articles($key_val_pairs, $include_vendus = FALSE){
 
 		// include statut=4 (=vendu) or not
 		if(!$include_vendus){
-			$q .= " AND  statut_id < 4";
+			$statut_id = name_to_id('vendu', 'statut');
+			$q .= " AND  statut_id < ".$statut_id;
 		}
 
 		// assign values to search criterias

@@ -2,6 +2,7 @@
 var sep = 'qQq'; // separator to concatenate many cols/vals querys that will be retreived  by php as array
 var wW = $(window).width();
 var wH = $(window).height();
+var new_vrac_id = 0;
 
 // js equivalent to php time(), will be used throughout functions
 var unix_time = Math.round((new Date()).getTime()/1000);
@@ -10,7 +11,7 @@ var unix_time = Math.round((new Date()).getTime()/1000);
 /***** functions *****************************************************/
 
 // save sql data ( ajax call, uses php function update_table() ) 
-/*  !!!!! allows only one update per call - should pass arrays in col(s) and value(s)? */
+// uses 'sep' global var declared above to pass more than one value for 'col' and 'value'
 function updateTable(table, id, col, value){
 	$.ajax({
 		// Server script to process the upload
@@ -73,134 +74,19 @@ function showDone(){
 	}, 2700);
 }
 
-// update paniers modal
-function updatePaniersModal(){
-	$.ajax({
-		// Server script to process the upload
-		url: '/_code/php/admin/admin_ajax.php?updatePaniersModal',
-		type: 'GET',
-		// on success show message
-		success : function(msg) {
-			$('#paniersContainer #panierAjaxTarget').html(msg);
-			return true;
-		}
-	});
-}
-
-// ajax call to create panier (and create article, OR update article)
-function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, panier_statut_id){
-	// ajax call that will use db_function create_panier()
-	$.ajax({
-		// Server script to process the upload 
-		url: '/_code/php/admin/admin_ajax.php?create_panier&nom='+nom+'&poids='+poids+'&prix='+prix+'&paiement_id='+paiement_id+'&statut='+panier_statut_id,
-		type: 'GET',
-
-		// on success; msg is either new panier ID, or an error message
-		success : function(msg) {
-
-			var message;
-			// see if message is error (0|) ou note (2|)
-			var er = msg.substr(0,2);
-			if(er == '0|'){
-				message = '<p class="error">'+msg.substr(2)+'</p>';
-			}else if(er == '2|'){
-				message = '<p class="note">'+msg.substr(2)+'</p>';
-			
-			}else{
-				// success, 
-				// If article_id_or_fields is article id, update article.
-				// Else, we're creating a panier + an article at the same time, and the article has not been created yet, so article_id_or_fields is a js object containing the fields needed for the creation of the article
-				
-				var panier_id = msg;
-				//alert(panier_id);
-
-				if( typeof article_id_or_fields !== 'object' ){
-					var message = '<p class="success">Article updated, panier crée ID:'+panier_id+'</p>';
-					var article_statut_id = statut_table['vendu'];
-					// update article
-					updateTable(
-						'articles', 
-						article_id_or_fields, 
-						'panier_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
-						panier_id +sep+ prix +sep+ poids+sep+article_statut_id+sep+unix_time
-					);
-					
-					// hide article in table (if within admin/index.php)
-					var $tr = $('table.data').find('tr[data-id="'+article_id_or_fields+'"]');
-					if($tr){$tr.hide(1000);}
-					// or hide div#formsContainer (if within scinderArticle.php)
-					var $formsContainer = $('body div#formsContainer');
-
-					// debug
-					//alert($formsContainer.attr('id'));
-
-					if($formsContainer.length){
-						$formsContainer.hide();
-						$('div#adminContainer').append('<a class="button" href="/admin/">&lt; Retour</a>'+message);
-					}
-
-					message = '<p class="success">Vente enregistrée, Panier créé; ID:'+msg+'</p>';
-
-					$('#done').html(message);
-
-					// update panierModal
-					if( panier_statut_id == 0 ){ // show updated paniers only if panier was not directly sold
-						setTimeout(function(){
-							updatePaniersModal();
-							$('div#paniersTarget').show();
-						}, 1000);
-					}
-
-				}else{
-					// update panier_id field, if already in 
-					var panier_in_fields = false;
-					var panier_statut_in_fields = false;
-					jQuery.each(article_id_or_fields, function( i, field ){
-						if(field.name == 'panier_id'){
-							field.value = panier_id;
-							panier_in_fields = true;
-						}
-						if(field.name == 'panier_statut_id'){
-							field.value = panier_statut_id;
-							panier_statut_in_fields = true;
-						}
-					});
-					// if not already there, add panier_id to article_id_or_fields object
-					if(!panier_in_fields){
-						article_id_or_fields[article_id_or_fields.length] = {name:"panier_id", value:panier_id};
-					}
-					// we'll use panier_statut_id to determine if we need to update and show paniersModal
-					if(!panier_statut_in_fields){
-						article_id_or_fields[article_id_or_fields.length] = {name:"panier_statut_id", value:panier_statut_id};
-					}
-					create_article(article_id_or_fields);
-				}
-			}
-		},
-
-		// Custom XMLHttpRequest
-		xhr: function() {
-			var myXhr = $.ajaxSettings.xhr();
-			//alert(myXhr);
-			return myXhr;
-		}
-	});
-}
-
 // create article
 function create_article(fields){
 	var query_string = '';
-	//var updatePaniers = false;
 	var updatePaniers = true;
 
 	// debug
-	 console.log(fields);
+	//console.log(fields);
 
 	// let's build our query string for admin_ajax.php?create_article
 	jQuery.each(fields, function( i, field ){
 		// let's omit the panier_statut_id from query, but let's also find out if we need to update paniersModal after article is created
 		if( field.name == 'panier_statut_id' ){
-			if(field.value == 1){
+			if(field.value == statut_table['vendu']){
 				updatePaniers = false;
 			}
 		}else{
@@ -264,23 +150,29 @@ function create_article(fields){
 	});
 }
 
-// ajax call (that will use db_function create_vrac_article() to duplicate article vendu)
+// ajax call (that will use PHP db_function duplicate_vrac_article() to duplicate article vendu)
 function duplicate_vrac_article(id, old_poids, old_prix){
 	$.ajax({
 		// Server script to process the upload 
 		url: '/_code/php/admin/admin_ajax.php?vrac_vente&original_id='+id+'&old_poids='+old_poids+'&old_prix='+old_prix,
 		type: 'GET',
 
-		// on success
+		// on success, message is either "(0|2)|text string" (error or note), or "1|[new_id]" (success, new id of duplicated vrac article)
 		success : function(msg) {
-			// see if message is success (1|) ou error (0|)
+			// see if message is error or note (0| or 2|)
 			var er = msg.substr(0,2);
 			if(er == '0|'){
 				msg = '<p class="error">'+msg.substr(2)+'</p>';
 			}else if(er == '2|'){
 				msg = '<p class="note">'+msg.substr(2)+'</p>';
+			}else{
+				// new_vrac_id global scope var is set on top of this file
+				new_vrac_id = msg.substr(2); // "new_id", i.e. 126
 			}
 			$('#done').html(msg);
+			
+			// debug
+			//alert(msg);
 		},
 
 		// Custom XMLHttpRequest
@@ -292,6 +184,121 @@ function duplicate_vrac_article(id, old_poids, old_prix){
 	});
 }
 
+/******** paniers functions ********/
+// update paniers modal
+function updatePaniersModal(){
+	$.ajax({
+		// Server script to process the upload
+		url: '/_code/php/admin/admin_ajax.php?updatePaniersModal',
+		type: 'GET',
+		// on success show message
+		success : function(msg) {
+			$('#paniersContainer #panierAjaxTarget').html(msg);
+			return true;
+		}
+	});
+}
+
+// ajax call to create panier (and create article, OR update article)
+function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac, panier_statut_id){
+	// ajax call that will use db_function create_panier()
+	$.ajax({
+		// Server script creates the panier
+		url: '/_code/php/admin/admin_ajax.php?create_panier&nom='+nom+'&poids='+poids+'&prix='+prix+'&paiement_id='+paiement_id+'&statut_id='+panier_statut_id,
+		type: 'GET',
+
+		// on success; msg is either new panier ID, or an error message
+		success : function(msg) {
+
+			var message;
+			// see if message is error (0|) ou note (2|)
+			var er = msg.substr(0,2);
+			if(er == '0|'){
+				message = '<p class="error">'+msg.substr(2)+'</p>';
+			}else if(er == '2|'){
+				message = '<p class="note">'+msg.substr(2)+'</p>';
+			
+			// SUCCESS, msg = new panier id
+			}else{
+				// If article_id_or_fields is article id, update article.
+				// Else, we're creating a panier + an article at the same time, and the article has not been created yet, so article_id_or_fields is a js object containing the fields needed for the creation of the article
+				
+				var panier_id = msg;
+				//alert(panier_id);
+
+				if( typeof article_id_or_fields !== 'object' ){
+					var article_id = article_id_or_fields;
+					var message = '<p class="success">Article updated, panier crée ID:'+panier_id+'</p>';
+					var article_statut_id = statut_table['vendu'];
+					// update article
+					updateTable(
+						'articles', 
+						article_id, 
+						'panier_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
+						panier_id +sep+ prix +sep+ poids+sep+article_statut_id+sep+unix_time
+					);
+					
+					// hide/update article row or form if article is NOT vrac
+					if(vrac*1 !== 1){
+						//alert('not vrac!');
+						var $tr = $('table.data').find('tr[data-id="'+article_id+'"]')
+						if( $tr.length ){
+							//alert('yes tr!');
+							$tr.hide(1000);
+						}else/* if( $('div#formsContainer').length )*/{
+							//alert('no tr!');
+							$('div#formsContainer').hide();
+							$('div#adminContainer').append('<a class="button" href="/admin/">&lt; Retour</a>'+message);
+						}
+					}
+
+					message = '<p class="success">Vente enregistrée, Panier créé; ID:'+msg+'</p>';
+
+					$('#done').html(message);
+
+					// update panierModal
+					if( panier_statut_id !== statut_table['vendu'] ){ // show updated paniers only if panier was not directly sold
+						setTimeout(function(){
+							updatePaniersModal();
+							$('div#paniersTarget').show();
+						}, 1000);
+					}
+
+				}else{
+					// update panier_id field, if already in 
+					var panier_in_fields = false;
+					var panier_statut_in_fields = false;
+					jQuery.each(article_id_or_fields, function( i, field ){
+						if(field.name == 'panier_id'){
+							field.value = panier_id;
+							panier_in_fields = true;
+						}
+						if(field.name == 'panier_statut_id'){
+							field.value = panier_statut_id;
+							panier_statut_in_fields = true;
+						}
+					});
+					// if not already there, add panier_id to article_id_or_fields object
+					if(!panier_in_fields){
+						article_id_or_fields[article_id_or_fields.length] = {name:"panier_id", value:panier_id};
+					}
+					// we'll use panier_statut_id to determine if we need to update and show paniersModal
+					if(!panier_statut_in_fields){
+						article_id_or_fields[article_id_or_fields.length] = {name:"panier_statut_id", value:panier_statut_id};
+					}
+					create_article(article_id_or_fields);
+				}
+			}
+		},
+
+		// Custom XMLHttpRequest
+		xhr: function() {
+			var myXhr = $.ajaxSettings.xhr();
+			//alert(myXhr);
+			return myXhr;
+		}
+	});
+}
 
 /***** behavior targets/calls *****************************************/
 
@@ -342,7 +349,10 @@ $("table.data").on('click', 'a.vendre', function(e){
 	showModal('prixVenteModal?article_id='+id+'&prix='+encodeURIComponent(prix));
 });
 
-// show/hide moreOptions statutActions in paniersModal !!!!!!!!! other actions not implemented yet
+
+/*************** PANIERS behaviors START **************/
+
+// show/hide moreOptions statutActions in paniersModal
 $('body').on('click', 'div.moreOptions', function(){
 	var $ul = $(this).parent().find('ul.statutActions');
 	if( $ul.is(":visible") ){
@@ -350,17 +360,17 @@ $('body').on('click', 'div.moreOptions', function(){
 	}else{
 		$ul.show();
 	}
-})
+});
 // hide statutActions on mouse leave in paniersModal
 $('body').on('mouseleave', 'ul.statutActions', function(){
 	$(this).hide();
-})
+});
 
 /* VENTE DE PANIER */
 $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 	e.preventDefault();
 	if( $(this).hasClass('disabled') ){
-		alert('Merci de remplir le champ "Prix"');
+		alert('Merci de remplir le champ "Total"');
 		return false;
 	}
 	var $container = $(this).parent();
@@ -373,13 +383,61 @@ $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 		var paiement_id = paiement_table['espèces'];
 	}
 	var poids = $container.attr('data-poids');
-	var statut = 1;
+	var statut_id = statut_table['vendu']; // 4
 
 	updateTable(
 		'paniers', 
 		id, 
-		'total'+sep+'paiement_id'+sep+'statut'+sep+'date_vente'+sep+'poids', 
-		 total +sep+ paiement_id +sep+ statut +sep+ unix_time + sep+ poids
+		'total'+sep+'paiement_id'+sep+'statut_id'+sep+'date_vente'+sep+'poids', 
+		 total +sep+ paiement_id +sep+ statut_id +sep+ unix_time + sep+ poids
+	);
+	
+	// update each article prix inside panier
+	$container.find('div.particle').each( function(){
+		var article_id = $(this).attr('data-articleid');
+		var $a_prix_input = $(this).find('input[name="aPrix"]');
+		if($a_prix_input.val().length){
+			var article_prix = $a_prix_input.val();
+		}else{
+			var article_prix = '0';
+		}
+		//alert('artcielID: '+article_id+', prix: '+article_prix);
+		updateTable(
+			'articles', 
+			article_id, 
+			'prix', 
+			article_prix
+		);
+		// !!!!!!!!!!! here we could delete each image directory via ajax call to php rmdrr(ROOT.'uploads/'+article_id)
+	});
+	
+	// we want to retreive the result of updateTable above, which wraps an asynchronous call. When it's done, the function sets the html of div#done. So we can check for that and know the result, but let's wait a half second
+	setTimeout(function(){
+		var result = $('#done').html();
+		//alert(result);
+		if( result.substr(0,15) !== '<p class="error' ){ // no error message
+			$container.animate({'height':'30px'}, 500, function(){
+				$(this).replaceWith('<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu, id: '+id+' <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>');
+			});
+		}
+	}, 300);
+
+});
+
+
+/* UPDATE PANIER STATUT (from paniersModal.php, ul.statutActions drop-down) */
+$('body').on('click', 'ul.statutActions a', function(e){
+	e.preventDefault();
+
+	var $container = $(this).parents('div.pCont');
+	var id = $container.attr('data-panierid');
+	var new_statut_id = $(this).attr('data-statut');
+
+	updateTable(
+		'paniers', 
+		id, 
+		'statut_id', 
+		new_statut_id
 	);
 	
 	// we want to retreive the result of updateTable above, which wraps an asynchronous call. When it's done, the function sets the html of div#done. So we can check for that and know the result, but let's wait a half second
@@ -388,103 +446,200 @@ $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 		//alert(result);
 		if( result.substr(0,15) !== '<p class="error' ){ // no error message
 			$container.animate({'height':'30px'}, 500, function(){
-				$(this).replaceWith('<div class="success" style="padding-right:35px; margin-top:5px;"><a href="javascript:;" class="closeBut">&times;</a>Panier vendu</div>');
+				$(this).replaceWith('<div class="success" style="padding-right:35px; margin-top:5px;">Panier statut mis à jour  <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>');
 			});
 		}
 	}, 300);
 
 });
 
+// update panier total when individual articles prix are changed
+$("body").on('change', 'div.paActions input[name="aPrix"]', function(){
+	// get and add value of each article prix
+	var total = 0;
+	var $cont = $(this).parents('div.pCont');
+	var $submit = $cont.find('a.ventePanierSubmit');
+	$cont.find('input[name="aPrix"]').each( function(){
+		if($(this).val().length){
+			var v = parseFloat( $(this).val() );
+			//alert(v);
+			total += v;
+			//alert(total);
+		}
+	});
+	$cont.find('input#prixVentePanier').val(total.toFixed(2));
+	if( $submit.hasClass('disabled') ){
+		$submit.removeClass('disabled');
+	}
+	//alert('changed');
+});
+
+// update panier when individual article is removed
+$("body").on('click', 'div.particle a.remove', function(){
+	// get article id
+	var article_id = $(this).parents('div.particle').attr('data-articleid');
+	//alert(article_id);
+	// update article: remove panier_id, date_vente, set statut_id = 1 (disponible)
+	updateTable(
+		'articles', 
+		article_id, 
+		'panier_id'+sep+'date_vente'+sep+'statut_id', 
+		'' +sep+ '' +sep+ '1'
+	);
+	// update paniers modal
+	setTimeout(function(){
+		updatePaniersModal();
+		$('div#paniersTarget').show();
+	}, 500);
+
+});
+
+// delete panier (from panierModal.php)
+$('body').on('click', 'a.deletePanier', function(){
+	var panier_id = $(this).parent().attr('data-panierid');
+	var table = 'paniers';
+	$.ajax({
+		// Server script to process the upload
+		url: '/_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+panier_id,
+		type: 'GET',
+		// on success show message
+		success : function(msg) {
+			var er = msg.substr(0, 2);
+			if(er == '0|'){
+				msg = '<p class="error">'+msg.substr(2)+'</p>';
+			}else if(er == '1|'){
+				msg = '<p class="success">'+msg.substr(2)+'</p>';
+			}else if(er == '2|'){
+				msg = '<p class="note">'+msg.substr(2)+'</p>';
+			}
+			$('#done').html(msg);
+			//return msg;
+			// update paniers modal
+			setTimeout(function(){
+				updatePaniersModal();
+				$('div#paniersTarget').show();
+			}, 500);
+			return true;
+		}
+	});
+});
+
+/*************** PANIERS behaviors END **************/
+
+
+/*********** ARTICLE VENTE (ADD TO PANIER) behaviors START **************/
+
 /** when article is sold via prixVenteModal.php */ 
 // 1. button #directeVenteSubmit
 $("body").on('click', 'button#directeVenteSubmit', function(e){
 	e.preventDefault();
 	var $form = $(this).parents('form');
-	var id = $form.find('input[name="id"]').val(); // article[id]
+	var $poids = $form.find('input[name="poids"]');
 	var $paiement_cheque = $form.find('input[name="paiement_id"]');
 	if($paiement_cheque.prop('checked') == true){
 		var paiement_id = paiement_table['chèque'];
 	}else{
 		var paiement_id = paiement_table['espèces'];
 	}
-	var prix = $form.find('input[name="prix"]').val();
-	prix = prix.replace(',','.');
-	var poids = $form.find('input[name="poids"]').val();
-	poids = poids.replace(',','.');
+	var article_id = $form.find('input[name="id"]').val(); // article[id]
+	var prix = $form.find('input[name="prix"]').val().replace(',','.');
+	var poids = $poids.val().replace(',','.');
 
-	/* these vars will be used for vrac, to duplicate item with pre-sale prix and poids */ 
+	if(poids.length == 0){
+		$poids.focus();
+		alert('Merci de remplir le champ "poids"');
+		return false;
+	}
+
+	// used as nom du panier if new panier is to be created
+	var panier_nom = $form.find('input[name="titre"]').val();
+
+	// hide modal
+	hideModal( $(this).parents('div.modal') );
+
+	/* vrac? */ 
 	var vrac = $form.find('input[name="vrac"]').val();
-	var old_prix = $form.find('input[name="old_prix"]').val();
-	var old_poids = $form.find('input[name="old_poids"]').val();
-	old_poids = old_poids.replace(',','.');
-	var new_poids = parseFloat(old_poids)-parseFloat(poids);
-	var nom = $form.find('input[name="titre"]').val();
 
 	// if vrac, duplicate article vendu ( update original minus poids vente? ...)
 	if(vrac == 1/* && new_poids > 0*/){
-		// ajax call (that will use db_function create_vrac_article() to duplicate article vendu)
-		duplicate_vrac_article(id, old_poids, old_prix);
+		// these vars will be used to duplicate item with pre-sale prix and poids
+		var old_prix = $form.find('input[name="old_prix"]').val();
+		var old_poids = $form.find('input[name="old_poids"]').val().replace(',','.');
+		//var new_poids = parseFloat(old_poids)-parseFloat(poids);
+		// ajax call (that will use php db_function duplicate_vrac_article() to duplicate vrac article)
+		duplicate_vrac_article(article_id, old_poids, old_prix);
+		// ↑ when completed and if successfull, the above ajax call will update the value of global js var new_vrac_id to id of newly created vrac article. In which case, this new_vrac_id should be used as article_id in create_panier call below
 	}
-
-	// hide modal
-	hideModal($(this).parents('div.modal'));
 
 	/* 
 	CHANGES START NOW 
 	up to here, directeVenteSubmit (this) and ajoutPanierSubmit (below) are strictly the same 
 	*/
 
-	// create panier
-	// ajax call that will use db_function create_panier()
-	create_panier(id, nom, poids, prix, paiement_id, 1);
-	
+	// set time out to make sure we catch the updated new_vrac_id via duplicate_vrac_article ajax call above 
+	setTimeout( function(){
+		if(new_vrac_id !== 0 && vrac == 1){
+			article_id = new_vrac_id;
+		}
+		// create panier
+		// ajax call that will use db_function create_panier()
+		create_panier(article_id, panier_nom, poids, prix, paiement_id, vrac, statut_table['vendu']);
+	}, 500);
+
 });
 
 // 2. button #ajoutPanierSubmit
 $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 	e.preventDefault();
 	var $form = $(this).parents('form');
-	var id = $form.find('input[name="id"]').val(); // article[id]
+	var $poids = $form.find('input[name="poids"]');
 	var $paiement_cheque = $form.find('input[name="paiement_id"]');
 	if($paiement_cheque.prop('checked') == true){
 		var paiement_id = paiement_table['chèque'];
 	}else{
 		var paiement_id = paiement_table['espèces'];
 	}
-	var prix = $form.find('input[name="prix"]').val();
-	prix = prix.replace(',','.');
-	var poids = $form.find('input[name="poids"]').val();
-	poids = poids.replace(',','.');
+	var article_id = $form.find('input[name="id"]').val(); // article[id]
+	var prix = $form.find('input[name="prix"]').val().replace(',','.');
+	var poids = $form.find('input[name="poids"]').val().replace(',','.');
 
-	/* these vars will be used for vrac, to duplicate item with pre-sale prix and poids */ 
+	if(poids.length == 0){
+		$poids.focus();
+		alert('Merci de remplir le champ "poids"');
+		return false;
+	}
+
+	// used as nom du panier if new panier is to be created
+	var panier_nom = $form.find('input[name="titre"]').val();
+
+	// hide modal
+	hideModal( $(this).parents('div.modal') );
+
+	/* vrac? */ 
 	var vrac = $form.find('input[name="vrac"]').val();
-	var old_prix = $form.find('input[name="old_prix"]').val();
-	var old_poids = $form.find('input[name="old_poids"]').val();
-	old_poids = old_poids.replace(',','.');
-	var new_poids = parseFloat(old_poids)-parseFloat(poids);
-	var nom = $form.find('input[name="titre"]').val();
 
 	// if vrac, duplicate article vendu, ( update original minus poids vente? ...)
 	if(vrac == 1/* && new_poids > 0*/){
-		duplicate_vrac_article(id, old_poids, old_prix);
+		//these vars will be used to duplicate item with pre-sale prix and poids
+		var old_prix = $form.find('input[name="old_prix"]').val();
+		var old_poids = $form.find('input[name="old_poids"]').val().replace(',','.');
+		//var new_poids = parseFloat(old_poids)-parseFloat(poids);
+		// ajax call (that will use php db_function duplicate_vrac_article() to duplicate vrac article)
+		duplicate_vrac_article(article_id, old_poids, old_prix);
+		// ↑ when completed and if successfull, the above ajax call will update the value of global js var new_vrac_id to id of newly created vrac article. In which case, this new_vrac_id should be used as article_id in create_panier call below
 	}
-
-	// hide modal
-	hideModal($(this).parents('div.modal'));
 
 	/* 
 	CHANGES START NOW 
 	up to here, ajoutPanierSubmit (this) and directeVenteSubmit (above) are strictly the same 
 	*/
 
-	var article_statut_id = statut_table['vendu'];
-
 	/**  are we creating a new panier, or using a 'panier en cours' ? **/
 	// If 'nouveau panier' option was selected, we can get new panier nom from panierNom field
 	var $panierNomInput = $form.find('input[name="panierNom"]');
 	if( $panierNomInput.val().length ){ // we are creating a new panier
 		var createPanier = true;
-		var nom = $panierNomInput.val();
+		var panier_nom = $panierNomInput.val();
 	
 	// else, we are using a 'panier en cours', don't need its name but its ID
 	}else{
@@ -492,35 +647,61 @@ $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 		var panier_id = $form.find('select[name="panier_id"]').val();
 	}
 
-	var panier_statut_id = 0;
-
 	if(createPanier){
-		create_panier(id, nom, poids, prix, paiement_id, panier_statut_id);
+		setTimeout( function(){
+			if(new_vrac_id !== 0 && vrac == 1){
+				article_id = new_vrac_id;
+			}
+			// create panier
+			// ajax call that will use db_function create_panier()
+			create_panier(article_id, panier_nom, poids, prix, paiement_id, vrac, statut_table['disponible']);
+		}, 500);
 
 	// attribute panier_id to article and update article to sold
 	}else{
-		// update article
-		updateTable(
-			'articles', 
-			id, 
-			'panier_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
-			 panier_id +sep+ prix +sep+ poids+sep+article_statut_id+sep+unix_time
-		);
-		// and update panier date, so that it goes on top in the list (order date DESC)
-		updateTable('paniers', panier_id, 'date', unix_time);
+		setTimeout( function(){
+			if(new_vrac_id !== 0 && vrac == 1){
+				article_id = new_vrac_id;
+			}
+			// update article
+			updateTable(
+				'articles', 
+				article_id, 
+				'panier_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
+				panier_id +sep+ prix +sep+ poids+sep+statut_table['vendu']+sep+unix_time
+			);
+			// and update panier date, so that it goes to top of the list (order date DESC)
+			updateTable(
+				'paniers', 
+				panier_id, 
+				'date', 
+				unix_time
+			);
+		}, 500);
 
 		// hide div#formsContainer (if within scinderArticle.php?..&vendre)
 		// debug
 		//alert('HERE');
-		var $formsContainer = $('body div#formsContainer');
-
-		// debug
-		//alert($formsContainer.attr('id'));
-
-		if($formsContainer.length){
-			$formsContainer.hide();
-			$('div#adminContainer').append('<a class="button" href="/admin/">&lt; Retour</a>');
+		// hide/update article row or form if article is NOT vrac
+		if(vrac*1 !== 1){
+			//alert('not vrac!');
+			var $tr = $('table.data').find('tr[data-id="'+article_id+'"]')
+			if( $tr.length ){
+				//alert('yes tr!');
+				$tr.hide(1000);
+			}else/* if( $('div#formsContainer').length )*/{
+				//alert('no tr!');
+				$('div#formsContainer').hide();
+				$('div#adminContainer').append('<a class="button" href="/admin/">&lt; Retour</a>'+message);
+			}
 		}
+		/*if(vrac == 0){
+			var $formsContainer = $('body div#formsContainer');
+			if($formsContainer.length){
+				$formsContainer.hide();
+				$('div#adminContainer').append('<a class="button" href="/admin/">&lt; Retour</a>');
+			}
+		}*/
 		
 		setTimeout(function(){
 			updatePaniersModal();
@@ -541,6 +722,7 @@ $("body").on('click', 'button#newArticleDirectVenteSubmit', function(e){
 	$required.each(function( index ) {
 		if( !$(this).val().length ){
 			error = true;
+			alert( 'Il reste un champ à remplir: '+$(this).attr('name') );
 			$(this).focus();
 			return false; // break the loop
 		}
@@ -551,12 +733,11 @@ $("body").on('click', 'button#newArticleDirectVenteSubmit', function(e){
 	}
 
 	var fields = $form.serializeArray();
-	
 	// debug
 	//console.log( fields );
 
 	// these need to be declared here because declaring them within jQuery object does not work
-	var poids, prix, nom, paiement_id;
+	var poids, prix, nom, paiement_id, vrac;
 
 	// now we can update their values through jQuery.each
 	jQuery.each(fields, function( i, field ){
@@ -574,6 +755,9 @@ $("body").on('click', 'button#newArticleDirectVenteSubmit', function(e){
 		if(field.name == 'paiement_id'){
 			paiement_id = field.value;
 		}
+		if(field.name == 'vrac'){
+			vrac = field.value;
+		}
 	});
 	// if checkbox was not checked, there's no field['paiement_id'] so paiement_id is undefined
 	if(typeof paiement_id === "undefined"){
@@ -581,7 +765,7 @@ $("body").on('click', 'button#newArticleDirectVenteSubmit', function(e){
 	}
 
 	// create panier. fields (first param) will pass the info needed to create the article once the panier has been created. (If the article exsisted already the value of 'fields' would be the article id)
-	create_panier(fields, nom, poids, prix, paiement_id, 1);
+	create_panier(fields, nom, poids, prix, paiement_id, vrac, statut_table['vendu']);
 
 });
 
@@ -612,7 +796,7 @@ $("body").on('click', 'button#newArticleAjoutPanierSubmit', function(e){
 	//console.log( fields );
 
 	// these need to be declared here because declaring them within jQuery.each loop does not work
-	var panier_id, nom, poids, prix, paiement_id;
+	var panier_id, nom, poids, prix, paiement_id, vrac;
 
 	// now we can update their values through jQuery.each
 	jQuery.each(fields, function( i, field ){
@@ -631,6 +815,9 @@ $("body").on('click', 'button#newArticleAjoutPanierSubmit', function(e){
 		if(field.name == 'paiement_id'){
 			paiement_id = field.value;
 		}
+		if(field.name == 'vrac'){
+			vrac = field.value;
+		}
 	});
 	// if checkbox was not checked, there's no field['paiement_id'] so paiement_id is undefined
 	if(typeof paiement_id === "undefined"){
@@ -644,10 +831,16 @@ $("body").on('click', 'button#newArticleAjoutPanierSubmit', function(e){
 
 	}else if( (panier_id == '' || panier_id == 'undefined') && nom != ''){ //we're creating a new panier 
 		// let's create the new panier, and pass the new article fields as 1st param so that once the panier is created, the article is also created
-		create_panier(fields, nom, poids, prix, paiement_id, 0);
+		create_panier(fields, nom, poids, prix, paiement_id, vrac, statut_table['disponible']);
 	}
 
 });
+
+/*********** ARTICLE VENTE (ADD TO PANIER) behaviors END **************/
+
+
+
+
 
 // modifier un article on tr.pair et tr.impair click
 $("table.data").on('click', 'tr.pair td, tr.pair td div, tr.impair td, tr.impair td div', function(e){
@@ -699,7 +892,7 @@ $('<a class="closeMessage">&times;</a>').appendTo('p.error, p.note, p.success, d
 
 /* vente end of form user behavior */
 // show/hide last steps of form, depending on choice between 'vendre directement' et 'ajouter au panier'
-$('body').on('click', 'a#newArticleAjoutPanier', function(e){
+$('body').on('click', 'a#ajoutPanier', function(e){
 	e.preventDefault();
 	$('div#paniers select, div#paniers input').prop('disabled', false);
 	$('input#prixVente').prop('required', false);
@@ -713,9 +906,9 @@ $('body').on('click', 'a#newArticleAjoutPanier', function(e){
 		//alert('should focus on select');
 		$('select#paniers').focus();
 	}
-	$('a#newArticleDirectVente').removeClass('selected').addClass('discarded');
+	$('a#directVente').removeClass('selected').addClass('discarded');
 });
-$('body').on('click', 'a#newArticleDirectVente', function(e){
+$('body').on('click', 'a#directVente', function(e){
 	e.preventDefault();
 	$('div#paniers select, div#paniers input').prop('disabled', true);
 	$('div#paniers').hide();
@@ -723,7 +916,7 @@ $('body').on('click', 'a#newArticleDirectVente', function(e){
 	$('input#prixVente').prop('required', true);
 	$('input#prixVente').focus();
 	$(this).removeClass('discarded').addClass('selected');
-	$('a#newArticleAjoutPanier').removeClass('selected').addClass('discarded');
+	$('a#ajoutPanier').removeClass('selected').addClass('discarded');
 });
 
 // enable disabled submit buttons at end of each form : directeVenteSubmit, and ajoutPanierSubmit
@@ -778,16 +971,7 @@ $('body').on('change', 'input#panierNom', function(){
 		$('button#newArticleAjoutPanierSubmit').prop('disabled', true);
 	}
 });
-/* not used: a#aNP is an extra 'nouveau panier' button commented out in 'vente-panier.php'
-$('body').on('click', 'a#aNP', function(e){
-	e.preventDefault();
-	$('select#paniers').val('');
-	$('p#pPN').show();
-	$('input#panierNom').focus();
-	$('button#ajoutPanierSubmit').prop('disabled', true);
-	$('button#newArticleAjoutPanierSubmit').prop('disabled', true);
-});
-*/
+
 $('.showPaniers').on('click', function(){
 	$('div#paniersTarget').show();
 });
@@ -811,7 +995,7 @@ $('body').on('change', 'input#prixVentePanier', function(){
 	}
 });
 
-/* UPLOAD BEHAVIORS */
+/********** UPLOAD BEHAVIORS START ************/
 
 // #chooseFileLink onclick triggers #fileUpload click
 $('body').on('click', '#chooseFileLink', function(){
@@ -911,4 +1095,4 @@ $('body').on('click', '#uploadFileSubmit', function(e){
 	
 });
 
-/* end upload behaviors */
+/********** UPLOAD BEHAVIORS END ************/

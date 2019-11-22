@@ -6,6 +6,6 @@ CREATE TABLE `paniers` (
   `total` decimal(19,2) DEFAULT NULL,
   `poids` decimal(19,3) DEFAULT NULL,
   `date_vente` int(11) DEFAULT NULL,
-  `statut` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0=en attente, 1=vendu',
+  `statut_id` int(2) NOT NULL DEFAULT '1' COMMENT '1=disponible = panier en cours',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

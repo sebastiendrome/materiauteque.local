@@ -7,7 +7,7 @@ if( isset($_SESSION['article_id']) ){
 	unset($_SESSION['article_id']);
 }
 
-$paniers = get_table('paniers', 'statut=0', 'date DESC');
+$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
 
 // make sure we get the needed data, if we don't have it already
 if( !isset($categories) || empty($categories) ){
@@ -54,20 +54,18 @@ if( isset($_POST['simpleSearch']) ){
 // get all ids just to count the number of articles
 $all_articles = get_items_data('id', 'all');
 $count = count($all_articles);
-if(isset($_GET['limit']) && !empty($_GET['limit'])){
-	// validate
-	if(preg_match('/^\d*?$/',$_GET['limit']) && $_GET['limit']<=$count){
-		$limit = $_GET['limit'];
-		$_SESSION['limit'] = $limit;
-		$p = 1;
-		$_SESSION['p'] = $p;
-	}
+if(isset($_GET['limit']) && !empty($_GET['limit']) && preg_match('/^\d*?$/',$_GET['limit']) ){
+	$limit = $_GET['limit'];
+	$_SESSION['limit'] = $limit;
+	$p = 1;
+	$_SESSION['p'] = $p;
+
 }elseif( isset($_SESSION['limit']) ){
 	$limit = $_SESSION['limit'];
-
 }else{
 	$limit = 20;
 }
+
 $pages = ceil($count/$limit);
 
 if(isset($_GET['p'])){
@@ -140,7 +138,7 @@ echo '<div id="done">'.$message.'</div>';
 <div class="adminHeader">
 <h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<a href="/_code/php/forms/newArticle.php" class="button add left" title="créer un article">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button vente" title="rechercher ou créer un article à vendre">€ Nouvelle vente</a> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a><!-- <a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
+<a href="/_code/php/forms/newArticle.php" class="button add left" title="créer un article">Nouvel article</a> <!--<a href="/_code/php/forms/findArticle.php" class="button edit">Rechercher un article</a> --><a href="/_code/php/forms/ventes.php" class="button vente" title="rechercher ou créer un article à vendre">€ Nouvelle vente</a> <!--<span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/_code/php/forms/manage-paniers.php" class="button edit">Paniers</a> --><span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a><!-- <a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> -->
 
 <div class="clearBoth"></div>
 </div>

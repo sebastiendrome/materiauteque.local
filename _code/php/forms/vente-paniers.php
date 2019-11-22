@@ -17,8 +17,8 @@ if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') ){
 ?>
 
 <div style="text-align:center;">
-	<a href="javascript:;" id="newArticleDirectVente" class="button">Vendre directement</a> ou 
-	<a href="javascript:;" id="newArticleAjoutPanier" class="button">Ajouter au panier</a>
+	<a href="javascript:;" id="directVente" class="button">Vendre directement</a> ou 
+	<a href="javascript:;" id="ajoutPanier" class="button">Ajouter au panier</a>
 </div>
 
 <div class="clearBoth">
@@ -28,7 +28,7 @@ if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') ){
 		<?php
 		// avoid error 'Undefined variable: paniers' when loading via javascript into scinderArticle.php, after new article duplicate was created to be sold
 		if( !isset($paniers) ){
-			$paniers = get_table('paniers', 'statut=0', 'date DESC');
+			$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
 		}
 		if( $paniers ){
 			echo '<div style="padding:0 5px;">
@@ -69,10 +69,10 @@ if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') ){
 	</div>
 
 	<div id="direct" style="display:none; padding-top:10px;">
-		<p>Prix: <input type="number" min="0" step="any" style="width:60px; min-width:60px; text-align:right;" name="prix" id="prixVente" value="" placeholder="0,00" required> €
+		<p>Prix: <input type="number" min="0" step="any" style="width:60px; min-width:60px; text-align:right;" name="prix" id="prixVente" value="<?php if( isset($item_data['prix']) ){echo $item_data['prix']; } ?>" placeholder="0,00" required> €
 		<input type="checkbox" id="paiement_id" name="paiement_id" value="2" style="margin-left:20px;"> <label for="paiement_id">Paiement par chèque</label></p>
 
-		<button type="submit" name="<?php echo $direct_submit; ?>" id="<?php echo $direct_submit; ?>" class="vente" style="width:100%; margin-left:0;" disabled>Enregistrer la vente</button>
+		<button type="submit" name="<?php echo $direct_submit; ?>" id="<?php echo $direct_submit; ?>" class="vente" style="width:100%; margin-left:0;"<?php if( !isset($item_data['prix']) || $item_data['prix']<= 0){echo ' disabled';} ?>>Enregistrer la vente</button>
 	</div>
 	
 </div>

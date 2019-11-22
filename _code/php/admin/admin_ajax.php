@@ -12,7 +12,7 @@ if( isset($_POST['contextNewFile']) ){
 	$result = upload_file($path, $replace);
 }
 
-// save sql
+// save sql table
 if( isset($_GET['updateTable']) ){
 	$table = urldecode($_GET['table']);
 	$id = urldecode($_GET['id']);
@@ -67,7 +67,6 @@ if( isset($_POST['original']) && isset($_POST['copy']) ){
 }
 
 // create vrac vente
-// uses: duplicate_vrac_article()
 if( isset($_GET['vrac_vente']) ){
 	$original_id = $_GET['original_id'];
 	$old_poids = $_GET['old_poids'];
@@ -82,7 +81,7 @@ if( isset($_GET['create_panier']) ){
 	$data['paiement_id'] = $_GET['paiement_id'];
 	$data['total'] = $_GET['prix'];
 	$data['date_vente'] = time();
-	$data['statut'] = $_GET['statut'];
+	$data['statut_id'] = $_GET['statut_id'];
 	$data['poids'] = $_GET['poids'];
 
 	$new_id = insert_new('paniers', $data);
@@ -90,6 +89,15 @@ if( isset($_GET['create_panier']) ){
 		$result = '0|erreur create_panier: '.$new_id;
 	}else{
 		$result = $new_id;
+	}
+}
+
+// delete panier
+if( isset($_GET['deleteItem']) ){
+	$id = urldecode($_GET['id']);
+	$table = urldecode($_GET['table']);
+	if( !empty($id) && is_numeric($id) && !empty($table) ){
+		$result = delete_item($table, $id);
 	}
 }
 
@@ -119,16 +127,9 @@ if( isset($_GET['create_article']) ){
 
 // update paniers modal
 if( isset($_GET['updatePaniersModal']) ){
-	$paniers = get_table('paniers', 'statut=0', 'date DESC');
-	$result = display_paniers($paniers);
-}
-
-// show popup to edit table content
-if( isset($_GET['editPopup']) ){
-	$table = urldecode($_GET['table']);
-	$article_id = urldecode($_GET['id']);
-	$col = urldecode($_GET['col']);
-	$result = popup_edit($table, $article_id, $col);
+	$open_statut = name_to_id('disponible', 'statut');
+	$paniers = get_table('paniers', 'statut_id='.$open_statut, 'date DESC');
+	$result = display_paniers_en_cours($paniers);
 }
 
 

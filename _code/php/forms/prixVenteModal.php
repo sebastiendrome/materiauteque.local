@@ -13,7 +13,7 @@ if( !isset($id) || empty($id) ){
 	exit;
 }
 
-$paniers = get_table('paniers', 'statut=0', 'date DESC');
+$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
 
 // we'll need to know these fields for item
 $item_data =  get_item_data($id, 'titre, statut_id, prix, poids, vrac');
@@ -74,17 +74,20 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 		
 		<p>
 		Poids:
-		<input type="text" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo str_replace('.' ,',' ,$item_data['poids']); ?>" placeholder="0,000" required> Kg</p>
+		<input type="number" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo str_replace('.' ,',' ,$item_data['poids']); ?>" placeholder="0,000" required autofocus> Kg</p>
 
 		
 		<?php require(ROOT.'_code/php/forms/vente-paniers.php'); ?>
-		
-		
-		<p>&nbsp;</p>
-		<h3 style="text-align:center; margin:20px 0; clear:both;"> —— OU —— </h3>
 
-	<span style="color:#383838; font-weight:bold; font-size:larger;">Vente partielle:</span> 
-	<a href="/_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left scinder">Scinder l'article en 2</a>
+		
+		<?php if($item_data['vrac'] == 0){ ?>
+			<p>&nbsp;</p>
+			<h3 style="text-align:center; margin:20px 0; clear:both;"> —— OU —— </h3>
+
+			<span style="color:#383838; font-weight:bold; font-size:larger;">Vente partielle:</span> 
+			<a href="/_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left scinder">Scinder l'article en 2</a>
+		<?php } ?>
+		
 
 	</form>
 

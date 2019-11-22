@@ -6,7 +6,7 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
 
-$paniers = get_table('paniers', 'statut=0', 'date DESC');
+$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
 
 /*
 // process form POST data (simple search)

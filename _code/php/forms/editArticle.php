@@ -86,18 +86,21 @@ if( !isset($title) ){
 	echo ' <a href="javascript:;" class="showModal button remove" rel="deleteArticleModal?article_id='.$article_id.'">Supprimer cet article</a>';
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
+	$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
+	include(ROOT.'_code/php/forms/paniersModal.php');
+
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
-	
+
 	$footer = true;
 }else{
 	echo $message;
 	$footer = false;
 }
 
-$paniers = get_table('paniers', 'statut=0', 'date DESC');
-include(ROOT.'_code/php/forms/paniersModal.php');
 ?>
+
+<div id="formsContainer">
 
 <form name="newArticle" id="newArticle" action="?article_id=<?php echo $article_id; ?>" method="post" style="display:inline-block; float:left; margin-right:10px;">
 
@@ -111,9 +114,10 @@ include(ROOT.'_code/php/forms/paniersModal.php');
 
 </form>
 
+
 <?php require(ROOT.'/_code/php/forms/newArticleImages.php'); ?>
 
-
+</div>
 
 <?php
 if($footer){

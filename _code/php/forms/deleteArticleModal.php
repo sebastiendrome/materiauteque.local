@@ -32,6 +32,7 @@ if(isset($_GET['article_id']) && !empty($_GET['article_id']) ){
 	
 	<form name="deleteArticle" id="deleteArticle" action="/_code/php/forms/deleteArticle.php" method="post">
 	<input type="hidden" name="delete_id" id="delete_id" value="<?php echo $article_id; ?>">
+	<input type="hidden" name="table" id="table" value="articles">
 	<input type="hidden" name="deleteArticleSubmitted" id="deleteArticleSubmitted" value="deleteArticleSubmitted">
 	<a href="javascript:;" class="button hideModal left">Non</a> <button type="submit" name="deleteArticleSubmit" id="deleteArticleSubmit" class="right">Supprimer</button>
 	</form>

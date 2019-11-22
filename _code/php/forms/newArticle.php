@@ -56,6 +56,9 @@ if( !isset($title) ){
 	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
+	$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
+	include(ROOT.'_code/php/forms/paniersModal.php');
+
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
 		
@@ -65,13 +68,16 @@ if( !isset($title) ){
 	$footer = false;
 }
 
-$paniers = get_table('paniers', 'statut=0', 'date DESC');
-include(ROOT.'_code/php/forms/paniersModal.php');
+echo '<div id="formsContainer">';
 
 if(isset($items_table)){
 	echo $items_table;
 }
+
+echo '</div>'.PHP_EOL;
+
 ?>
+
 
 <form name="newArticle" id="newArticle" action="" method="post" style="display:inline-block; float:left; margin-right:10px;">
 	
