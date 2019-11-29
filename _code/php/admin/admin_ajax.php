@@ -36,6 +36,7 @@ if( isset($_GET['updateTable']) ){
 			}
 		}else{
 			$result = '0|$_GET[updateTable] error: columns and values don\'t match!';
+			return false;
 		}
 	}else{
 		// format numbers 2,4 => 2.3
@@ -46,6 +47,18 @@ if( isset($_GET['updateTable']) ){
 	}
 	
 	$result = update_table($table, $id, $update);
+}
+
+// delete img directories for articles within sold paniers
+if( isset($_GET['removeDirs']) && !empty($_GET['removeDirs']) ){
+	$dir_string = $_GET['removeDirs'];
+	$dir_array = explode('qQq', $dir_string);
+	foreach($dir_array as $dir){
+		if( !empty($dir) && file_exists(ROOT.'uploads/'.$dir) ){
+			rmdirr(ROOT.'uploads/'.$dir);
+		}
+	}
+	$result = '1|image directories deleted: '.str_replace('qQq', ' ', $dir_string);
 }
 
 

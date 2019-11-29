@@ -1,5 +1,5 @@
 
-var sep = 'qQq'; // separator to concatenate many cols/vals querys that will be retreived  by php as array
+var sep = 'qQq'; // separator to concatenate many cols/vals querys that will be retreived by php as array
 var wW = $(window).width();
 var wH = $(window).height();
 var new_vrac_id = 0;
@@ -31,6 +31,32 @@ function updateTable(table, id, col, value){
 			}
 			$('#done').html(message);
 			return true;
+			//return message;
+		}
+	});
+}
+
+// remove article images directory when a panier is sold containg this article
+function removeDirs(imgDirs){
+	$.ajax({
+		// Server script to process the upload
+		url: '/_code/php/admin/admin_ajax.php?removeDirs='+imgDirs,
+		type: 'GET',
+		// on success show message
+		success : function(msg) {
+			var pre = msg.substr(0,2);
+			var mes = msg.substr(2);
+			var message;
+			if(pre == '0|'){
+				message = '<p class="error">'+mes+'</p>';
+			}else if(pre == '1|'){
+				message = '<p class="success">'+mes+'</p>';
+			}else if(pre == '2|'){
+				message = '<p class="note">'+mes+'</p>';
+			}
+			//$('#done').html(message);
+			alert(message);
+			//return true;
 			//return message;
 		}
 	});
@@ -339,6 +365,8 @@ $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 		'total'+sep+'paiement_id'+sep+'statut_id'+sep+'date_vente'+sep+'poids', 
 		 total +sep+ paiement_id +sep+ statut_id +sep+ unix_time + sep+ poids
 	);
+
+	var imgDirs = '';
 	
 	// update each article prix inside panier
 	$container.find('div.particle').each( function(){
@@ -356,17 +384,24 @@ $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 			'prix', 
 			article_prix
 		);
-		// !!!!!!!!!!! here we could delete each image directory via ajax call to php rmdrr(ROOT.'uploads/'+article_id)
+		// create string of article_id(s) to delete article img directory later
+		imgDirs += article_id+sep;
+
 	});
+
+	// delete image directory for each article in sold panier
+	removeDirs(imgDirs);
 	
 	// we want to retreive the result of updateTable above, which wraps an asynchronous call. When it's done, the function sets the html of div#done. So we can check for that and know the result, but let's wait to make sure it's done
 	t4 = setTimeout(function(){
 		var result = $('#done').html();
 		//alert(result);
-		if( result.substr(0,15) !== '<p class="error' ){ // no error message
+		if( result.substr(0,15) !== '<p class="error' ){ // no error message = success
 			$container.animate({'height':'30px'}, 500, function(){
 				$(this).replaceWith('<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu, id: '+id+' <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>');
 			});
+		}else{
+			$container.append(result);
 		}
 	}, 500);
 
