@@ -180,7 +180,7 @@ function display_paniers_en_cours($paniers){
 				$articles_output .= '<div class="particle"'.$particle_style.' data-articleid="'.$a['id'].'">';
 				$articles_output .= '<div class="paActions">
 				<a href="javascript:;" class="remove" title="supprimer cet article du panier"></a>
-				<label for="'.$a['id'].'">€</label><input type="number" name="aPrix" value="'.$a['prix'].'" id="'.$a['id'].'" class="articlePrix" placeholder="0,00"></div>';
+				<label for="'.$a['id'].'">€</label><input type="number" name="aPrix" value="'.$a['prix'].'" id="'.$a['id'].'" class="articlePrix currency" placeholder="0,00"></div>';
 				$articles_output .= $imgCont.$a['titre'].' <span style="white-space:nowrap;">'.str_replace('.', ',', $a['poids']).' kg</span>';
 				
 				$articles_output .= '<div class="clearBoth"></div>
@@ -200,7 +200,7 @@ function display_paniers_en_cours($paniers){
 				$output .= $a_count.' articles, '. str_replace('.', ',', $poids_total).' kg<br>';
 			}
 			$output .= $articles_output;
-			$output .= '<p class="n" style="text-align:right; padding-right:20px;"><span style="white-space:nowrap;"><input type="checkbox" id="paiement_id" name="paiement_id" value="2"> <label for="paiement_id">paiement par chèque</label></span> &nbsp;&nbsp;&nbsp;&nbsp;<span style="white-space:nowrap;">Total €<input type="number" style="width:70px; min-width:70px; text-align:right;" name="prix" id="prixVentePanier" value="'.number_format($total,2).'" placeholder="0,00" required></span>
+			$output .= '<p class="n" style="text-align:right; padding-right:20px;"><span style="white-space:nowrap;"><input type="checkbox" id="paiement_id" name="paiement_id" value="2"> <label for="paiement_id">paiement par chèque</label></span> &nbsp;&nbsp;&nbsp;&nbsp;<span style="white-space:nowrap;">Total €<input type="number" class="currency" style="width:70px; min-width:70px; text-align:right;" name="prix" id="prixVentePanier" value="'.number_format($total,2).'" placeholder="0,00" required></span>
 			</p>';
 			$output .= '<div class="moreOptions"><a href="javascript:;" class="dots">• • •</a><ul class="statutActions'.$last.'">';
 			if( !isset($statut_array) ){

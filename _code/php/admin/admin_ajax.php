@@ -88,7 +88,7 @@ if( isset($_GET['create_panier']) ){
 	if( !$new_id ){
 		$result = '0|erreur create_panier: '.$new_id;
 	}else{
-		$result = $new_id;
+		$result = '1|'.$new_id;
 	}
 }
 
@@ -121,7 +121,7 @@ if( isset($_GET['create_article']) ){
 	if( !$new_id ){
 		$result = '0|erreur create_article new ID '.$new_id;
 	}else{
-		$result = $new_id;
+		$result = '1|'.$new_id;
 	}
 }
 
