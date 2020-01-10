@@ -238,7 +238,12 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 				$st_id = name_to_id('vendu', 'statut');
 			}
 			echo '<input type="hidden" name="statut_id" value="'.$st_id.'">';
-			echo '<input type="hidden" name="prix" value="'.$item_data['prix'].'">';
+			if( isset($item_data['prix']) ){
+				$item_prix = $item_data['prix'];
+			}else{
+				$item_prix = '';
+			}
+			echo '<input type="hidden" name="prix" value="'.$item_prix.'">';
 		}else{
 
 			echo '<tr>

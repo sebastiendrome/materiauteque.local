@@ -55,7 +55,7 @@ function removeDirs(imgDirs){
 				message = '<p class="note">'+mes+'</p>';
 			}
 			//$('#done').html(message);
-			alert(message);
+			//alert(message);
 			//return true;
 			//return message;
 		}
