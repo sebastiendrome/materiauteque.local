@@ -238,7 +238,9 @@ Si l'article n'existe pas ou est introuvable...
 	<input type="hidden" name="visible" value="0">
 	<input type="hidden" name="date_vente" value="<?php echo time(); ?>">
 	
+	<div id="vpLoader">
 	<?php require(ROOT.'_code/php/forms/vente-paniers.php'); ?>
+	</div>
 	
 
 </form>

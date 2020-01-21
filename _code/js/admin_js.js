@@ -144,13 +144,12 @@ function create_article(fields){
 				var article_id = mes;
 				message = '<p class="success">Article créé ID:'+article_id+'</p>';
 				
-				// if we're in ventes.php, no need to updatePaniers, instead let's show meaningful message and scroll to top of page
+				// if we're in ventes.php let's show meaningful message and scroll to top of page
 				if(basename(window.location.href) == 'ventes.php'){
-					//updatePaniers = false;
 					window.scrollTo(0, 0);
 					$('div#adminContainer div#msg').remove();
 					$('div#adminContainer').prepend('<div id="msg"><p class="success">Article vendu, ID:'+article_id+' <a href="javascript:;" class="closeBut">&times;</a></p></div>');
-				}else{
+				//}else{
 					// reset new article form
 					$('form#newArticle').trigger("reset");
 				}
@@ -217,12 +216,17 @@ function duplicate_vrac_article(id, old_poids, old_prix){
 // update paniers modal
 function updatePaniersModal(){
 	$.ajax({
-		// Server script to process the upload
 		url: '/_code/php/admin/admin_ajax.php?updatePaniersModal',
 		type: 'GET',
-		// on success show message
 		success : function(msg) {
 			$('#paniersContainer #panierAjaxTarget').html(msg);
+			// reload vente-paniers in container div#vpLoader, if found
+			if($('body div#vpLoader').length !== 0) {
+				//alert('YES vpLoader');
+				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php');
+			}/*else{
+				alert('NO vpLoader');
+			}*/
 			return true;
 		}
 	});
