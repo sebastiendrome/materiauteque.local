@@ -224,11 +224,8 @@ function updatePaniersModal(){
 			// reload vente-paniers in container div#vpLoader, if found
 			if($('body div#vpLoader').length !== 0) {
 				var context = window.location;
-				//alert('YES vpLoader');
 				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
-			}/*else{
-				alert('NO vpLoader');
-			}*/
+			}
 			return true;
 		}
 	});
@@ -349,6 +346,7 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 	e.preventDefault();
 	var t4;
+	var t5;
 	if( $(this).hasClass('disabled') ){
 		alert('Merci de remplir le champ "Total"');
 		return false;
@@ -403,9 +401,12 @@ $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 		var result = $('#done').html();
 		//alert(result);
 		if( result.substr(0,15) !== '<p class="error' ){ // no error message = success
-			$container.animate({'height':'30px'}, 500, function(){
-				$(this).replaceWith('<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu, id: '+id+' <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>');
-			});
+			updatePaniersModal();
+			var venteMsg = '<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu. id: '+id+' <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>';
+			t5 = setTimeout(function(){
+				$('div#panierAjaxTarget').prepend(venteMsg);
+			}, 300);
+			
 		}else{
 			$container.append(result);
 		}
