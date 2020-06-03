@@ -5,15 +5,21 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
-// are we in index.php or ventes.php? js code for identifying the clicked buttons is different
-if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') ){
+/* We can be loading or ajax-re-loading the form, to:
+1. Vendre un article existant
+2. Créer un article pour le vendre
+Upon loading, this file needs to know which is the case:
+- If php knows we're in /ventes.php (form was loaded with the page) or the ?context=[window.location] GET was passed through $jquery.load() (form was re-loaded in page via ajax), and we're in case 2. In this case, buttons ids as newArticleDirectVenteSubmit and newArticleAjoutPanierSubmit
+- Or we're in case 1, in which case buttons ids as directeVenteSubmit and ajoutPanierSubmit
+Different javascript functions are triggered on click depending on the buttons ids.
+*/
+if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') || ( isset($_GET['context']) && strstr($_GET['context'], 'forms/ventes.php') ) ){
 	$direct_submit = 'newArticleDirectVenteSubmit';
 	$ajout_submit = 'newArticleAjoutPanierSubmit';
 }else{
 	$direct_submit = 'directeVenteSubmit';
 	$ajout_submit = 'ajoutPanierSubmit';
 }
-
 ?>
 
 <div style="text-align:center;">

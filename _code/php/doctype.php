@@ -9,7 +9,6 @@ if( !isset($title) ){
 if( !isset($description) ){
 	$description = '';
 }
-
 /*
 optional: 
 $social_url, $social_image
@@ -36,14 +35,16 @@ if( file_exists($gtag) ){
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="description" content="<?php echo $description; ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Sébastien Brault, sebdedie@gmail.com">
 
-<meta property="og:url"		   content="<?php echo $social_url; ?>">
-<meta property="og:type"		  content="website">
-<meta property="og:title"		 content="<?php echo $title; ?>">
-<meta property="og:description"   content="<?php echo $description; ?>">
+<meta property="og:url"			content="<?php echo $social_url; ?>">
+<meta property="og:type"		content="website">
+<meta property="og:title"		content="<?php echo $title; ?>">
+<meta property="og:description"	content="<?php echo $description; ?>">
+<meta property="og:author"		content="Sébastien Brault, sebdedie@gmail.com">
 <?php 
 if( isset($social_image) && !empty($social_image) ){ ?>
-<meta property="og:image"		 content="<?php echo $social_image; ?>">
+<meta property="og:image"		content="<?php echo $social_image; ?>">
 <?php 
 }
 ?>

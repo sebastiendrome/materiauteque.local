@@ -146,6 +146,7 @@ function create_article(fields){
 				
 				// if we're in ventes.php let's show meaningful message and scroll to top of page
 				if(basename(window.location.href) == 'ventes.php'){
+					//alert('WE\'RE IN ventes.php, js function create_article, admin_ajax.php?create_article');
 					window.scrollTo(0, 0);
 					$('div#adminContainer div#msg').remove();
 					$('div#adminContainer').prepend('<div id="msg"><p class="success">Article vendu, ID:'+article_id+' <a href="javascript:;" class="closeBut">&times;</a></p></div>');
@@ -222,8 +223,9 @@ function updatePaniersModal(){
 			$('#paniersContainer #panierAjaxTarget').html(msg);
 			// reload vente-paniers in container div#vpLoader, if found
 			if($('body div#vpLoader').length !== 0) {
+				var context = window.location;
 				//alert('YES vpLoader');
-				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php');
+				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
 			}/*else{
 				alert('NO vpLoader');
 			}*/
@@ -978,7 +980,7 @@ $("select[name='categories_id'], select[name='matieres_id']").on('change', funct
 	var select_input = $(this).attr("name");
 	var sous_table = 'sous_'+select_input;
 	// $target: the next select input to be populated depending on the selected option. Make sure it belongs to the same form, hence going through the DOM parents(form)...
-	var $target = $(this).parents('form').find($("select[name='"+sous_table+"']"));
+	var $target = $(this).closest('form').find($("select[name='"+sous_table+"']"));
 	// if select name is 'categories_id', we want to look into 'categories' SQL table, if it is 'matieres_id', we want to look into 'matieres' table...
 	var table = select_input.replace("_id",'');
 	// call to _code/js/js.js: function get_children(), that will request via ajax call to _code/php/admin/admin_ajax.php?get_children the children of id_parent in table, and insert them as html <option> markup to $target
@@ -986,11 +988,11 @@ $("select[name='categories_id'], select[name='matieres_id']").on('change', funct
 });
 // jump to next select from sous_categories selected 
 $("select[name='sous_categories_id']").on('change', function(){
-	$("select[name='matieres_id']").focus();
+	$(this).closest('form').find("select[name='matieres_id']").focus();
 });
 // jump to next input from sous_matieres selected 
 $("select[name='sous_matieres_id']").on('change', function(){
-	$("input[name='poids']").focus();
+	$(this).closest('form').find("input[name='poids']").focus();
 });
 
 

@@ -53,8 +53,6 @@ define("DB_NAME", $db_name);
 // error handler
 require(ROOT.'_code/php/errors.php');
 
-
-
 // FILE TYPES
 $types = array();
 // ALL

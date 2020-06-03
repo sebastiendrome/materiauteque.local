@@ -29,7 +29,6 @@ if(isset($paniers) && $paniers){
 	echo 'var paniers = false;'.PHP_EOL;
 }
 ?>
-//alert(paiement_table['chèque']);
 </script>
 
 <!-- jQuery -->

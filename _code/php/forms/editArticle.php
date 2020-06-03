@@ -72,7 +72,7 @@ if( !isset($title) ){
 	$title = ' Modifier un Article';
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
-	<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">'.PHP_EOL;
+	<link href="/_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
 
 	echo '<div id="working"><div class="note">working...</div></div>';
 	echo '<div id="done">'.$message.'</div>';

@@ -11,7 +11,7 @@ function copyr($source, $dest){
 	}
 	$dir = dir($source);// Loop through the folder
 	while (false !== $entry = $dir->read()) {
-		if ($entry == '.' || $entry == '..') {// Skip pointers
+		if (substr($entry, 0, 1) == '.') {// Skip pointers
 			continue;
 		}
 		if ($dest !== "$source/$entry") {// Deep copy directories
