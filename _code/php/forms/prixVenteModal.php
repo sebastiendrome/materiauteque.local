@@ -76,8 +76,9 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 		Poids:
 		<input type="number" class="weight" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo $item_data['poids']; ?>" placeholder="0,000" required autofocus> Kg</p>
 
-		
+		<div id="vpLoader">
 		<?php require(ROOT.'_code/php/forms/vente-paniers.php'); ?>
+		</div>
 
 		
 		<?php if($item_data['vrac'] == 0){ ?>

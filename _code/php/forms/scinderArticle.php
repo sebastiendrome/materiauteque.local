@@ -251,7 +251,7 @@ $("form#dualForm").on("submit", function(e){
 					// update article id in form!
 					$('form#copy input[name="id"]').val(newId);
 					$('form#copy table.editArticle').hide();
-					$('form#copy div#loader').load('/_code/php/forms/vente-paniers.php', function(){
+					$('form#copy div#vpLoader').load('/_code/php/forms/vente-paniers.php', function(){
 						$(this).css('padding', '10px');
 					});
 				}else{

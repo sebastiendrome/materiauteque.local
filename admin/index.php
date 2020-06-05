@@ -222,7 +222,7 @@ if( isset($search_items) && !empty($search_items)){
 ?>
 
 
-<div class="clearBoth" style="margin-top:35px;">
+<div class="clearBoth">
 
 <h2 style="display:inline-block; margin-right:10px;">Articles</h2> 
 <span style="white-space:nowrap;"><?php echo ($offset+1).'—'.$w_end.' sur '.$count; ?>&nbsp;&nbsp;</span>

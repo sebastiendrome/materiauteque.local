@@ -287,4 +287,4 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 	
 	<!-- the following div is used to load vente-paniers.php in the context of scinderArticle.php, when the scission of an article to be sold has been succesfully made. vente-paniers.php allows us to finalize the sale, by choosing between 'Vendre directement' & 'Ajouter au panier'
 	-->
-	<div id="loader" style="background-color:#f5f5f5;"></div>
+	<div id="vpLoader" style="background-color:#f5f5f5;"></div>

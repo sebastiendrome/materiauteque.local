@@ -1,8 +1,18 @@
 <?php
 /******** TO DO ********
- * view more than 1 image per article
+ * Admin main sections:
+ * * Gérer les articles à la vente (c'est fait)
+ * * Tous les articles
+ * * Statistiques
+ * * Fermer / ouvrir la caisse
+ * * Gérer Catégories & Matières (master only)
+ * * Gérer les utilisateurs (master only)
+ 
+ * 'master' and 'guest' user (guest cannot access Catégories/Matières, Utilisateurs)
+ * 
+ 
  * order images for articles (move up/down)
- * Form: vente process and logic
+ 
  * pagination des résultats (admin et public)
  */
 session_start();
