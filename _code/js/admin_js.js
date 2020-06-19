@@ -223,7 +223,9 @@ function updatePaniersModal(){
 			$('#paniersContainer #panierAjaxTarget').html(msg);
 			// reload vente-paniers in container div#vpLoader, if found
 			if($('body div#vpLoader').length !== 0) {
+
 				var context = window.location;
+				$('body div#vpLoader').html('');
 				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
 			}
 			return true;
@@ -905,7 +907,7 @@ $('body').on('mouseleave', 'ul.statutActions', function(){
 // disable .disabled links
 $('body').on('click', 'a.disabled', function(e){
 	e.preventDefault();
-	alert('Ce bouton ne peut pas encore être cliqué parcequ\'il manque des informations au formulaire');
+	//alert('Ce bouton ne peut pas encore être cliqué parcequ\'il manque des informations au formulaire');
 	return false;
 });
 

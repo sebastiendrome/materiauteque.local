@@ -122,6 +122,10 @@ if( !isset($article_id) || empty($article_id) ){
 	require(ROOT.'_code/php/forms/edit_article_table.php');
 	?>
 
+	<!-- the following div is used to load vente-paniers.php in the context of scinderArticle.php, when the scission of an article to be sold has been succesfully made. vente-paniers.php allows us to finalize the sale, by choosing between 'Vendre directement' & 'Ajouter au panier'
+	-->
+	<div id="vpLoader" style="background-color:#f5f5f5;"></div>
+
 </form>
 
 
@@ -140,8 +144,6 @@ if( !isset($article_id) || empty($article_id) ){
 </div>
 
 </div><!-- end formsContainer -->
-
-<?php //require(ROOT.'/_code/php/forms/newArticleImages.php'); ?>
 
 
 

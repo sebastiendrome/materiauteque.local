@@ -284,7 +284,3 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 		<td>Observations:<td><textarea name="observations"><?= $item_data['observations'] ?? '' ?></textarea>
 	
 	</table>
-	
-	<!-- the following div is used to load vente-paniers.php in the context of scinderArticle.php, when the scission of an article to be sold has been succesfully made. vente-paniers.php allows us to finalize the sale, by choosing between 'Vendre directement' & 'Ajouter au panier'
-	-->
-	<div id="vpLoader" style="background-color:#f5f5f5;"></div>
