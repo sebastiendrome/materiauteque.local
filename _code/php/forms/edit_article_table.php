@@ -218,13 +218,13 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 
 
 		<tr>
-		<td>Poids (Kg):<td><input type="number" class="weight" min="0" step="any" name="poids" value="<?= $item_data['poids'] ?? '' ?>"<?php echo in_array('poids', $required) ? " required" : ""; ?>>
+		<td>Poids (Kg):<td><input type="number" step="any" min="0" class="weight" name="poids" value="<?= $item_data['poids'] ?? '' ?>"<?php echo in_array('poids', $required) ? " required" : ""; ?>>
 		
 		<?php
 		if($article_form_context !== 'vente'){
 		?>
 		<tr>
-		<td>Prix :<td><input type="number" class="currency" min="0" step="any" name="prix" value="<?= $item_data['prix'] ?? '' ?>"<?php echo in_array('prix', $required) ? " required" : ""; ?>>
+		<td>Prix :<td><input type="number" step="any" min="0" class="currency" name="prix" value="<?= $item_data['prix'] ?? '' ?>"<?php echo in_array('prix', $required) ? " required" : ""; ?>>
 		<?php 
 		} 
 		?>

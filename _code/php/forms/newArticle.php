@@ -17,7 +17,7 @@ if( isset($_POST['newArticleSubmitted']) ){
 	}
 	if($article_id = insert_new('articles', $new_item_data)){
 		$_SESSION['article_id'] = $article_id;
-		$new_item[0] = get_item_data($article_id);
+		$new_item[0] = get_article_data($article_id);
 		$items_table = items_table_output($new_item);
 		$message = '1|Nouvel Article créé. ID: '.$article_id;
 		$path = 'uploads/'.$article_id;
@@ -26,7 +26,7 @@ if( isset($_POST['newArticleSubmitted']) ){
 		$message = '0|'.mysqli_error($db);
 	}
 }elseif( isset($_GET['upload_result'])){
-	$new_item[0] = get_item_data($_SESSION['article_id']);
+	$new_item[0] = get_article_data($_SESSION['article_id']);
 	$items_table = items_table_output($new_item);
 	$message = urldecode($_GET['upload_result']);
 	$path = 'uploads/'.$_SESSION['article_id'];
@@ -53,7 +53,7 @@ if( !isset($title) ){
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/articles.php" class="button edit articles selected" title="Gérer les articles">Articles</a> <a href="/admin/ventes.php" class="button edit vente" title="Gérer les ventes">Ventes</a> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours</a>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
@@ -61,6 +61,8 @@ if( !isset($title) ){
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
+
+	echo '<h2>Nouvel article</h2>';
 		
 	$footer = true;
 }else{

@@ -68,7 +68,7 @@ if( isset($_POST['findArticleSubmitted']) ){
 		if( $results = find_articles($key_val_pairs, $include_vendus) ){
 			foreach($results as $key => $val){
 				//echo 'Article #'.$key.'<br>';
-				$items[] = get_item_data($key);
+				$items[] = get_article_data($key);
 			}
 		}
 	}

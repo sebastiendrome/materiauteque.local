@@ -12,12 +12,26 @@ if( isset($_POST['contextNewFile']) ){
 	$result = upload_file($path, $replace);
 }
 
+// save panier changes
+if( isset($_POST['savePanierSubmitted']) ){
+	$post = $_POST;
+	$result = save_panier_changes($post);
+}
+
+// display one panier
+// save panier changes
+if( isset($_GET['display_panier']) ){
+	$result = display_panier($_GET['id'], $_GET['context']);
+}
+
+
 // save sql table
 if( isset($_GET['updateTable']) ){
 	$table = urldecode($_GET['table']);
 	$id = urldecode($_GET['id']);
 	$col = urldecode($_GET['col']);
-	$value = urldecode($_GET['value']);
+	//$value = urldecode($_GET['value']);
+	$value = $_GET['value'];
 	$update = array();
 	// if many cols - vals are passed (separated with $separator), make array
 	$separator = 'qQq';

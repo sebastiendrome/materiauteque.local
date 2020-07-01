@@ -49,7 +49,7 @@ $query = mysqli_query($db,'SELECT SUM(total) AS `Ventes`, SUM(poids) AS `Poids` 
 $query = mysqli_query($db,'SELECT * FROM `categories` WHERE `id_parent`=0') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
 while( $row = mysqli_fetch_assoc($query) ){$somme2 = array(0,0);
     $somme = array(0,0);    
-    if($query3 = mysqli_query($db,'SELECT SUM(articles.prix) AS `Ventes`, SUM(articles.poids) AS `Poids` FROM `paniers`,`articles` WHERE `paniers`.`statut_id`=4 AND categories_id='.$row['id'].' AND panier_id=paniers.id AND paniers.`date_vente`>'.mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]).' AND paniers.`date_vente`<'.mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]).'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__)){
+    if($query3 = mysqli_query($db,'SELECT SUM(articles.prix) AS `Ventes`, SUM(articles.poids) AS `Poids` FROM `paniers`,`articles` WHERE `paniers`.`statut_id`=4 AND categories_id='.$row['id'].' AND paniers_id=paniers.id AND paniers.`date_vente`>'.mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]).' AND paniers.`date_vente`<'.mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]).'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__)){
         $somme = mysqli_fetch_assoc($query3);
     }
     echo '<tr>';
@@ -65,7 +65,7 @@ while( $row = mysqli_fetch_assoc($query) ){$somme2 = array(0,0);
 		$query2 = mysqli_query($db,'SELECT * FROM `categories` WHERE `id_parent`='.$row['id'].'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
     while( $row2 = mysqli_fetch_assoc($query2) ){
         $somme2 = array(0,0);
-        if($query4 = mysqli_query($db,'SELECT SUM(articles.prix) AS `Ventes`, SUM(articles.poids) AS `Poids` FROM `paniers`,`articles` WHERE `paniers`.`statut_id`=4 AND sous_categories_id='.$row2['id'].' AND panier_id=paniers.id AND paniers.`date_vente`>'.mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]).' AND paniers.`date_vente`<'.mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]).'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__)){
+        if($query4 = mysqli_query($db,'SELECT SUM(articles.prix) AS `Ventes`, SUM(articles.poids) AS `Poids` FROM `paniers`,`articles` WHERE `paniers`.`statut_id`=4 AND sous_categories_id='.$row2['id'].' AND paniers_id=paniers.id AND paniers.`date_vente`>'.mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]).' AND paniers.`date_vente`<'.mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]).'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__)){
             $somme2 = mysqli_fetch_assoc($query4);
         }
         echo '<tr>';

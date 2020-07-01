@@ -3,10 +3,10 @@ var sep = 'qQq'; // separator to concatenate many cols/vals querys that will be 
 var wW = $(window).width();
 var wH = $(window).height();
 var new_vrac_id = 0;
+var oldVal = ''; // global var used to update on element focus and compared to new value on blur
 
 // js equivalent to php time(), will be used throughout functions
 var unix_time = Math.round((new Date()).getTime()/1000);
-
 
 /***** functions *****************************************************/
 
@@ -103,7 +103,21 @@ function showDone(){
 	}, 2700);
 }
 
-// create article
+// delete item from table (ajax)
+function deleteItem(table, item_id){
+	$.ajax({
+		url: '/_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+item_id,
+		type: 'GET',
+		success : function(msg){
+			return msg;
+		},
+		error: function() {
+			alert('Error with deleteItem ajax call');
+		}
+	});
+}
+
+// create article (ajax)
 function create_article(fields){
 	var query_string = '';
 	var updatePaniers = true;
@@ -139,18 +153,17 @@ function create_article(fields){
 			}else if(pre == '2|'){
 				message = '<p class="note">'+mes+'</p>';
 
-			// success, create panier (once created, it will update the article panier_id with panier new id)
+			// success, create panier (once created, it will update the article paniers_id with panier new id)
 			}else if(pre == '1|'){
 				var article_id = mes;
 				message = '<p class="success">Article créé ID:'+article_id+'</p>';
 				
-				// if we're in ventes.php let's show meaningful message and scroll to top of page
-				if(basename(window.location.href) == 'ventes.php'){
-					//alert('WE\'RE IN ventes.php, js function create_article, admin_ajax.php?create_article');
+				// if we're in nouvelle-vente.php let's show meaningful message and scroll to top of page
+				if(basename(window.location.href) == 'nouvelle-vente.php'){
+					//alert('WE\'RE IN nouvelle-vente.php, js function create_article, admin_ajax.php?create_article');
 					window.scrollTo(0, 0);
-					$('div#adminContainer div#msg').remove();
-					$('div#adminContainer').prepend('<div id="msg"><p class="success">Article vendu, ID:'+article_id+' <a href="javascript:;" class="closeBut">&times;</a></p></div>');
-				//}else{
+					//$('div#adminContainer div#msg').remove();
+					//$('div#adminContainer').prepend('<div id="msg"><p class="success">Article vendu, ID:'+article_id+' <a href="javascript:;" class="closeBut">&times;</a></p></div>');
 					// reset new article form
 					$('form#newArticle').trigger("reset");
 				}
@@ -161,7 +174,6 @@ function create_article(fields){
 
 					setTimeout(function(){
 						updatePaniersModal();
-						$('div#paniersTarget').show();
 					}, 1000);
 				}
 			}
@@ -220,7 +232,12 @@ function updatePaniersModal(){
 		url: '/_code/php/admin/admin_ajax.php?updatePaniersModal',
 		type: 'GET',
 		success : function(msg) {
-			$('#paniersContainer #panierAjaxTarget').html(msg);
+			if( $('#paniersContainer').length ){
+				$('#paniersContainer #panierAjaxTarget').html(msg);
+				$('div#paniersContainer').show();
+				// memory for showing or hiding paniers modal from page to page
+				document.cookie = "paniersModalDisplay=block; path=/";
+			}
 			// reload vente-paniers in container div#vpLoader, if found
 			if($('body div#vpLoader').length !== 0) {
 
@@ -229,6 +246,86 @@ function updatePaniersModal(){
 				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
 			}
 			return true;
+		}
+	});
+}
+
+// save panier changes
+function savePanierChanges(panierId){
+
+	var myForm = document.forms.namedItem(panierId);
+
+	$.ajax({
+		// Your server script to process the upload
+		url: '/_code/php/admin/admin_ajax.php',
+		type: 'POST',
+
+		// Form data
+		data: new FormData(myForm),
+
+		// Tell jQuery not to process data or worry about content-type
+		// You *must* include these options!
+		cache: false,
+		contentType: false,
+		processData: false,
+
+		// on success, reload page with upload_result message
+		success : function(msg) {
+			var pre = msg.substr(0, 2);
+			var mes = msg.substr(2);
+			var message = '';
+			if(pre == '0|'){
+				message = '<p class="error">'+mes+'</p>';
+			}else if(pre == '2|'){
+				message = '<p class="note">'+mes+'</p>';
+			
+			// SUCCESS, msg = new panier id
+			}else if(pre == '1|'){
+				message = '<p class="success">'+mes+'</p>';
+				display_panier(panierId, 'ventesPaniersAjaxTarget');
+			}
+			// show message
+			$('#done').html(message);
+		}
+	});
+}
+
+// ajax call to display one panier output (used to refresh single panier container in paniers display)
+function display_panier(panierId, context){
+	// ajax call that will use db_function create_panier()
+	$.ajax({
+		// Server script creates the panier
+		url: '/_code/php/admin/admin_ajax.php?display_panier&id='+panierId+'&context='+context,
+		type: 'GET',
+
+		// on success; msg is either new panier ID, or an error message
+		success : function(msg) {
+			var pre = msg.substr(0, 2);
+			var mes = msg.substr(2);
+			var message = '';
+			if(pre == '0|'){
+				message = '<p class="error">'+mes+'</p>';
+			}else if(pre == '2|'){
+				message = '<p class="note">'+mes+'</p>';
+			
+			// SUCCESS, msg = new panier id
+			}else if(pre == '1|'){
+				message = mes;
+			}
+			if(context == 'ventesPaniersAjaxTarget'){
+				var $target = $('div#ventesPaniersAjaxTarget').find('div.pCont[data-panierid='+panierId+']');
+			}else if(context == 'paniersAjaxTarget'){
+				var $target = $('div#paniersAjaxTarget').find('div.pCont[data-panierid='+panierId+']');
+			}
+			// replace the found panier output
+			if($target.length){
+				$target.replaceWith(message);
+			// or prepend it to the main container
+			}else if($('div#'+context).length){
+				$('div#'+context).prepend(message);
+			}/*else{
+				alert('nowhere to show new panier');
+			}*/
 		}
 	});
 }
@@ -244,7 +341,7 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 		// on success; msg is either new panier ID, or an error message
 		success : function(msg) {
 
-			// message is error (0|[message string]) ou note (2|[message string]) ou success (1|[panier_id])
+			// message is error (0|[message string]) ou note (2|[message string]) ou success (1|[paniers_id])
 			var pre = msg.substr(0, 2);
 			var mes = msg.substr(2);
 			var message = '';
@@ -260,18 +357,18 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 				// If article_id_or_fields is article id, update article.
 				// Else, we're creating a panier + an article at the same time, and the article has not been created yet, so article_id_or_fields is a js object containing the fields needed for the creation of the article
 				
-				var panier_id = mes;
-				//alert(panier_id);
+				var paniers_id = mes;
+				//alert(paniers_id);
 
 				// article_id_or_fields is object containing data for creating article
 				if( typeof article_id_or_fields == 'object' ){
 
-					// update panier_id field, if already in 
+					// update paniers_id field, if already in 
 					var panier_in_fields = false;
 					var panier_statut_in_fields = false;
 					jQuery.each(article_id_or_fields, function( i, field ){
-						if(field.name == 'panier_id'){
-							field.value = panier_id;
+						if(field.name == 'paniers_id'){
+							field.value = paniers_id;
 							panier_in_fields = true;
 						}
 						if(field.name == 'panier_statut_id'){
@@ -279,9 +376,9 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 							panier_statut_in_fields = true;
 						}
 					});
-					// if not already there, add panier_id to article_id_or_fields object
+					// if not already there, add paniers_id to article_id_or_fields object
 					if(!panier_in_fields){
-						article_id_or_fields[article_id_or_fields.length] = {name:"panier_id", value:panier_id};
+						article_id_or_fields[article_id_or_fields.length] = {name:"paniers_id", value:paniers_id};
 					}
 					// we'll use panier_statut_id to determine if we need to update and show paniersModal
 					if(!panier_statut_in_fields){
@@ -293,14 +390,14 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 				// article_id_or_fields is article id
 				}else{
 					var article_id = article_id_or_fields;
-					message = '<p class="success">Article updated, panier crée ID:'+panier_id+'</p>';
+					message = '<p class="success">Article updated, panier crée ID:'+paniers_id+'</p>';
 					var article_statut_id = statut_table['vendu'];
 					// update article
 					updateTable(
 						'articles', 
 						article_id, 
-						'panier_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
-						panier_id +sep+ prix +sep+ poids+sep+article_statut_id+sep+unix_time
+						'paniers_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
+						paniers_id +sep+ prix +sep+ poids+sep+article_statut_id+sep+unix_time
 					);
 					
 					// update html table or form if article is NOT vrac
@@ -325,7 +422,6 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 					if( panier_statut_id !== statut_table['vendu'] ){ // show updated paniers only if panier was not directly sold
 						setTimeout(function(){
 							updatePaniersModal();
-							$('div#paniersTarget').show();
 						}, 500);
 					}
 				}
@@ -341,11 +437,65 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 	});
 }
 
+// compare panier total and sum of articles prix (in HTML FORM)
+function compareTotal($this){
+	var $cont = $this.closest('div.pCont');
+	var total = 0;
+	var totalVal = $cont.find('input.prixVentePanier').val();
+	totalVal = parseFloat(totalVal);
+	// get and add value of each article prix
+	var total = article_sum($cont, 'prix');
+	// compare sum of articles with panier total
+	if( totalVal !== total ){
+		// show warning sign next to total
+		$cont.find('p.n a.warning').css('visibility','visible');
+	}else{
+		$cont.find('p.n a.warning').css('visibility','hidden');
+	}
+}
+
+// add up articles prix ou poids (item_to_add) within a panier (panier_id) (in HTML FORM)
+// $cont is the html container (typically, div.pCont)
+function article_sum($cont, item_to_add){
+	var total = 0;
+	if(item_to_add == 'prix'){
+		var cssTarget = '.currency';
+	}else if(item_to_add == 'poids'){
+		var cssTarget = '.weight';
+	}else{
+		alert('Error: invalid item_to_add: '+item_to_add);
+		return false;
+	}
+	// find all input.(currency|weight) that are are not to be removed, and only in a div.particle container (so as to exclude the panier total input in main container).
+	$cont.find('div.particle:not(.removeConfirm) input'+cssTarget).each( function(){
+		if($(this).val().length){
+			var v = parseFloat( $(this).val() );
+			total += v;
+		}
+	});
+	return total;
+}
+
+// remove article from panier
+function remove_article_from_panier(article_id){
+	// update article: remove paniers_id, date_vente, set statut_id = 1 (disponible)
+	updateTable(
+		'articles', 
+		article_id, 
+		'paniers_id'+sep+'date_vente'+sep+'statut_id', 
+		'' +sep+ '' +sep+ '1'
+	);
+	// update paniers modal
+	setTimeout(function(){
+		updatePaniersModal();
+	}, 500);
+}
+
 
 /*************** PANIERS behaviors START **************/
 
 /* VENTE DE PANIER */
-$('body').on('click', 'a.button.ventePanierSubmit', function(e){
+$('div#paniersContainer').on('click', 'a.button.ventePanierSubmit', function(e){
 	e.preventDefault();
 	var t4;
 	var t5;
@@ -353,9 +503,10 @@ $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 		alert('Merci de remplir le champ "Total"');
 		return false;
 	}
-	var $container = $(this).parent();
+	var $container = $(this).closest('div.pCont');
 	var id = $container.attr('data-panierid');
-	var total = $container.find('input#prixVentePanier').val();
+	var nom = $container.attr('data-paniernom');
+	var total = $container.find('input.prixVentePanier').val();
 	var $paiement_cheque = $container.find('input[name="paiement_id"]');
 	if($paiement_cheque.prop('checked') == true){
 		var paiement_id = paiement_table['chèque'];
@@ -404,21 +555,22 @@ $('body').on('click', 'a.button.ventePanierSubmit', function(e){
 		//alert(result);
 		if( result.substr(0,15) !== '<p class="error' ){ // no error message = success
 			updatePaniersModal();
-			var venteMsg = '<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu. id: '+id+' <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>';
+			var venteMsg = '<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu: '+nom+'<br><a href="javascript:;" class="undoVentePanier" data-panierid="'+id+'" title="rouvrir ce panier">Annuler la vente<span class="undo"></span></a> <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>';
 			t5 = setTimeout(function(){
 				$('div#panierAjaxTarget').prepend(venteMsg);
-			}, 300);
+				display_panier(id, 'ventesPaniersAjaxTarget');
+			}, 200);
 			
 		}else{
 			$container.append(result);
 		}
-	}, 500);
+	}, 350);
 
 });
 
 
 /* UPDATE PANIER STATUT (from paniersModal.php, ul.statutActions drop-down) */
-$('body').on('click', 'ul.statutActions a', function(e){
+$('div#paniersContainer, div#ventesPaniersContainer').on('click', 'ul.statutActions a', function(e){
 	e.preventDefault();
 
 	var t6;
@@ -447,54 +599,97 @@ $('body').on('click', 'ul.statutActions a', function(e){
 
 });
 
+
+// update panier en cours when individual article is removed
+$('div#paniersContainer').on('click', 'div.particle a.remove', function(){
+	// get article id
+	var article_id = $(this).parents('div.particle').attr('data-articleid');
+	//alert(article_id);
+	remove_article_from_panier(article_id);
+});
+
+
+
+
+/* all paniers */
+// auto-select inputs (.currency and .weight) on click
+$('div#paniersContainer, div#ventesPaniersContainer').on('click', 'div.pCont input.currency, div.pCont input.weight', function(){
+	$(this).select();
+});
+// show warning next to panier total when individual articles do not add to its value
+$('div#paniersContainer, div#ventesPaniersContainer').on('change', 'div.pCont input.currency', function(){
+	compareTotal( $(this) );
+});
+// auto adjust the height of textarea via tAreaContainer hidden div
+$('div#paniersContainer, div#ventesPaniersContainer').on('keyup', 'textarea.notes', function(e){
+	var cont = this.parentElement;
+	var text_to_change = cont.childNodes[0];
+	if(e.which == 13){
+		text_to_change.nodeValue += '\n&nbsp;';
+		return false;
+	}
+	if(this.value.length){
+		text_to_change.nodeValue = this.value;
+	}else{
+		text_to_change.nodeValue = '&nbsp;';
+	}
+});
+// update global var 'oldVal' when textarea.notes is on focus
+$('div#paniersContainer, div#ventesPaniersContainer').on('focus', 'textarea.notes', function(){
+	oldVal = $(this).val();
+});
+// save panier notes when loosing focus on textarea.notes
+// oldVal is set as global var at top of page, and updated on focus (above)
+$('div#paniersContainer, div#ventesPaniersContainer').on('blur', 'textarea.notes', function(){
+	var $this = $(this);
+	var newVal = $this.val();
+	//alert(newVal);
+	if( newVal !== oldVal){
+		var id = $this.closest('div.pCont').attr('data-panierid');
+		updateTable('paniers', id, 'notes', encodeURIComponent(newVal) );
+	}
+	// hide textarea if value is empty - show 'add note' button
+	if(newVal == ''){
+		setTimeout( function(){
+			var $cont = $this.closest('div.pCont');
+			$cont.find('div.tAreaResizer').css('display','none');
+			$cont.find('a.addNote').css('display','inline-block');
+		}, 150);
+	}
+});
+// show and focus on notes textarea when a.addNote is clicked
+$('div#paniersContainer, div#ventesPaniersContainer').on('click', 'div.pCont a.addNote', function(e){
+	e.preventDefault();
+	var $cont = $(this).closest('div.pCont');
+	$cont.find('div.tAreaResizer').css('display','block');
+	$cont.find('textarea.notes').focus();
+	$cont.find('a.addNote').css('display','none');
+});
+
 // update panier total when individual articles prix are changed
-$("body").on('change', 'div.paActions input[name="aPrix"]', function(){
+/***** !!!!!!!! supprimé jusqu'à nouvel ordre
+$('div#paniersContainer, div#ventesPaniersContainer').on('change', 'div.paActions input.currency', function(){
 	// get and add value of each article prix
-	var total = 0;
 	var $cont = $(this).parents('div.pCont');
+	var total = article_sum($cont, 'prix');
 	var $submit = $cont.find('a.ventePanierSubmit');
-	$cont.find('input[name="aPrix"]').each( function(){
-		if($(this).val().length){
-			var v = parseFloat( $(this).val() );
-			//alert(v);
-			total += v;
-			//alert(total);
-		}
-	});
-	$cont.find('input#prixVentePanier').val(total.toFixed(2));
+	$cont.find('input.prixVentePanier').val(total.toFixed(2));
 	if( $submit.hasClass('disabled') ){
 		$submit.removeClass('disabled');
 	}
 	//alert('changed');
 });
+*/
 
-// update panier when individual article is removed
-$("body").on('click', 'div.particle a.remove', function(){
-	// get article id
-	var article_id = $(this).parents('div.particle').attr('data-articleid');
-	//alert(article_id);
-	// update article: remove panier_id, date_vente, set statut_id = 1 (disponible)
-	updateTable(
-		'articles', 
-		article_id, 
-		'panier_id'+sep+'date_vente'+sep+'statut_id', 
-		'' +sep+ '' +sep+ '1'
-	);
-	// update paniers modal
-	setTimeout(function(){
-		updatePaniersModal();
-		$('div#paniersTarget').show();
-	}, 500);
-
-});
-
-// delete panier (from panierModal.php)
-$('body').on('click', 'a.deletePanier', function(){
-	var panier_id = $(this).parent().attr('data-panierid');
+/* paniers en cours */
+// delete panier when it has been emptied (from panierModal.php)
+$('div#paniersContainer, div#ventesPaniersContainer').on('click', 'a.deletePanier', function(){
+	var $container = $(this).closest('div.pCont');
+	var paniers_id = $container.attr('data-panierid');
 	var table = 'paniers';
 	$.ajax({
 		// Server script to process the upload
-		url: '/_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+panier_id,
+		url: '/_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+paniers_id,
 		type: 'GET',
 		// on success show message
 		success : function(msg) {
@@ -510,14 +705,115 @@ $('body').on('click', 'a.deletePanier', function(){
 			}
 			$('#done').html(message);
 			//return msg;
-			// update paniers modal
+			/*if($container.parent().attr('id') == 'panierAjaxTarget'){
+				// update paniers modal
+				setTimeout(function(){
+					updatePaniersModal();
+				}, 400);
+			}else if($container.parent().attr('id') == 'ventesPaniersAjaxTarget'){
+				// update paniers modal
+				setTimeout(function(){
+					$container.hide();
+				}, 150);
+			}*/
 			setTimeout(function(){
-				updatePaniersModal();
-				$('div#paniersTarget').show();
-			}, 500);
+				$container.hide();
+			}, 150);
+			
 			return true;
+		},
+		error: function() {
+			alert('Error with deleteItem ajax call');
 		}
 	});
+});
+// "enregistrer la vente" button is enabled or disabled depending on total set or empty
+$('div#paniersContainer').on('keyup', 'input.prixVentePanier', function(){
+	var $venteBut = $(this).parents('div.pCont').find('a.button.vente');
+	if( $(this).val() !== '' ){
+		$venteBut.removeClass('disabled');
+	}else{
+		$venteBut.addClass('disabled');
+	}
+});
+// same as above BUT on change, AND focus on submit vente button (cannot be combined with above)
+$('div#paniersContainer').on('change', 'input.prixVentePanier', function(){
+	var $venteBut = $(this).parents('div.pCont').find('a.button.vente');
+	if( $(this).val() !== '' ){
+		$venteBut.removeClass('disabled');
+		$venteBut.focus();
+	}else{
+		$venteBut.addClass('disabled');
+	}
+});
+$('div#paniersContainer').on('click', 'a.undoVentePanier', function(){
+	var id = $(this).attr('data-panierid');
+	updateTable('paniers', id, 'statut_id', 1);
+	var $panier_displayed = $('div#ventesPaniersContainer').find('div.pCont[data-panierid='+id+']');
+	if($panier_displayed.length){
+		$panier_displayed.hide();
+	}
+	setTimeout(function(){
+		updatePaniersModal();
+	},150);
+});
+
+
+/* paniers vendus */
+// save panier changes
+$('div#ventesPaniersContainer').on('click', 'button.savePanierChanges', function(e){
+	e.preventDefault();
+	//var panierId = $(this).closest('div.pCont').attr('data-panierid');
+	var panierId = $(this).closest('form').attr('name');
+	savePanierChanges(panierId);
+});
+// compare articles prix and panier total on form reset and show warning if not equal
+$('div#ventesPaniersContainer').on('click', 'div.pCont button.reset', function(){
+	var $this = $(this);
+	setTimeout(function(){
+		compareTotal( $this );
+	}, 150);
+});
+// highlight changed value and show save/cancel buttons in paniers Form
+$('div#ventesPaniersContainer').on('change', 'div.pCont input, div.pCont select', function(){
+	var $container = $(this).closest('div.pCont');
+	$(this).addClass('changed');
+	//$(this).css({'background-color':'#fff', 'border':'1px dashed #000'});
+	$container.find('div.changes').css('display', 'block');
+});
+// highlight change when individual article is removed and show save/cancel buttons
+$("div#ventesPaniersContainer").on('click', 'div.particle a.remove', function(){
+	var $container = $(this).closest('div.pCont');
+	var $particle = $(this).closest('div.particle');
+	$particle.addClass('removeConfirm');
+	$particle.find('select.statut_id').val('1');
+	$container.find('div.changes').css('display', 'block');
+	compareTotal( $(this) );
+});
+// cancel changes in panier vendu form
+$('div#ventesPaniersContainer').on('click', 'div.pCont button.reset', function(){
+	var $this = $(this);
+	var $container = $(this).closest('div.pCont');
+	//$container.find('input, select').removeAttr('style');
+	$container.find('input, select').removeClass('changed');
+	$container.find('div.particle').removeClass('removeConfirm');
+	setTimeout(function(){
+		$container.find('div.changes').css('display', 'none');
+	}, 100);
+});
+// quick cancel article removal from panier
+$('div#ventesPaniersContainer').on('click', 'div.particle a.undo', function(){
+	var $container = $(this).closest('div.pCont');
+	var $particle = $(this).closest('div.particle');
+	$particle.removeClass('removeConfirm');
+	$particle.find('select.statut_id').val('4'); // vendu
+	compareTotal( $(this) );
+	// hide 'annuler'/'enregistrer' buttons if nothing else was changed
+	if( $container.find('input.changed, select.changed').length === 0){
+		setTimeout(function(){
+			$container.find('div.changes').css('display', 'none');
+		}, 100);	
+	}
 });
 
 /*************** PANIERS behaviors END **************/
@@ -527,7 +823,7 @@ $('body').on('click', 'a.deletePanier', function(){
 
 /** when article is sold via prixVenteModal.php */ 
 // 1. button #directeVenteSubmit
-$("body").on('click', 'button#directeVenteSubmit', function(e){
+$('body').on('click', 'button#directeVenteSubmit', function(e){
 	e.preventDefault();
 
 	var $form = $(this).parents('form');
@@ -596,7 +892,7 @@ $("body").on('click', 'button#directeVenteSubmit', function(e){
 });
 
 // 2. button #ajoutPanierSubmit
-$("body").on('click', 'button#ajoutPanierSubmit', function(e){
+$('body').on('click', 'button#ajoutPanierSubmit', function(e){
 	e.preventDefault();
 
 	var $form = $(this).parents('form');
@@ -651,11 +947,12 @@ $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 	if( $panierNomInput.val().length ){ // we are creating a new panier
 		var createPanier = true;
 		var panier_nom = $panierNomInput.val();
+		panier_nom = panier_nom.replace(/("|')/g, ''); // sanitize
 	
 	// else, we are using a 'panier en cours', don't need its name but its ID
 	}else{
 		var createPanier = false;
-		var panier_id = $form.find('select[name="panier_id"]').val();
+		var paniers_id = $form.find('select[name="paniers_id"]').val();
 	}
 
 	// if new panier needs to be created
@@ -681,7 +978,7 @@ $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 			create_panier(article_id, panier_nom, poids, prix, paiement_id, vrac, statut_table['disponible']);
 		}
 
-	// just update article to sold with existing panier_id
+	// just update article to sold with existing paniers_id
 	}else{
 
 		// If vrac, set time out to make sure we catch the updated new_vrac_id via duplicate_vrac_article ajax call above
@@ -696,13 +993,13 @@ $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 					updateTable(
 						'articles', 
 						article_id, 
-						'panier_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
-						panier_id +sep+ prix +sep+ poids+sep+statut_table['vendu']+sep+unix_time
+						'paniers_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
+						paniers_id +sep+ prix +sep+ poids+sep+statut_table['vendu']+sep+unix_time
 					);
 					// and update panier date, so that it goes to top of the list (order date DESC)
 					updateTable(
 						'paniers', 
-						panier_id, 
+						paniers_id, 
 						'date', 
 						unix_time
 					);
@@ -710,7 +1007,6 @@ $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 					// we need to give time to the 2 updateTable ajax calls above to happen
 					t2 = setTimeout( function(){
 						updatePaniersModal();
-						$('div#paniersTarget').show();
 					}, 500);
 
 				}else{ // not ready yet, timeout again
@@ -724,13 +1020,13 @@ $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 			updateTable(
 				'articles', 
 				article_id, 
-				'panier_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
-				panier_id +sep+ prix +sep+ poids+sep+statut_table['vendu']+sep+unix_time
+				'paniers_id'+sep+'prix'+sep+'poids'+sep+'statut_id'+sep+'date_vente', 
+				paniers_id +sep+ prix +sep+ poids+sep+statut_table['vendu']+sep+unix_time
 			);
 			// and update panier date, so that it goes to top of the list (order date DESC)
 			updateTable(
 				'paniers', 
-				panier_id, 
+				paniers_id, 
 				'date', 
 				unix_time
 			);
@@ -750,7 +1046,6 @@ $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 			// we need to give time to the 2 updateTable ajax calls above to happen
 			t2 = setTimeout( function(){
 				updatePaniersModal();
-				$('div#paniersTarget').show();
 			}, 500);
 		}
 	}
@@ -758,7 +1053,7 @@ $("body").on('click', 'button#ajoutPanierSubmit', function(e){
 
 
 // 3. button #newArticleDirectVenteSubmit
-$("body").on('click', 'button#newArticleDirectVenteSubmit', function(e){
+$('body').on('click', 'button#newArticleDirectVenteSubmit', function(e){
 	e.preventDefault();
 	error = false;
 	var $form = $(this).parents('form');
@@ -817,7 +1112,7 @@ $("body").on('click', 'button#newArticleDirectVenteSubmit', function(e){
 
 
 // 4. button #newArticleAjoutPanierSubmit
-$("body").on('click', 'button#newArticleAjoutPanierSubmit', function(e){
+$('body').on('click', 'button#newArticleAjoutPanierSubmit', function(e){
 	e.preventDefault();
 	error = false;
 	var $form = $(this).parents('form');
@@ -842,15 +1137,16 @@ $("body").on('click', 'button#newArticleAjoutPanierSubmit', function(e){
 	//console.log( fields );
 
 	// these need to be declared here because declaring them within jQuery.each loop does not work
-	var panier_id, nom, poids, prix, paiement_id, vrac;
+	var paniers_id, nom, poids, prix, paiement_id, vrac;
 
 	// now we can update their values through jQuery.each
 	jQuery.each(fields, function( i, field ){
-		if(field.name == 'panier_id'){
-			panier_id = field.value;
+		if(field.name == 'paniers_id'){
+			paniers_id = field.value;
 		}
 		if(field.name == 'panierNom'){
 			nom = field.value;
+			nom = nom.replace(/("|')/g, '');
 		}
 		if(field.name == 'poids'){
 			poids = field.value;
@@ -871,11 +1167,11 @@ $("body").on('click', 'button#newArticleAjoutPanierSubmit', function(e){
 	}
 	
 	// are we creating a new article to put it in a selected panier, or are we also creating a new panier?
-	if(nom == '' && panier_id != ''){ // we've selected an existing panier_id
-		// so let's just create the article, panier_id is in fields
+	if(nom == '' && paniers_id != ''){ // we've selected an existing paniers_id
+		// so let's just create the article, paniers_id is in fields
 		create_article(fields);
 
-	}else if( (panier_id == '' || panier_id == 'undefined') && nom != ''){ //we're creating a new panier 
+	}else if( (paniers_id == '' || paniers_id == 'undefined') && nom != ''){ //we're creating a new panier 
 		// let's create the new panier, and pass the new article fields as 1st param so that once the panier is created, the article is also created
 		create_panier(fields, nom, poids, prix, paiement_id, vrac, statut_table['disponible']);
 	}
@@ -1095,26 +1391,13 @@ $('body').on('change', 'input#panierNom', function(){
 });
 
 $('.showPaniers').on('click', function(){
-	$('div#paniersTarget').show();
+	$('div#paniersContainer').show();
+	// memory for showing or hiding paniers modal from page to page
+	document.cookie = "paniersModalDisplay=block; path=/";
 });
 
-/* paniers */
-$('body').on('keyup', 'input#prixVentePanier', function(){
-	var $venteBut = $(this).parents('div.pCont').find('a.button.vente');
-	if( $(this).val() !== '' ){
-		$venteBut.removeClass('disabled');
-	}else{
-		$venteBut.addClass('disabled');
-	}
-});
-$('body').on('change', 'input#prixVentePanier', function(){
-	var $venteBut = $(this).parents('div.pCont').find('a.button.vente');
-	if( $(this).val() !== '' ){
-		$venteBut.removeClass('disabled');
-		$venteBut.focus();
-	}else{
-		$venteBut.addClass('disabled');
-	}
+$('a.warning').on('click', function(){
+	alert( $(this).attr('title') );
 });
 
 /********** UPLOAD BEHAVIORS START ************/
@@ -1126,7 +1409,7 @@ $('body').on('click', '#chooseFileLink', function(){
 });
 
 // #fileUpload click validates file size and extension, then triggers #uploadFileSubmit click
-$("body").on("change", '#fileUpload', function(){
+$('body').on("change", '#fileUpload', function(){
 	var upVal = this.value;
 	if(upVal != ''){
 

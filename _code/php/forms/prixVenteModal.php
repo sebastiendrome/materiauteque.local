@@ -16,7 +16,7 @@ if( !isset($id) || empty($id) ){
 $paniers = get_table('paniers', 'statut_id=1', 'date DESC');
 
 // we'll need to know these fields for item
-$item_data =  get_item_data($id, 'titre, statut_id, prix, poids, vrac');
+$item_data =  get_article_data($id, 'titre, statut_id, prix, poids, vrac');
 
 
 // get the suggested 'prix' of the article, we'll pre-fill the 'prix_vente' input with it
@@ -74,7 +74,7 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 		
 		<p>
 		Poids:
-		<input type="number" class="weight" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo $item_data['poids']; ?>" placeholder="0,000" required autofocus> Kg</p>
+		<input type="number" step="any" min="0" class="weight" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo $item_data['poids']; ?>" placeholder="0,000" required autofocus> Kg</p>
 
 		<div id="vpLoader">
 		<?php require(ROOT.'_code/php/forms/vente-paniers.php'); ?>

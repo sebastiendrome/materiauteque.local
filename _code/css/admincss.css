@@ -1,8 +1,11 @@
 @charset "UTF-8";
 
 #adminContainer{padding:20px; padding-top:10px; clear:both;}
-.adminHeader{position:relative; padding:0 20px;}
-.adminHeader h1{display:inline-block; margin-right:20px;}
+#adminContainer h2{margin-top:0;}
+.adminHeader{position:relative; padding:0 20px; border-bottom: 1px solid #ccc;}
+.adminHeader h1{display:inline-block; margin:5px 20px 5px 0;}
+.adminHeader a.button{vertical-align: text-bottom;}
+.adminHeader a.button.paniersBut{margin-top:8px;}
 
 .pagination a{display:inline-block; margin:3px;}
 div.tableContainer{max-width:100%; max-width:1105px; overflow:auto;}
@@ -100,7 +103,7 @@ a.remove{color:rgb(194, 2, 2);}
 .download::before{
 	content:"\022BB\00a0";
 }
-.edit::before{
+.edit::before, .addNote::before{
 	content:"\270E\00a0";
 }
 
@@ -238,14 +241,18 @@ textarea[name='descriptif'], textarea[name='observations']{height:70px;}
 
 
 a.vendre, button.vendre{font-weight:bold; text-align:center; width:calc(100% - 21px);}
-a.vente, button.vente{background-color:rgb(242,202,58); color:#000; text-shadow:none;/*rgb(235, 203, 100);*/}
+a.vente, button.vente{background-color:rgb(242,202,58); color:#000; text-shadow:none;}
 button.vente:hover{text-shadow:none;}
+a.articles, button.articles{background-color:rgb(170, 202, 243); color:#000; text-shadow:none;}
+button.articles:hover{text-shadow:none;}
 
 div.short{position:relative;}
 div.short div.long{display:none; position:absolute; z-index:1; top:-3px; left:-3px; padding:2px; border:1px solid #ccc; background-color:#ffc; width:auto; height:auto;}
 
 /* paniers */
 div#paniersContainer{
+	width:35%;
+	min-width:380px;
 	position:fixed; z-index:30; top:-1px; right:-1px; 
 	padding:10px; 
 	background-color:#fff; 
@@ -256,32 +263,98 @@ div#paniersContainer{
 	overflow-y:auto;
 	overflow-x:hidden;
 }
+
 div#paniersContainer a.closeBut{
 	position:fixed; top:10px; right:15px;
 }
-div#paniersContainer a.showPaniers{
+/*a.showPaniers{
 	display: inline-block; padding: 10px; margin: -10px; margin-right:0;
+}*/
+
+/*#panierAjaxTarget div.pCont{
+	min-width:350px;
+	max-width:380px;
+}*/
+#ventesPaniersAjaxTarget div.pCont{
+	min-width:300px;
+	max-width:580px;
 }
-/*div#paniersTarget{padding:0 5px;}*/
 div.pCont{
 	margin-top:20px; 
-	padding:4px 10px 10px 10px; 
+	padding:4px 10px; 
 	border:1px solid #ddd; 
-	min-width:270px;
-	max-width:380px;
 	border-radius:3px; 
 	background-color:#f5f5f5; 
 	clear:both;
 }
 div.pCont div.title{padding:2px 0 10px 2px;}
 div.pCont div.title b{border-bottom:1px solid #000;}
-div.pCont .n{color:#000;}
+div.pCont p.n{color:#000; margin:5px 0;}
+p.n a.warning{visibility:hidden;}
 div.pCont div.moreOptions{
 	position:relative;
 	float:right;
 	margin-right:10px;
 }
-div.pCont div.particle{
+div.pCont input.changed, div.pCont select.changed{
+	background-color:#fff !important; border:1px dashed #000 !important;
+}
+
+#ventesPaniersAjaxTarget div.pCont a.addNote{position:absolute; margin-top:-30px;}
+div.tAreaResizer{
+	position:relative;
+	width:auto;
+	height:auto;
+	overflow: hidden;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	background-color:#ffd;
+	color:#ffd; /* to hide the text */
+	box-shadow:0 2px 3px rgba(125,125,125,.5);
+}
+div.tAreaResizer textarea{
+	resize:none;
+	overflow:hidden;
+	width: calc( 100% - 20px );
+	height:100%;
+	position:absolute;
+	top:0;
+	left:0;
+	border:none;
+	background-color:transparent;
+}
+div.tAreaResizer textarea:focus{
+	outline: none;
+}
+div.tAreaResizer, div.tAreaResizer textarea{
+	font-family:monospace;
+	font-size:1em;
+	white-space:pre-wrap;
+	padding:10px;
+	margin:0;
+	display:block;
+}
+
+div.particle.removeConfirm{
+	background-color:rgba(255, 255, 255, 0.5);
+	text-decoration: line-through;
+	/*color:#aaa;*/
+	padding-left:5px;
+	border:1px dashed #000 !important;
+	margin-top:-1px;
+}
+div.particle.removeConfirm div.paActions{visibility:hidden;}
+div.particle a.undo{display:none; position:absolute; top:0; right:0; width:18px; height:18px;}
+div.particle.removeConfirm a.undo{display:block; position:absolute;}
+
+div.pCont div.changes{
+	display:none; 
+	margin:5px 0;
+}
+
+div.particle{position:relative;}
+
+#panierAjaxTarget div.particle{
 	font-size:smaller; 
 	border:1px solid #ddd; margin-bottom:-1px; 
 	background-color:#eee; 
@@ -289,7 +362,13 @@ div.pCont div.particle{
 	position:relative;
 	clear:both;
 }
-div.particle div.imgCont{
+#ventesPaniersAjaxTarget div.particle, #ventesPaniersAjaxTarget div.title{
+	border-bottom:1px solid #ccc;
+}
+div.particle select.statut_id{
+	display:none;
+}
+#panierAjaxTarget div.particle div.imgCont{
 	display:block; float:left; 
 	width:50px; height:40px; 
 	margin:-2px 0 -2px -57px; 
@@ -300,16 +379,26 @@ div.particle div.imgCont{
 div.particle div.paActions{
 	float:right;
 }
-div.particle div.paActions input.articlePrix{
-	width:50px; min-width:50px;
+div.pCont form{margin:0; padding:0; background-color:transparent; display:block;}
+div.pCont select{min-width:0;}
+div.pCont input.currency, div.pCont input.weight, div.pCont select{
 	background-color:transparent; border-color:transparent;
 	text-align:right;
 }
-div.particle div.paActions input.articlePrix:hover, div.particle div.paActions input.articlePrix:focus{
+div.pCont input.currency{
+	width:50px; min-width:50px;
+}
+div.pCont input.weight{
+	width:60px; min-width:60px;
+}
+div.pCont input.currency:hover, div.pCont input.currency:focus, div.pCont input.weight:hover, div.pCont input.weight:focus, div.pCont select:hover, div.pCont select:focus{
 	background-color:#fff; border-color:#ccc;
 }
-div.particle a.remove{float:right; padding-left:4px; padding-bottom:1px;}
-div.particle a.remove:hover{background-color: #888; color:#fff; text-decoration: none;}
+div.pCont a.remove{float:right; padding-left:4px; padding-bottom:1px;}
+div.pCont a.remove:hover{background-color: #888; color:#fff; text-decoration: none;}
+
+/***** !!!! more options next to 'enregistrer la vente' du panier. Caché jusqu'à nouvel ordre */
+div.moreOptions{display:none;}
 
 div.moreOptions a.dots{
 	display:inline-block;
@@ -342,3 +431,5 @@ span.count{display:inline-block; width:18px; height:18px; line-height:18px; bord
 
 a.discarded{opacity:.6;}
 a.discarded:hover{opacity:1;}
+
+.lowkey{color:grey; font-style:italic;}

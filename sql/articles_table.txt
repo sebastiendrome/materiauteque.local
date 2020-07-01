@@ -12,7 +12,7 @@ CREATE TABLE `articles` (
   `prix` decimal(19,2) DEFAULT NULL COMMENT 'prix conséillé, ou vide=prix libre',
   `visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0=invisible, 1=visible',
   `observations` text,
-  `panier_id` int(11) DEFAULT NULL,
+  `paniers_id` int(11) DEFAULT NULL,
   `date` int(11) NOT NULL,
   `date_vente` int(11) DEFAULT NULL,
   `etiquette` varchar(20) DEFAULT NULL COMMENT 'pas utilisé, pour plus tard',

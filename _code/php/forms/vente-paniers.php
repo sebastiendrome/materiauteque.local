@@ -9,11 +9,11 @@ if( !defined("ROOT") ){
 1. Vendre un article existant
 2. Créer un article pour le vendre
 Upon loading, this file needs to know which is the case:
-- If php knows we're in /ventes.php (form was loaded with the page) or the ?context=[window.location] GET was passed through $jquery.load() (form was re-loaded in page via ajax), and we're in case 2. In this case, buttons ids as newArticleDirectVenteSubmit and newArticleAjoutPanierSubmit
+- If php knows we're in /nouvelle-vente.php (form was loaded with the page) or the ?context=[window.location] GET was passed through $jquery.load() (form was re-loaded in page via ajax), and we're in case 2. In this case, buttons ids as newArticleDirectVenteSubmit and newArticleAjoutPanierSubmit
 - Or we're in case 1, in which case buttons ids as directeVenteSubmit and ajoutPanierSubmit
 Different javascript functions are triggered on click depending on the buttons ids.
 */
-if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') || ( isset($_GET['context']) && strstr($_GET['context'], 'forms/ventes.php') ) ){
+if( strstr($_SERVER['REQUEST_URI'], 'forms/nouvelle-vente.php') || ( isset($_GET['context']) && strstr($_GET['context'], 'forms/nouvelle-vente.php') ) ){
 	$direct_submit = 'newArticleDirectVenteSubmit';
 	$ajout_submit = 'newArticleAjoutPanierSubmit';
 }else{
@@ -49,7 +49,7 @@ if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') || ( isset($_GET['contex
 			<!--<span style="float:right;"><a href="javascript:;" class="right" id="aNP">+ nouveau panier</a></span>-->';
 			echo '</div>';
 			echo '
-			<select name="panier_id" id="paniers" style="background-image:none; padding-right:0 !important; line-height:25px;" size="'.(count($paniers)+1).'">';
+			<select name="paniers_id" id="paniers" style="background-image:none; padding-right:0 !important; line-height:25px;" size="'.(count($paniers)+1).'">';
 			$i=0;
 			foreach($paniers as $panier){
 				if($i==0){$selected = ' selected';}else{$selected='';}
@@ -61,7 +61,7 @@ if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') || ( isset($_GET['contex
 			$hide_panierNom = ' display:none;';
 			$disable_submit = '';
 		}else{
-			echo '<select name="panier_id" id="paniers" style="display:none;">
+			echo '<select name="paniers_id" id="paniers" style="display:none;">
 			<option value="">+ nouveau panier...</option>
 			</select>';
 			$hide_panierNom = '';
@@ -75,7 +75,7 @@ if( strstr($_SERVER['REQUEST_URI'], 'forms/ventes.php') || ( isset($_GET['contex
 	</div>
 
 	<div id="direct" style="display:none; padding-top:10px;">
-		<p>Prix: <input type="number" class="currency" min="0" step="any" style="width:60px; min-width:60px; text-align:right;" name="prix" id="prixVente" value="<?php if( isset($item_data['prix']) ){echo $item_data['prix']; } ?>" placeholder="0,00" required> €
+		<p>Prix: <input type="number" step="any" min="0" class="currency" style="width:60px; min-width:60px; text-align:right;" name="prix" id="prixVente" value="<?php if( isset($item_data['prix']) ){echo $item_data['prix']; } ?>" placeholder="0,00" required> €
 		<input type="checkbox" id="paiement_id" name="paiement_id" value="2" style="margin-left:20px;"> <label for="paiement_id">Paiement par chèque</label></p>
 
 		<button type="submit" name="<?php echo $direct_submit; ?>" id="<?php echo $direct_submit; ?>" class="vente" style="width:100%; margin-left:0;"<?php if( !isset($item_data['prix']) || $item_data['prix']<= 0){echo ' disabled';} ?>>Enregistrer la vente</button>

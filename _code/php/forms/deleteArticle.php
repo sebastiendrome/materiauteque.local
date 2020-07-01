@@ -37,18 +37,6 @@ if( isset($article_id) && !empty($article_id) ){
 }
 ?>
 
-<!--
-<form name="deleteArticle" id="deleteArticle" action="" method="post" style="display:inline-block;">
-
-<h3>Supprimer un article:</h3>
-
-	Article ID: <input type="number" name="delete_id" id="delete_id" step="any" value="">
-
-	<input type="hidden" name="deleteArticleSubmitted" id="deleteArticleSubmitted" value="deleteArticleSubmitted">
-	<button type="submit" name="deleteArticleSubmit" id="deleteArticleSubmit" class="right">Supprimer</button>
-</form>
--->
-
 <?php
 if($footer){
 	echo '</div><!-- end admin container -->'.PHP_EOL;

@@ -10,7 +10,7 @@ if( !defined("ROOT") ){
 // for creating sub-sections, we need the parent section:
 if(isset($_GET['article_id']) && !empty($_GET['article_id']) ){
 	$article_id = urldecode($_GET['article_id']);
-	$item_data = get_item_data($article_id, 'titre');
+	$item_data = get_article_data($article_id, 'titre');
 	$images_array = get_article_images($article_id, '_M');
 	if(!empty($images_array)){
 		$img = $images_array[0];

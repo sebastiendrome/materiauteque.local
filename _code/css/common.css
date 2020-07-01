@@ -153,7 +153,7 @@ z-index:10;
 
 
 /* for trouble-shooting */
-pre{border:1px solid #000; background-color:#222; color:#eee;}
+pre{border:1px solid #000; background-color:#222; color:#eee; overflow-x: auto;}
 
 /* STYLE */
 
@@ -185,9 +185,8 @@ a.button.big:hover{background-color:#ddd}
 
 .error{border:1px solid #bb0808; background-color:#e6d4d4; color:#bb0808;}
 .success{border:1px solid #25850d;background-color:#ddebd9; color:#25850d;}
-.note{border:1px solid #cc5;background-color:#ffc; color:#555;}
-
 .error, .success, .note{padding:2px 10px; border-radius:3px; position:relative; overflow: hidden;}
+.note{border:none; background-color:#ffd; color:#555; box-shadow:0 2px 3px rgba(125,125,125,.5); border-radius:0; font-family:monospace;}
 
 input[name="keywords"]{border-radius:3px; border:1px solid #aaa; padding:4px; min-width:275px; background-image:url(/_code/images/search-grey.svg); background-repeat: no-repeat; background-position: 2% 50%;
 padding-left:25px;}

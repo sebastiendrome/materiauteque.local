@@ -113,9 +113,9 @@ function get_children($table, $id_parent){
 }
 
 // get panier articles
-function get_panier_articles($panier_id){
+function get_panier_articles($paniers_id){
 	global $db;
-	$q = "SELECT id, titre, poids, prix FROM articles WHERE panier_id = '$panier_id' ORDER BY date_vente DESC";
+	$q = "SELECT id, titre, poids, prix FROM articles WHERE paniers_id = '$paniers_id' ORDER BY date_vente DESC";
 	//debug
 	//echo '<pre>'.$q.'</pre>';
 	$query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
@@ -129,8 +129,47 @@ function get_panier_articles($panier_id){
 	}
 }
 
-// get all item data
-function get_item_data($article_id, $fields = '*'){
+// get ventes by dates order by panier
+function get_ventes($time_start='', $time_end=''){
+	global $db;
+	if( !empty($time_start) && !empty($time_end) ){
+		$when = "AND date_vente >= $time_start AND date_vente < $time_end";
+	}else{
+		$when = '';
+	}
+	$q = "SELECT id, paniers_id, date_vente, titre, poids, prix FROM articles WHERE statut_id = 4 ".$when." ORDER BY paniers_id DESC";
+	//debug
+	//echo '<pre>'.$q.'</pre>';
+	$query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
+	while($row = mysqli_fetch_assoc($query)){
+		$ventes[] = $row;
+	}
+	if(!empty($ventes)){
+		return($ventes);
+	}else{
+		return FALSE;
+	}
+
+}
+
+// get any item from any table
+function get_item($table, $item_id, $fields = '*'){
+	global $db;
+	if( is_array($fields) ){
+		if( !in_array('id', $fields) ){
+			array_unshift($fields , 'id');
+		}
+		$fields_string = implode(", ", $fields);
+		$fields = $fields_string;
+	}
+	$q = "SELECT $fields FROM $table WHERE id = '$item_id'";
+	$query = mysqli_query( $db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
+	$item = mysqli_fetch_assoc( $query );
+	return $item;
+}
+
+// get an article data
+function get_article_data($article_id, $fields = '*'){
 	global $db;
 	if( is_array($fields) ){
 		if( !in_array('id', $fields) ){
@@ -254,10 +293,6 @@ function update_table($table, $id, $update){
 
 
 
-
-
-
-
 /**** 3. INSERTERS ****/
 
 
@@ -333,7 +368,7 @@ function scinde_article($original, $copy){
 
 /* scinde un article vrac en deux pour la vente (from prixVenteModal, #directeVenteSubmit on click) */
 function duplicate_vrac_article($original_id, $old_poids, $old_prix){
-	$item_data = get_item_data($original_id);
+	$item_data = get_article_data($original_id);
 	$id = $item_data['id'];
 	unset($item_data['id']);
 	unset($item_data['date']);
@@ -612,7 +647,6 @@ function update_sql($update){
 				$q .= "$k = NULL";
 			}
 
-
 			// add coma separator between each key=value, but not for the last one
 			if($i < $count){
 				$q .= ", ";
@@ -623,6 +657,7 @@ function update_sql($update){
 		$q .= $update;
 	}
 	
+	// debug:
 	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
 	
 	return $q;
@@ -751,7 +786,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 	//echo '<pre>'.__FUNCTION__.PHP_EOL;print_r($result_array);echo '</pre>';
 	
 	$editable = array('categories_id', 'matieres_id', 'titre', 'descriptif', 'observations', 'prix', 'poids', 'statut_id', 'visible');
-	$exclude = array('id', 'date', 'date_vente', 'vrac', 'etiquette', 'panier_id', 'visible', 'paiement_id');
+	$exclude = array('id', 'date', 'date_vente', 'vrac', 'etiquette', 'paniers_id', 'visible', 'paiement_id');
 
 	$output = '';
 	$i = $n = 0;
@@ -843,6 +878,120 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			}else{
 				$output .= '';
 			}
+			$output .= '</td>';
+			
+			$output .= '</tr>';
+			$i++;
+			$n++;
+		}
+	}
+	$output .= '</tbody></table>'.PHP_EOL;
+	return $output;
+}
+
+/* echo interactive ventes table (uses present() function above) for admin */
+function ventes_table_output($result_array, $limit = NULL, $offset = 0){
+
+	if( empty($result_array) ){
+		return false;
+	}
+	
+	if($limit === NULL){
+		$limit = count($result_array);
+	}
+	$start = $limit*$offset;
+	$end = $start+$limit;
+	
+	// debug
+	//echo '<pre>'.__FUNCTION__.PHP_EOL;print_r($result_array);echo '</pre>';
+	
+	$editable = array('prix', 'poids');
+	$exclude = array('id', 'statut_id', 'date_vente');
+
+	$output = '';
+	$i = $n = 0;
+	$output .= '<table class="data" data-id="articles">'.PHP_EOL;
+	
+	foreach($result_array as $key => $value){
+
+		if($n >= $start && $n < $end){
+			$article_id = $value['id'];
+
+			/*
+			// get images
+			$images_array = get_article_images($article_id, '_S');
+			//$img_count = count($images_array);
+			*/
+			
+			// first iteration, show top row = key name
+			if($i == 0){
+				$output .= '<thead>';
+				$output .= '<tr class="topRow">';
+				/*
+				// th for images
+				$output .= '<th>Image</th>';
+				*/
+				foreach($value as $k => $v){
+					if( !in_array($k, $exclude) ){
+						$output .= '<th>'.str_replace('_id', '', $k).'</th>';
+					}
+				}
+				// th for 'annuler la vente' button
+				$output .= '<th style="background-image:none; padding-left:5px;">&nbsp;</th>';
+
+				$output .= '</tr>';
+				$output .= '</thead><tbody>'; 
+			}
+
+			if($i % 2 == 0){
+				$tr_class = 'pair';
+			}else{
+				$tr_class = 'impair';
+			}
+			// show results
+			$output .= '<tr data-id="'.$article_id.'" class="'.$tr_class.'" title="Modifier cet article">';
+
+
+			/*
+			// images
+			$output .= '<td>';
+			$output .= '<a href="javascript:;" title="Modifier ou ajouter une image" class="showModal" rel="newArticleImages?article_id='.$article_id.'">';
+			if(!empty($images_array)){
+				$output .= '<img src="/'.$images_array[0].'" style="display:block; width:70px; margin:-3px;">';
+			}else{
+				$output .= '<span class="warning">ajouter</span>';
+			}
+			$output .= '</a>';
+			$output .= '</td>';
+			*/
+
+			foreach($value as $k => $v){
+
+				// only show panier name once (articles are grouped by panier)
+				if($k == 'paniers_id'){
+					if( isset($panier_group) && $panier_group == $v ){
+						$output .= '<td> * </td>';
+					continue;
+					}else{
+						$panier_group = $v;
+					}
+				}
+
+				if( !in_array($k, $exclude) ){ // skip exluded fields
+					$v_present = present($k, $v);
+					
+					if( in_array($k, $editable) ){
+						$data = ' class="'.$k.'" data-col="'.$k.'"';
+					}else{
+						$data = '';
+					}
+					$output .= '<td'.$data.'>'.$v_present.'</td>';
+				}
+			}
+
+			$output .= '<td>';
+			$output .= '<a href="javascript:;" data-id="'.$article_id.'" class="button remove" title="annuler la vente de cet article">annuler la vente</a>';
+			
 			$output .= '</td>';
 			
 			$output .= '</tr>';

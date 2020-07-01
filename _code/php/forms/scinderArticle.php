@@ -87,7 +87,7 @@ if( !isset($article_id) || empty($article_id) ){
 	unset($_SESSION['article_id']);
 	//exit;
 }else{
-	$item_data = get_item_data($article_id); 
+	$item_data = get_article_data($article_id); 
 	$item_data_copy = $item_data;
 	?>
 
