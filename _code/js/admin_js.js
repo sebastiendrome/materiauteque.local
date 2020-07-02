@@ -542,17 +542,23 @@ $('div#paniersContainer').on('click', 'a.button.ventePanierSubmit', function(e){
 	$container.find('div.particle').each( function(){
 		var article_id = $(this).attr('data-articleid');
 		var $a_prix_input = $(this).find('input[name="aPrix"]');
+		var $a_poids_input = $(this).find('input[name="aPoids"]');
 		if($a_prix_input.val().length){
 			var article_prix = $a_prix_input.val();
 		}else{
 			var article_prix = '0';
 		}
-		//alert('artcielID: '+article_id+', prix: '+article_prix);
+		if($a_poids_input.val().length){
+			var article_poids = $a_poids_input.val();
+		}else{
+			var article_poids = '0';
+		}
+		alert('artcielID: '+article_id+', prix: '+article_prix+', poids: '+article_poids);
 		updateTable(
 			'articles', 
 			article_id, 
-			'prix', 
-			article_prix
+			'prix'+sep+'poids', 
+			article_prix+sep+article_poids
 		);
 		// create string of article_id(s) to delete article img directory later
 		imgDirs += article_id+sep;

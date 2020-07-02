@@ -39,7 +39,8 @@ list($day, $month, $year) = explode('-', $date);
 //list($day, $month, $year) = explode('-', $date);
 $time_start = mktime(0, 0, 0, $month, $day, $year); // = today
 $time_end = $time_start+86400;
-$paniers_vendus = get_table('paniers', 'statut_id=4 AND date_vente>='.$time_start.' AND date_vente<'.$time_end, 'date DESC');
+$vendu = name_to_id('vendu', 'statut');
+$paniers_vendus = get_table('paniers', 'statut_id='.$vendu.' AND date_vente>='.$time_start.' AND date_vente<'.$time_end, 'date DESC');
 
 ?>
 
