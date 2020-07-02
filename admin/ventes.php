@@ -7,35 +7,39 @@ if( isset($_SESSION['article_id']) ){
 	unset($_SESSION['article_id']);
 }
 
-/*
-if(isset($_GET)){
-	print_r($_GET);
+// date
+if(isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year']) ){
+	if( is_numeric($_POST['day']) && is_numeric($_POST['month']) && is_numeric($_POST['year']) ){
+		$day = sprintf('%02d', $_POST['day']);
+		$month = sprintf('%02d', $_POST['month']);
+		$year = $_POST['year'];
+		if( empty($year) ){
+			$year = '2020';
+		}elseif(strlen($year) == 2){
+			$year = '20'.$year;
+		}
+		$date = $day.'-'.$month.'-'.$year;
+		$_SESSION['dateVentes'] = $date;
+	}else{
+		$date = date('d-m-Y'); // = today
+		$error = '<p class="error">La date est mal formée.</p>';
+	}
+}elseif( isset($_SESSION['dateVentes']) ){
+	$date = $_SESSION['dateVentes'];
+}else{
+	$date = date('d-m-Y'); // = today
 }
-*/
-
-// paniers en cours for paniersModal.php
-$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
-
-//$ventes = get_ventes();
-//$items_table = ventes_table_output($ventes);
+list($day, $month, $year) = explode('-', $date);
 
 
 // get paniers vendus today
 //$time_start = strtotime('yesterday');
-$time_start = strtotime('today');
-//$time_start = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
-$time_end = time();
+//$time_start = strtotime('today');
+//$date = date('d-m-Y'); // = today
+//list($day, $month, $year) = explode('-', $date);
+$time_start = mktime(0, 0, 0, $month, $day, $year); // = today
+$time_end = $time_start+86400;
 $paniers_vendus = get_table('paniers', 'statut_id=4 AND date_vente>='.$time_start.' AND date_vente<'.$time_end, 'date DESC');
-
-//echo $time_start.'<br>'.$time_end.'<br>';
-
-// result message passed via query string
-if( isset($message) && !empty($message) ){
-	$message = str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $message).'</p>';
-	$message_script = '<script type="text/javascript">showDone();</script>';
-}else{
-	$message = $message_script = '';
-}
 
 ?>
 
@@ -43,9 +47,7 @@ if( isset($message) && !empty($message) ){
 <link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
 
 <?php
-if( isset($_GET['upload_result']) ){
-	$message = urldecode($_GET['upload_result']);
-}elseif( isset($_GET['message']) ){
+if( isset($_GET['message']) ){
 	$message = urldecode($_GET['message']);
 }
 if( isset($message) && !empty($message) ){
@@ -63,8 +65,11 @@ echo '<div id="done">'.$message.'</div>';
 <div class="adminHeader">
 <h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<!--<a href="/admin/caisse.php" class="button caisse edit" title="Caisse (ouverture et fermeture)">Caisse</a> --><a href="/admin/ventes.php" class="button vente edit selected" title="Gérer les ventes">Ventes</a> <!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span>--> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a><!-- <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a> -->
-<a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours</a>
+<h2 id="ventesDate">Ventes <form name="dateVentes" action="" method="post"><input type="text" name="day" value="<?php echo $day; ?>" size="2" maxlength="2"><input type="text" name="month" value="<?php echo $month; ?>" size="2" maxlength="2"><input type="text" name="year" value="<?php echo $year; ?>" size="4" maxlength="4"><input type="submit" name="submitDateVentes" value="&gt;" style="position:absolute; top:-100px;"></form></h2> 
+<a href="/_code/php/forms/nouvelle-vente.php" class="button vente" rel="nouvelle-vente" title="rechercher ou créer un article à vendre">+ Nouvelle vente</a>
+
+<!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span>--> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a><!-- <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a> -->
+<a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount"><?php echo $paniers_count; ?></span>)</a>
 
 <div class="clearBoth"></div>
 </div>
@@ -78,8 +83,8 @@ include(ROOT.'_code/php/forms/paniersModal.php');
 <!-- start admin container -->
 <div id="adminContainer">
 
+<?php if(isset($error)){echo $error;} ?>
 
-<h2 style="display:inline-block; margin-right:10px;">Ventes <?php echo date('d-m-Y'); ?></h2> <a href="/_code/php/forms/nouvelle-vente.php" class="button vente" rel="nouvelle-vente" title="rechercher ou créer un article à vendre">+ Nouvelle vente</a>
 <a name="pp"></a>
 
 <?php

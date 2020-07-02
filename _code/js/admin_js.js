@@ -1,5 +1,5 @@
 
-var sep = 'qQq'; // separator to concatenate many cols/vals querys that will be retreived by php as array
+var sep = 'qQq'; // custom separator to concatenate many cols/vals queries that will be retreived by php as array
 var wW = $(window).width();
 var wH = $(window).height();
 var new_vrac_id = 0;
@@ -231,19 +231,32 @@ function updatePaniersModal(){
 	$.ajax({
 		url: '/_code/php/admin/admin_ajax.php?updatePaniersModal',
 		type: 'GET',
-		success : function(msg) {
+		success : function(msg){
+			// msg is: "1234|paniers html output" the number before | is the number of paniers
+			var paniersCount = msg.match(/^\d*/); // get number of paniers (used to update span#paniersCount)
+			var len = paniersCount.length;
+			var paniersOutput = msg.substr(len+1); // get the html output minus the paniers number and pipe
+
+			// update panier modal container with paniersOutput (html output) if found
 			if( $('#paniersContainer').length ){
-				$('#paniersContainer #panierAjaxTarget').html(msg);
+				$('#paniersContainer #panierAjaxTarget').html(paniersOutput);
 				$('div#paniersContainer').show();
 				// memory for showing or hiding paniers modal from page to page
 				document.cookie = "paniersModalDisplay=block; path=/";
 			}
-			// reload vente-paniers in container div#vpLoader, if found
-			if($('body div#vpLoader').length !== 0) {
-
+			
+			// refresh (reload) vente-paniers in container div#vpLoader, if found
+			if($('body div#vpLoader').length !== 0){
 				var context = window.location;
 				$('body div#vpLoader').html('');
 				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
+			}
+
+			// update paniers count in span#paniersCount if found
+			if($('span#paniersCount').length){
+				$('span#paniersCount').each( function(){
+					$(this).text(paniersCount);
+				});
 			}
 			return true;
 		}
@@ -494,7 +507,7 @@ function remove_article_from_panier(article_id){
 
 /*************** PANIERS behaviors START **************/
 
-/* VENTE DE PANIER */
+/* PANIERS EN COURS */
 $('div#paniersContainer').on('click', 'a.button.ventePanierSubmit', function(e){
 	e.preventDefault();
 	var t4;
@@ -608,12 +621,47 @@ $('div#paniersContainer').on('click', 'div.particle a.remove', function(){
 	remove_article_from_panier(article_id);
 });
 
+// "enregistrer la vente" button is enabled or disabled depending on total set or empty
+$('div#paniersContainer').on('keyup', 'input.prixVentePanier', function(){
+	var $venteBut = $(this).parents('div.pCont').find('a.button.vente');
+	if( $(this).val() !== '' ){
+		$venteBut.removeClass('disabled');
+	}else{
+		$venteBut.addClass('disabled');
+	}
+});
+// same as above BUT on change, AND focus on submit vente button (cannot be combined with above)
+$('div#paniersContainer').on('change', 'input.prixVentePanier', function(){
+	var $venteBut = $(this).parents('div.pCont').find('a.button.vente');
+	if( $(this).val() !== '' ){
+		$venteBut.removeClass('disabled');
+		$venteBut.focus();
+	}else{
+		$venteBut.addClass('disabled');
+	}
+});
+$('div#paniersContainer').on('click', 'a.undoVentePanier', function(){
+	var id = $(this).attr('data-panierid');
+	updateTable('paniers', id, 'statut_id', 1);
+	var $panier_displayed = $('div#ventesPaniersContainer').find('div.pCont[data-panierid='+id+']');
+	if($panier_displayed.length){
+		$panier_displayed.hide();
+	}
+	setTimeout(function(){
+		updatePaniersModal();
+	},150);
+});
 
 
 
-/* all paniers */
+
+/* ALL PANIERS (EN COURS + VENDUS) */
 // auto-select inputs (.currency and .weight) on click
 $('div#paniersContainer, div#ventesPaniersContainer').on('click', 'div.pCont input.currency, div.pCont input.weight', function(){
+	$(this).select();
+});
+// auto-select dateVentes inputs
+$('form[name="dateVentes"] input[type="text"]').on('click', function(){
 	$(this).select();
 });
 // show warning next to panier total when individual articles do not add to its value
@@ -681,8 +729,7 @@ $('div#paniersContainer, div#ventesPaniersContainer').on('change', 'div.paAction
 });
 */
 
-/* paniers en cours */
-// delete panier when it has been emptied (from panierModal.php)
+// delete panier when it has been emptied 
 $('div#paniersContainer, div#ventesPaniersContainer').on('click', 'a.deletePanier', function(){
 	var $container = $(this).closest('div.pCont');
 	var paniers_id = $container.attr('data-panierid');
@@ -727,39 +774,9 @@ $('div#paniersContainer, div#ventesPaniersContainer').on('click', 'a.deletePanie
 		}
 	});
 });
-// "enregistrer la vente" button is enabled or disabled depending on total set or empty
-$('div#paniersContainer').on('keyup', 'input.prixVentePanier', function(){
-	var $venteBut = $(this).parents('div.pCont').find('a.button.vente');
-	if( $(this).val() !== '' ){
-		$venteBut.removeClass('disabled');
-	}else{
-		$venteBut.addClass('disabled');
-	}
-});
-// same as above BUT on change, AND focus on submit vente button (cannot be combined with above)
-$('div#paniersContainer').on('change', 'input.prixVentePanier', function(){
-	var $venteBut = $(this).parents('div.pCont').find('a.button.vente');
-	if( $(this).val() !== '' ){
-		$venteBut.removeClass('disabled');
-		$venteBut.focus();
-	}else{
-		$venteBut.addClass('disabled');
-	}
-});
-$('div#paniersContainer').on('click', 'a.undoVentePanier', function(){
-	var id = $(this).attr('data-panierid');
-	updateTable('paniers', id, 'statut_id', 1);
-	var $panier_displayed = $('div#ventesPaniersContainer').find('div.pCont[data-panierid='+id+']');
-	if($panier_displayed.length){
-		$panier_displayed.hide();
-	}
-	setTimeout(function(){
-		updatePaniersModal();
-	},150);
-});
 
 
-/* paniers vendus */
+/* PANIERS VENDUS (VENTES) */
 // save panier changes
 $('div#ventesPaniersContainer').on('click', 'button.savePanierChanges', function(e){
 	e.preventDefault();
@@ -817,6 +834,8 @@ $('div#ventesPaniersContainer').on('click', 'div.particle a.undo', function(){
 });
 
 /*************** PANIERS behaviors END **************/
+
+
 
 
 /*********** ARTICLE VENTE (ADD TO PANIER) behaviors START **************/
@@ -1249,7 +1268,7 @@ $("table.data").on('click', 'a.vendre', function(e){
 
 
 /* format number inputs (on blur) to currency or weight depending on their class name */
-$('body').on('blur', 'input[type="number"]', function(){
+$('body').on('blur', 'input.currency, input.weight', function(){
 	var v = parseFloat( $(this).val() );
 	if( $(this).hasClass('currency') ){
 		$(this).val( v.toFixed(2) ); // 0,00 $

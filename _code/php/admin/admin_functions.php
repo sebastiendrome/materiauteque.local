@@ -166,82 +166,13 @@ function display_panier($id, $context = ''){
 
 // display open paniers (in paniersModal.php)
 function display_paniers_en_cours($paniers){
-	if( empty($paniers) ){
+	if( !$paniers ){
 		return false;
 	}
 	$output = $last = '';
 	$i = 0;
 	$p_count = count($paniers);
 
-	/*
-	foreach($paniers as $p){
-		$i++;
-		if($i == $p_count){
-			$last = ' last'; // css class that will change the last drop-down ul
-		}
-		$poids_total = $total = 0;
-		$articles_output = $disabled = '';
-		if( $articles = get_panier_articles($p['id']) ){
-			$a_count = count($articles);
-			foreach($articles as $a){
-				$ima = get_article_images($a['id'],'_S');
-				if( !empty($ima) ){
-					$imgCont = '<div class="imgCont" style="background-image:url(/'.$ima[0].');">&nbsp;</div>';
-					$particle_style = '';
-				}else{
-					$imgCont = '';
-					$particle_style = ' style="border-left-width:51px; padding-left:7px;"';
-				}
-				$articles_output .= '<div class="particle"'.$particle_style.' data-articleid="'.$a['id'].'">';
-				$articles_output .= '<div class="paActions">
-				<a href="javascript:;" class="remove" title="supprimer cet article du panier"></a> <span style="white-space:nowrap;">'.str_replace('.', ',', $a['poids']).' Kg</span> 
-				<label for="'.$a['id'].'">€</label><input type="number" step="any" name="aPrix" value="'.$a['prix'].'" id="'.$a['id'].'" class="articlePrix currency" placeholder="0,00"></div>';
-				$articles_output .= $imgCont.$a['titre'];
-				
-				$articles_output .= '<div class="clearBoth"></div>
-				</div>';
-
-				$poids_total += $a['poids'];
-				$total += $a['prix'];
-			}
-
-			if($total <= 0){
-				$disabled = ' disabled';
-			}
-
-			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-paniernom="'.$p['nom'].'" data-poids="'.$poids_total.'">';
-			$output .= '<div class="title"><b class="n">'.$p['nom'].'</b></div>';
-			if($a_count > 1){
-				$output .= $a_count.' articles, '. str_replace('.', ',', $poids_total).' kg<br>';
-			}
-			$output .= $articles_output;
-			$output .= '<p class="n" style="text-align:right; padding-right:20px;"><span style="white-space:nowrap;"><input type="checkbox" id="paiement_id" name="paiement_id" value="2"> <label for="paiement_id">paiement par chèque</label></span> &nbsp;&nbsp;&nbsp;&nbsp;<span style="white-space:nowrap;">Total €<input type="number" step="any" class="currency prixVentePanier" style="width:70px; min-width:70px; text-align:right;" name="prix" value="'.number_format($total,2).'" placeholder="0,00" required></span>
-			</p>';
-			$output .= '<div class="moreOptions"><a href="javascript:;" class="dots">• • •</a><ul class="statutActions'.$last.'">';
-			if( !isset($statut_array) ){
-				$statut_array = get_table('statut');
-			}
-			foreach($statut_array as $st){
-				if($st['nom'] !== 'disponible' && $st['nom'] !== 'vendu'){
-					$output .= '<li><a href="javascript:;" data-statut="'.$st['id'].'">'.$st['nom'].'</a></li>';
-				}
-			}
-			$output .= '</ul></div>';
-			$output .= '<a href="javascript:;" class="button vente right ventePanierSubmit'.$disabled.'">Enregistrer la vente</a>';
-
-			$output .= '<div class="clearBoth"></div>
-			</div>';
-			
-		}else{
-			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-paniernom="'.$p['nom'].'">
-			<div class="title"><b>'.$p['nom'].'</b></div>
-			<span class="lowkey">- panier vide -</span> <a href="javascript:;" class="button remove right deletePanier">supprimer</a>';
-			$output .= '<div class="clearBoth"></div>
-			</div>';
-		}
-		
-	}
-	*/
 	foreach($paniers as $p){
 		$i++;
 		if($i == $p_count){
@@ -249,7 +180,7 @@ function display_paniers_en_cours($paniers){
 		}
 		$poids_total = $total = 0;
 		$articles_output = '';
-		$paiement_vals = get_table('paiement');
+		//$paiement_vals = get_table('paiement');
 
 		if( $articles = get_panier_articles($p['id']) ){
 			$a_count = count($articles);

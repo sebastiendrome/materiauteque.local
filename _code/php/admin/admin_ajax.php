@@ -155,8 +155,12 @@ if( isset($_GET['create_article']) ){
 // update paniers modal
 if( isset($_GET['updatePaniersModal']) ){
 	$open_statut = name_to_id('disponible', 'statut');
-	$paniers = get_table('paniers', 'statut_id='.$open_statut, 'date DESC');
-	$result = display_paniers_en_cours($paniers);
+	if( $paniers = get_table('paniers', 'statut_id='.$open_statut, 'date DESC') ){
+		$paniers_count = count($paniers);
+	}else{
+		$paniers_count = '0';
+	}
+	$result = $paniers_count.'|'.display_paniers_en_cours($paniers);
 }
 
 

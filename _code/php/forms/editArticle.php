@@ -86,7 +86,6 @@ if( !isset($title) ){
 	echo ' <a href="javascript:;" class="showModal button remove" rel="deleteArticleModal?article_id='.$article_id.'">Supprimer cet article</a>';
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
-	$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
 	include(ROOT.'_code/php/forms/paniersModal.php');
 
 	echo '<!-- start admin container -->

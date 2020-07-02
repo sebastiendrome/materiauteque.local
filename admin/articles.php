@@ -7,8 +7,6 @@ if( isset($_SESSION['article_id']) ){
 	unset($_SESSION['article_id']);
 }
 
-$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
-
 // make sure we get the needed data, if we don't have it already
 if( !isset($categories) || empty($categories) ){
 	$categories = get_table('categories', 'visible=1 AND id_parent=0');
@@ -138,7 +136,8 @@ echo '<div id="done">'.$message.'</div>';
 <div class="adminHeader">
 <h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<!--<a href="/admin/caisse.php" class="button caisse edit" title="Caisse (ouverture et fermeture)">Caisse</a> --><a href="/admin/articles.php" class="button articles edit selected" title="Gérer les articles">Articles</a> <a href="/admin/ventes.php" class="button vente edit" title="Gérer les ventes">Ventes</a> <!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a> --> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours</a>
+<h2>Articles</h2> <a href="/_code/php/forms/newArticle.php" class="button add articles left" title="créer un article">Nouvel article</a> 
+<a href="/admin/ventes.php" class="button vente edit" title="Gérer les ventes">Ventes</a> <!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a> --> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount"><?php echo $paniers_count; ?></span>)</a>
 
 
 <div class="clearBoth"></div>
@@ -225,7 +224,6 @@ if( isset($search_items) && !empty($search_items)){
 
 <div class="clearBoth">
 
-<h2 style="display:inline-block; margin-right:10px;">Articles</h2> <a href="/_code/php/forms/newArticle.php" class="button add articles left" title="créer un article">Nouvel article</a> 
 <span style="white-space:nowrap;"><?php echo ($offset+1).'—'.$w_end.' sur '.$count; ?>&nbsp;&nbsp;</span>
 <span style="white-space:nowrap;">Voir <input type="text" name="limit" value="<?php echo $limit; ?>" style="min-width:25px; width:25px; text-align:right;" onClick="this.select();" onChange="window.location.href='?limit='+this.value;"> articles par page.&nbsp;&nbsp;</span>
 <span style="white-space:nowrap;">Sauter à la page <input type="text" name="p" value="" style="min-width:25px; width:25px; text-align:right;" onClick="this.select();" onChange="window.location.href='?limit=<?php echo $limit; ?>&p='+this.value;"></span>

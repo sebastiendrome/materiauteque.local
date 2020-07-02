@@ -6,8 +6,6 @@ if( !defined("ROOT") ){
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
 
-$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
-
 /**** !!!!!!! SEARCH ARTICLE can be hidden by changing this to false... */
 $show_findArticleForm = true;
 
@@ -108,7 +106,7 @@ if( !isset($title) ){
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/ventes.php" class="button vente edit selected" title="Gérer les ventes">Ventes</a> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours</a>'.PHP_EOL;
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/ventes.php" class="button vente edit selected" title="Gérer les ventes">Ventes</a> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount">'.$paniers_count.'</span>)</a>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	

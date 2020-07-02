@@ -13,8 +13,6 @@ if( !isset($id) || empty($id) ){
 	exit;
 }
 
-$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
-
 // we'll need to know these fields for item
 $item_data =  get_article_data($id, 'titre, statut_id, prix, poids, vrac');
 

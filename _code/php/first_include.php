@@ -19,7 +19,7 @@ session_start();
 date_default_timezone_set('Europe/Paris');
 
 // set version, to load fresh css and js
-$version = 14;
+$version = 15;
 
 // initialize site 
 define("SITE", $_SERVER['HTTP_HOST'].'/');
@@ -123,4 +123,10 @@ $max_upload_size = ini_get('upload_max_filesize');
 $max_upload_bytes = return_bytes($max_upload_size);
 define("MAX_UPLOAD_SIZE", $max_upload_size);
 define("MAX_UPLOAD_BYTES", $max_upload_bytes);
+
+if( $paniers = get_table('paniers', 'statut_id=1', 'date DESC') ){
+	$paniers_count = count($paniers);
+}else{
+	$paniers_count = '0';
+}
 

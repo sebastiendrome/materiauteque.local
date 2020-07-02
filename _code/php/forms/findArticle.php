@@ -20,7 +20,6 @@ if( !isset($title) ){
 	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
-	$paniers = get_table('paniers', 'statut_id=1', 'date DESC');
 	include(ROOT.'_code/php/forms/paniersModal.php');
 
 	echo '<!-- start admin container -->
