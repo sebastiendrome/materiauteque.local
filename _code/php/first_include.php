@@ -124,9 +124,14 @@ $max_upload_bytes = return_bytes($max_upload_size);
 define("MAX_UPLOAD_SIZE", $max_upload_size);
 define("MAX_UPLOAD_BYTES", $max_upload_bytes);
 
+// get paniers en cours (as array) and count them
 if( $paniers = get_table('paniers', 'statut_id=1', 'date DESC') ){
 	$paniers_count = count($paniers);
 }else{
 	$paniers_count = '0';
 }
-
+// get statut table, paiement table as arrays
+/*
+$statut_array = get_table('statut');
+$paiement_array = get_table('paiement');
+*/

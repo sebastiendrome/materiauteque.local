@@ -151,7 +151,9 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 			?>
 		</select>
 
-		
+		<?php
+		if($article_form_context !== 'search'){ 
+		?>
 		<tr>
 		<td>Matière:<td>
 		<select name="matieres_id"<?php echo in_array('matieres_id', $required) ? " required" : ""; ?>>
@@ -229,6 +231,10 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 		} 
 		?>
 
+		<?php 
+		} // if($article_form_context !== 'search')
+		?>
+
 		<?php
 		// if context = 'vente', let's not show the statut_id to the user, and set it to vendu (or réservé if in of scinderArticle.php)
 		if($article_form_context == 'vente'){
@@ -270,7 +276,7 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 		
 		
 		<?php
-		if($article_form_context !== 'vente'){ 
+		if($article_form_context !== 'vente' && $article_form_context !== 'search'){ 
 		?>
 		<tr>
 		<td>Visible:

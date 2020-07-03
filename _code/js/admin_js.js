@@ -553,7 +553,7 @@ $('div#paniersContainer').on('click', 'a.button.ventePanierSubmit', function(e){
 		}else{
 			var article_poids = '0';
 		}
-		alert('artcielID: '+article_id+', prix: '+article_prix+', poids: '+article_poids);
+		//alert('artcielID: '+article_id+', prix: '+article_prix+', poids: '+article_poids);
 		updateTable(
 			'articles', 
 			article_id, 

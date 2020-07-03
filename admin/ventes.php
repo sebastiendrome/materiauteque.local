@@ -25,10 +25,17 @@ if(isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year']) ){
 		$error = '<p class="error">La date est mal formée.</p>';
 	}
 }elseif( isset($_SESSION['dateVentes']) ){
+	// if session date = yesterday, change to today
+	if( $_SESSION['dateVentes'] == date('d-m-Y', strtotime('yesterday')) ){
+		$_SESSION['dateVentes'] = date('d-m-Y'); // = today
+	}
 	$date = $_SESSION['dateVentes'];
 }else{
 	$date = date('d-m-Y'); // = today
 }
+
+
+
 list($day, $month, $year) = explode('-', $date);
 
 
