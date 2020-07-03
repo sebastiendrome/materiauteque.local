@@ -219,7 +219,7 @@ function display_paniers_en_cours($paniers){
 				$note_button = '<a href="javascript:;" class="note addNote left" style="display:none;">note...</a>';
 			}
 
-			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-paniernom="'.$p['nom'].'" data-poids="'.$poids_total.'">
+			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-paniernom="'.$p['nom'].'">
 			
 			<form name="'.$p['id'].'" action="" method="get">';
 			
@@ -372,7 +372,7 @@ function display_paniers($paniers){
 
 
 			// output starts
-			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-paniernom="'.$p['nom'].'" data-poids="'.$poids_total.'">
+			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-paniernom="'.$p['nom'].'">
 			<form name="'.$p['id'].'" action="" method="get">
 			<input type="hidden" name="id" value="'.$p['id'].'">
 			<input type="hidden" name="savePanierSubmitted" value="savePanierSubmitted">';

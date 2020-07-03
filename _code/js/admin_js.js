@@ -526,7 +526,12 @@ $('div#paniersContainer').on('click', 'a.button.ventePanierSubmit', function(e){
 	}else{
 		var paiement_id = paiement_table['espèces'];
 	}
-	var poids = $container.attr('data-poids');
+	// calculate panier poids from articles poids
+	var poids = 0;
+	$container.find('div.particle input.weight').each( function(){
+		var ap = parseFloat( $(this).val() );
+		poids += ap;
+	});
 	var statut_id = statut_table['vendu']; // 4
 
 	updateTable(
@@ -568,13 +573,13 @@ $('div#paniersContainer').on('click', 'a.button.ventePanierSubmit', function(e){
 	// delete image directory for each article in sold panier
 	removeDirs(imgDirs);
 	
-	// we want to retreive the result of updateTable above, which wraps an asynchronous call. When it's done, the function sets the html of div#done. So we can check for that and know the result, but let's wait to make sure it's done
+	// we want to retreive the result of updateTable above, which wraps an asynchronous call. When it's done, the function sets the html of div#done. So we can check for that and know the result, but let's wait a bit to make sure it's done
 	t4 = setTimeout(function(){
 		var result = $('#done').html();
 		//alert(result);
 		if( result.substr(0,15) !== '<p class="error' ){ // no error message = success
 			updatePaniersModal();
-			var venteMsg = '<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu: '+nom+'<br><a href="javascript:;" class="undoVentePanier" data-panierid="'+id+'" title="rouvrir ce panier">Annuler la vente<span class="undo"></span></a> <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>';
+			var venteMsg = '<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu: '+nom+'<br><a href="javascript:;" class="undoVentePanier lowKey" data-panierid="'+id+'" title="rouvrir ce panier">Annuler la vente <span class="undo"></span></a> <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>';
 			t5 = setTimeout(function(){
 				$('div#panierAjaxTarget').prepend(venteMsg);
 				display_panier(id, 'ventesPaniersAjaxTarget');
