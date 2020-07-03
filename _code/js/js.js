@@ -43,11 +43,6 @@ function hideModal($elem){
 		n = n-1;
 	}else{
 		$elem.closest('div').hide();
-		// exception for paniers Modal: change cookie 'paniersModalDisplay' value to 'none'
-		if($elem.closest('div').attr('id') == 'paniersContainer'){
-			// memory for showing or hiding paniers modal from page to page
-			document.cookie = "paniersModalDisplay=none; path=/";
-		}
 	}
 	//alert(n);
 	if(n < 1){
@@ -112,8 +107,8 @@ $('body').on('click', '.showModal', function(e){
 	e.preventDefault();
 });
 
-// assign behavior to .closeBut et .hideModal (close parent div on click)
-$('body').on('click', '.closeBut, .hideModal', function(e){
+// assign behavior to .hideModal (close parent div on click)
+$('body').on('click', '.hideModal', function(e){
 	hideModal($(this));
 	e.preventDefault();
 });

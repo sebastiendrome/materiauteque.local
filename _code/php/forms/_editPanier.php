@@ -35,7 +35,7 @@ echo '</pre>';
 ?>
 
 <div class="modal">
-	<a href="javascript:;" class="closeBut">&times</a>
+	<a href="javascript:;" class="closeBut hideModal">&times</a>
 
 <form name="newArticle" id="newArticle" action="?article_id=<?php echo $article_id; ?>" method="post" style="display:inline-block; margin-right:10px;">
 

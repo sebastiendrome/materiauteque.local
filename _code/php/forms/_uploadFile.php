@@ -3,7 +3,7 @@ $path = 'uploads/'.$article_id.'/';
 ?>
 <div class="modal" id="uploadFileContainer">
 
-<a href="javascript:;" class="closeBut">&times;</a>
+<a href="javascript:;" class="closeBut hideModal">&times;</a>
 
 	<!-- upload file start -->
 	<div>

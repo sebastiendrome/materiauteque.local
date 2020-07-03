@@ -15,7 +15,7 @@ if( isset($_COOKIE['paniersModalDisplay']) && ( $_COOKIE['paniersModalDisplay'] 
 <img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours
 <div id="paniersTarget">
 
-<div id="panierAjaxTarget">
+<div id="paniersAjaxTarget">
 <?php echo $output; ?>
 </div>
 </div>

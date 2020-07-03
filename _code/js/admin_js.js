@@ -162,8 +162,6 @@ function create_article(fields){
 				if(basename(window.location.href) == 'nouvelle-vente.php'){
 					//alert('WE\'RE IN nouvelle-vente.php, js function create_article, admin_ajax.php?create_article');
 					window.scrollTo(0, 0);
-					//$('div#adminContainer div#msg').remove();
-					//$('div#adminContainer').prepend('<div id="msg"><p class="success">Article vendu, ID:'+article_id+' <a href="javascript:;" class="closeBut">&times;</a></p></div>');
 					// reset new article form
 					$('form#newArticle').trigger("reset");
 				}
@@ -239,7 +237,7 @@ function updatePaniersModal(){
 
 			// update panier modal container with paniersOutput (html output) if found
 			if( $('#paniersContainer').length ){
-				$('#paniersContainer #panierAjaxTarget').html(paniersOutput);
+				$('#paniersContainer #paniersAjaxTarget').html(paniersOutput);
 				$('div#paniersContainer').show();
 				// memory for showing or hiding paniers modal from page to page
 				document.cookie = "paniersModalDisplay=block; path=/";
@@ -313,6 +311,7 @@ function display_panier(panierId, context){
 
 		// on success; msg is either new panier ID, or an error message
 		success : function(msg) {
+			//alert(msg);
 			var pre = msg.substr(0, 2);
 			var mes = msg.substr(2);
 			var message = '';
@@ -490,7 +489,7 @@ function article_sum($cont, item_to_add){
 }
 
 // remove article from panier
-function remove_article_from_panier(article_id){
+function remove_article_from_panier(article_id, panier_id){
 	// update article: remove paniers_id, date_vente, set statut_id = 1 (disponible)
 	updateTable(
 		'articles', 
@@ -500,8 +499,9 @@ function remove_article_from_panier(article_id){
 	);
 	// update paniers modal
 	setTimeout(function(){
-		updatePaniersModal();
-	}, 500);
+		display_panier(panier_id, 'paniersAjaxTarget');
+		//updatePaniersModal();
+	}, 150);
 }
 
 
@@ -581,7 +581,7 @@ $('div#paniersContainer').on('click', 'a.button.ventePanierSubmit', function(e){
 			updatePaniersModal();
 			var venteMsg = '<div class="success" style="padding-right:35px; margin-top:5px;">Panier vendu: '+nom+'<br><a href="javascript:;" class="undoVentePanier lowKey" data-panierid="'+id+'" title="rouvrir ce panier">Annuler la vente <span class="undo"></span></a> <a href="javascript:;" class="remove" style="position:absolute; top:0; right:0;" onclick="$(this).parent().hide();" title="hide"></a></div>';
 			t5 = setTimeout(function(){
-				$('div#panierAjaxTarget').prepend(venteMsg);
+				$('div#paniersAjaxTarget').prepend(venteMsg);
 				display_panier(id, 'ventesPaniersAjaxTarget');
 			}, 200);
 			
@@ -592,6 +592,11 @@ $('div#paniersContainer').on('click', 'a.button.ventePanierSubmit', function(e){
 
 });
 
+// hide panierModal (div#paniersContainer) when closeBut is clicked, and set cookie
+$('div#paniersContainer a.closeBut').on('click', function(){
+	$(this).parent().css('display','none');
+	document.cookie = "paniersModalDisplay=none; path=/";
+});
 
 /* UPDATE PANIER STATUT (from paniersModal.php, ul.statutActions drop-down) */
 $('div#paniersContainer, div#ventesPaniersContainer').on('click', 'ul.statutActions a', function(e){
@@ -628,9 +633,11 @@ $('div#paniersContainer, div#ventesPaniersContainer').on('click', 'ul.statutActi
 $('div#paniersContainer').on('click', 'div.particle a.remove', function(){
 	// get article id
 	var article_id = $(this).parents('div.particle').attr('data-articleid');
+	var panier_id = $(this).parents('div.pCont').attr('data-panierid');
 	//alert(article_id);
-	remove_article_from_panier(article_id);
+	remove_article_from_panier(article_id, panier_id);
 });
+
 
 // "enregistrer la vente" button is enabled or disabled depending on total set or empty
 $('div#paniersContainer').on('keyup', 'input.prixVentePanier', function(){
@@ -669,10 +676,6 @@ $('div#paniersContainer').on('click', 'a.undoVentePanier', function(){
 /* ALL PANIERS (EN COURS + VENDUS) */
 // auto-select inputs (.currency and .weight) on click
 $('div#paniersContainer, div#ventesPaniersContainer').on('click', 'div.pCont input.currency, div.pCont input.weight', function(){
-	$(this).select();
-});
-// auto-select dateVentes inputs
-$('form[name="dateVentes"] input[type="text"]').on('click', function(){
 	$(this).select();
 });
 // show warning next to panier total when individual articles do not add to its value
@@ -724,6 +727,29 @@ $('div#paniersContainer, div#ventesPaniersContainer').on('click', 'div.pCont a.a
 	$cont.find('textarea.notes').focus();
 	$cont.find('a.addNote').css('display','none');
 });
+// highlight change when individual article is removed and show save/cancel buttons
+$("div#ventesPaniersContainer").on('click', 'div.particle a.remove', function(){
+	var $container = $(this).closest('div.pCont');
+	var $particle = $(this).closest('div.particle');
+	$particle.addClass('removeConfirm');
+	$particle.find('select.statut_id').val(statut_table['disponible']);
+	$container.find('div.changes').css('display', 'block');
+	compareTotal( $(this) );
+});
+// quick cancel article removal from panier
+$('div#ventesPaniersContainer').on('click', 'div.particle a.undo', function(){
+	var $container = $(this).closest('div.pCont');
+	var $particle = $(this).closest('div.particle');
+	$particle.removeClass('removeConfirm');
+	$particle.find('select.statut_id').val(statut_table['vendu']); // vendu
+	compareTotal( $(this) );
+	// hide 'annuler'/'enregistrer' buttons if nothing else was changed
+	if( $container.find('input.changed, select.changed').length === 0){
+		setTimeout(function(){
+			$container.find('div.changes').css('display', 'none');
+		}, 100);	
+	}
+});
 
 // update panier total when individual articles prix are changed
 /***** !!!!!!!! supprimé jusqu'à nouvel ordre
@@ -763,17 +789,7 @@ $('div#paniersContainer, div#ventesPaniersContainer').on('click', 'a.deletePanie
 			}
 			$('#done').html(message);
 			//return msg;
-			/*if($container.parent().attr('id') == 'panierAjaxTarget'){
-				// update paniers modal
-				setTimeout(function(){
-					updatePaniersModal();
-				}, 400);
-			}else if($container.parent().attr('id') == 'ventesPaniersAjaxTarget'){
-				// update paniers modal
-				setTimeout(function(){
-					$container.hide();
-				}, 150);
-			}*/
+			
 			setTimeout(function(){
 				$container.hide();
 			}, 150);
@@ -809,15 +825,6 @@ $('div#ventesPaniersContainer').on('change', 'div.pCont input, div.pCont select'
 	//$(this).css({'background-color':'#fff', 'border':'1px dashed #000'});
 	$container.find('div.changes').css('display', 'block');
 });
-// highlight change when individual article is removed and show save/cancel buttons
-$("div#ventesPaniersContainer").on('click', 'div.particle a.remove', function(){
-	var $container = $(this).closest('div.pCont');
-	var $particle = $(this).closest('div.particle');
-	$particle.addClass('removeConfirm');
-	$particle.find('select.statut_id').val('1');
-	$container.find('div.changes').css('display', 'block');
-	compareTotal( $(this) );
-});
 // cancel changes in panier vendu form
 $('div#ventesPaniersContainer').on('click', 'div.pCont button.reset', function(){
 	var $this = $(this);
@@ -828,20 +835,6 @@ $('div#ventesPaniersContainer').on('click', 'div.pCont button.reset', function()
 	setTimeout(function(){
 		$container.find('div.changes').css('display', 'none');
 	}, 100);
-});
-// quick cancel article removal from panier
-$('div#ventesPaniersContainer').on('click', 'div.particle a.undo', function(){
-	var $container = $(this).closest('div.pCont');
-	var $particle = $(this).closest('div.particle');
-	$particle.removeClass('removeConfirm');
-	$particle.find('select.statut_id').val('4'); // vendu
-	compareTotal( $(this) );
-	// hide 'annuler'/'enregistrer' buttons if nothing else was changed
-	if( $container.find('input.changed, select.changed').length === 0){
-		setTimeout(function(){
-			$container.find('div.changes').css('display', 'none');
-		}, 100);	
-	}
 });
 
 /*************** PANIERS behaviors END **************/
@@ -1216,6 +1209,11 @@ $('body').on('click', 'button#newArticleAjoutPanierSubmit', function(e){
 
 /***** behavior targets/calls *****************************************/
 
+// auto-select dateVentes inputs
+$('form[name="dateVentes"] input[type="text"]').on('click', function(){
+	$(this).select();
+});
+
 // show/hide moreOptions statutActions in paniersModal
 $('body').on('click', 'div.moreOptions', function(){
 	var $ul = $(this).parent().find('ul.statutActions');
@@ -1342,29 +1340,30 @@ $('<a class="closeMessage">&times;</a>').appendTo('p.error, p.note, p.success, d
 // show/hide last steps of form, depending on choice between 'vendre directement' et 'ajouter au panier'
 $('body').on('click', 'a#ajoutPanier', function(e){
 	e.preventDefault();
-	$('div#paniers select, div#paniers input').prop('disabled', false);
-	$('input#prixVente').prop('required', false);
-	$('div#direct').hide();
-	$('div#paniers').show();
+	var $cont = $(this).closest('div#vpLoader');
+	$cont.find('div#paniers select, div#paniers input').prop('disabled', false);
+	$cont.find('input#prixVente').prop('required', false);
+	$cont.find('div#direct').hide();
+	$cont.find('div#paniers').show();
 	$(this).removeClass('discarded').addClass('selected');
 	if(!paniers){
-		$('input#panierNom').focus();
+		$cont.find('input#panierNom').focus();
 	}else{
 		// debug
 		//alert('should focus on select');
-		$('select#paniers').focus();
+		$cont.find('select#paniers').focus();
 	}
-	$('a#directVente').removeClass('selected').addClass('discarded');
+	$cont.find('a#directVente').removeClass('selected').addClass('discarded');
 });
 $('body').on('click', 'a#directVente', function(e){
 	e.preventDefault();
-	$('div#paniers select, div#paniers input').prop('disabled', true);
-	$('div#paniers').hide();
-	$('div#direct').show();
-	$('input#prixVente').prop('required', true);
-	$('input#prixVente').focus();
+	var $cont = $(this).closest('div#vpLoader');
+	$cont.find('div#paniers select, div#paniers input').prop('disabled', true);
+	$cont.find('div#paniers').hide();
+	$cont.find('div#direct').show();
+	$cont.find('input#prixVente').prop('required', true).focus();
 	$(this).removeClass('discarded').addClass('selected');
-	$('a#ajoutPanier').removeClass('selected').addClass('discarded');
+	$cont.find('a#ajoutPanier').removeClass('selected').addClass('discarded');
 });
 
 // enable disabled submit buttons at end of each form : directeVenteSubmit, and ajoutPanierSubmit

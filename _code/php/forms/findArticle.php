@@ -17,7 +17,7 @@ if( !isset($title) ){
 	
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a>'.$title.' </h1>'.PHP_EOL;
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <h2>'.$title.' </h2>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	include(ROOT.'_code/php/forms/paniersModal.php');
@@ -81,7 +81,7 @@ if( isset($items) && !empty($items)){
 	if(isset($results)){
 		$count = count($results);
 		if($count>1){$s='s';}else{$s='';} // plural or singular
-		echo '<b>'.$count.' article'.$s.' trouvé'.$s.'.</b> <a href="#recherche" class="button">Nouvelle recherche</a><br>
+		echo '<b>'.$count.' article'.$s.' trouvé'.$s.'.</b> <a href="#recherche" class="button" onclick="$(\'form[name=findArticle] input[name=titre]\').focus();">Nouvelle recherche</a><br>
 		Paramètres de recherche: ';
 		foreach($key_val_pairs as $rk => $rv){
 			if( is_array($rv) ){

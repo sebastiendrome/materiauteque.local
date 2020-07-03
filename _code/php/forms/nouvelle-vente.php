@@ -59,9 +59,10 @@ if( isset($_POST['findArticleSubmitted']) ){
 	*/
 	if( !empty($key_val_pairs) ){
 		if( $results = find_articles($key_val_pairs) ){
+			$fields = array('titre','descriptif', 'categories_id', 'sous_categories_id', 'statut_id', 'poids', 'prix', 'observations');
 			foreach($results as $key => $val){
 				//echo 'Article #'.$key.'<br>';
-				$items[] = get_article_data($key);
+				$items[] = get_article_data($key, $fields);
 			}
 		}
 	}
@@ -106,7 +107,7 @@ if( !isset($title) ){
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/ventes.php" class="button vente edit selected" title="Gérer les ventes">Ventes</a> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount">'.$paniers_count.'</span>)</a>'.PHP_EOL;
+	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <h2>Nouvelle vente</h2> <a href="/admin/ventes.php" class="button vente edit selected" title="Gérer les ventes">Ventes</a> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount">'.$paniers_count.'</span>)</a>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	
@@ -115,8 +116,6 @@ if( !isset($title) ){
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
-
-	echo '<h2>Nouvelle vente</h2>';
 		
 	$footer = true;
 }else{
@@ -135,7 +134,7 @@ if( isset($items) && !empty($items)){
 	if(isset($results)){
 		$count = count($results);
 		if($count>1){$s='s';}else{$s='';} // plural or singular
-		echo '<b>'.$count.' article'.$s.' trouvé'.$s.'.</b> <a href="#recherche" class="button">Nouvelle recherche</a><br>
+		echo '<b>'.$count.' article'.$s.' trouvé'.$s.'.</b> <a href="#recherche" class="button" onclick="$(\'form[name=findArticle] input[name=titre]\').focus();">Nouvelle recherche</a><br>
 		Paramètres de recherche: ';
 		foreach($key_val_pairs as $rk => $rv){
 			if( is_array($rv) ){

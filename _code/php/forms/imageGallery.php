@@ -37,7 +37,7 @@ $inner_img_output = $img_nav.'<img src="'.$img_selected.'" style="display:block;
 ?>
 
 <div class="modal" style="padding:0;">
-	<a href="javascript:;" class="closeBut">&times;</a>
+	<a href="javascript:;" class="closeBut hideModal">&times;</a>
 <?php
 echo $inner_img_output;
 ?>

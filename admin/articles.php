@@ -36,9 +36,10 @@ if( isset($_POST['simpleSearch']) ){
 	if($keywords !== '' || $categories_id !== ''){
 		$ids = search($keywords, $categories_id, $sous_categories_id, /*visible-only=*/FALSE, /*vendus=*/FALSE);
 		if( !empty($ids) ){
+			$fields = array('titre','descriptif', 'categories_id', 'sous_categories_id', 'statut_id', 'poids', 'prix', 'observations');
 			foreach($ids as $id){
 				//echo 'Article #'.$key.'<br>';
-				$search_items[] = get_article_data($id);
+				$search_items[] = get_article_data($id, $fields);
 			}
 		}
 	}

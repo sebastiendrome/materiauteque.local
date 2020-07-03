@@ -158,7 +158,7 @@ function display_panier($id, $context = ''){
 
 	if($context == 'ventesPaniersAjaxTarget'){
 		$output = display_paniers($paniers);
-	}elseif($context == 'panierAjaxTarget'){
+	}elseif($context == 'paniersAjaxTarget'){
 		$output = display_paniers_en_cours($paniers);
 	}
 	return '1|'.$output;
@@ -172,20 +172,33 @@ function display_paniers_en_cours($paniers){
 	$output = $last = '';
 	$i = 0;
 	$p_count = count($paniers);
+	$statut_vals = get_table('statut');
 
 	foreach($paniers as $p){
 		$i++;
 		if($i == $p_count){
 			$last = ' last'; // css class that will change the last drop-down ul
 		}
-		$poids_total = $total = 0;
-		$articles_output = '';
-		//$paiement_vals = get_table('paiement');
 
 		if( $articles = get_panier_articles($p['id']) ){
+			
 			$a_count = count($articles);
+			$poids_total = $total = 0;
+			$articles_output = '';
+			
 			foreach($articles as $a){
-
+				
+				$statut_options = '<select name="'.$a['id'].'[aStatut_id]" class="statut_id">';
+				foreach($statut_vals as $sv){
+					if($sv['nom'] == 'vendu'){
+						$selected = ' selected';
+					}else{
+						$selected = '';
+					}
+					$statut_options .= '<option value="'.$sv['id'].'"'.$selected.'>'.$sv['nom'].'</option>';
+				}
+				$statut_options .= '</select>';
+				/*
 				$ima = get_article_images($a['id'],'_S');
 				if( !empty($ima) ){
 					$imgCont = '<div class="imgCont" style="background-image:url(/'.$ima[0].');">&nbsp;</div>';
@@ -194,13 +207,15 @@ function display_paniers_en_cours($paniers){
 					$imgCont = '';
 					$particle_style = ' style="border-left-width:51px; padding-left:7px;"';
 				}
-				$articles_output .= '<div class="particle"'.$particle_style.' data-articleid="'.$a['id'].'">';
-				$articles_output .= $imgCont.$a['titre'].'<div class="paActions"><a href="javascript:;" class="remove" title="supprimer cet article du panier"></a> <input type="number" step="any" min="0" name="aPoids" id="'.$a['id'].'poids" class="weight" placeholder="0,000" value="'.$a['poids'].'">kg&nbsp;&nbsp;&nbsp;&nbsp;
+				*/
+				$articles_output .= '<div class="particle" data-articleid="'.$a['id'].'">';
+				$articles_output .= $a['titre'].'<div class="paActions">';
+				$articles_output .= $statut_options;
+				$articles_output .= '<a href="javascript:;" class="remove" title="supprimer cet article du panier"></a> <input type="number" step="any" min="0" name="aPoids" id="'.$a['id'].'poids" class="weight" placeholder="0,000" value="'.$a['poids'].'">kg&nbsp;&nbsp;&nbsp;&nbsp;
 				€<input type="number" step="any" name="aPrix" id="'.$a['id'].'prix" class="currency" placeholder="0,00" value="'.$a['prix'].'">';
-				$articles_output .= '</div>';
+				$articles_output .= '</div><a href="javascript:;" class="undo" title="annuler la suppression de cet article"></a>';
 				
 				$articles_output .= '<div class="clearBoth"></div>
-				<!--<a href="javascript:;" class="undo" title="remettre cet article"></a>-->
 				</div>';
 
 				$poids_total += $a['poids'];
@@ -208,6 +223,18 @@ function display_paniers_en_cours($paniers){
 			}
 
 			$total = number_format($total,2);
+
+			if($a_count > 1){
+				$count_output = '&nbsp;&nbsp;&nbsp;'.$a_count.' articles, '. str_replace('.', ',', $poids_total).' kg<br>';
+			}else{
+				$count_output = '';
+			}
+
+			if($p['paiement_id'] == '2'){
+				$checked = ' checked';
+			}else{
+				$checked = '';
+			}
 
 			if( empty($p['notes']) ){
 				$node = '&nbsp';
@@ -224,42 +251,39 @@ function display_paniers_en_cours($paniers){
 			<form name="'.$p['id'].'" action="" method="get">';
 			
 			$output .= '<div class="title"><b class="n">'.$p['nom'].'</b>';
-			if($a_count > 1){
-				$output .= '&nbsp;&nbsp;&nbsp;'.$a_count.' articles, '. str_replace('.', ',', $poids_total).' kg<br>';
-			}
+			$output .= $count_output;
 			$output .= '</div>';
 
 			$output .= $articles_output;
 
-			if($p['paiement_id'] == '2'){
-				$checked = ' checked';
+			// show warning if total != somme des articles
+			if($total !== $p['total']){
+				$show_warn = ' style="visibility:visible;"';
 			}else{
-				$checked = '';
+				$show_warn = '';
 			}
-			
-			$output .= '<p class="n" style="text-align:right;">
-			<span style="white-space:nowrap;"><input type="checkbox" id="paiement_id" name="paiement_id" value="2"'.$checked.'> <label for="paiement_id">paiement par chèque</label></span> &nbsp;&nbsp;&nbsp;&nbsp;';
-			$output .= '<span style="white-space:nowrap;">Total €<input type="number" step="any" name="prix" id="'.$p['id'].'total" class="currency prixVentePanier" placeholder="0,00" value="'.$p['total'].'"></span><a href="javascript:;" class="warning" title="le total n\'est pas égal à la somme des articles"></a>
-			</p>';
-
-			$output .= '<div>
-			'.$note_button;
-			$output .= '<div class="moreOptions"><a href="javascript:;" class="dots">• • •</a><ul class="statutActions'.$last.'">';
-			if( !isset($statut_array) ){
-				$statut_array = get_table('statut');
-			}
-			foreach($statut_array as $st){
-				if($st['nom'] !== 'disponible' && $st['nom'] !== 'vendu'){
-					$output .= '<li><a href="javascript:;" data-statut="'.$st['id'].'">'.$st['nom'].'</a></li>';
-				}
-			}
-			$output .= '</ul></div>';
 
 			if($total <= 0 && ( empty($p['total']) || $p['total'] <= 0) ){
 				$disabled = ' disabled';
 			}else{
 				$disabled = '';
 			}
+			
+			$output .= '<p class="n" style="text-align:right;">
+			<span style="white-space:nowrap;"><input type="checkbox" id="paiement_id" name="paiement_id" value="2"'.$checked.'> <label for="paiement_id">paiement par chèque</label></span> &nbsp;&nbsp;&nbsp;&nbsp;';
+			$output .= '<span style="white-space:nowrap;">Total €<input type="number" step="any" name="prix" id="'.$p['id'].'total" class="currency prixVentePanier" placeholder="0,00" value="'.$p['total'].'"></span><a href="javascript:;" class="warning" title="le total n\'est pas égal à la somme des articles"'.$show_warn.'></a>
+			</p>';
+
+			$output .= '<div>
+			'.$note_button;
+			$output .= '<div class="moreOptions"><a href="javascript:;" class="dots">• • •</a><ul class="statutActions'.$last.'">';
+			
+			foreach($statut_vals as $st){
+				if($st['nom'] !== 'disponible' && $st['nom'] !== 'vendu'){
+					$output .= '<li><a href="javascript:;" data-statut="'.$st['id'].'">'.$st['nom'].'</a></li>';
+				}
+			}
+			$output .= '</ul></div>';
 			
 			$output .= '<a href="javascript:;" class="button vente right ventePanierSubmit'.$disabled.'">Enregistrer la vente</a>';
 			

@@ -22,7 +22,7 @@ if(isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year']) ){
 		$_SESSION['dateVentes'] = $date;
 	}else{
 		$date = date('d-m-Y'); // = today
-		$error = '<p class="error">La date est mal formée.</p>';
+		$error = '<p class="error">La date est mal formée (la forme doit être: 01 01 2020)</p>';
 	}
 }elseif( isset($_SESSION['dateVentes']) ){
 	// if session date = yesterday, change to today

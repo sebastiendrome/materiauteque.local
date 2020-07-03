@@ -38,7 +38,7 @@ if( isset($_GET['previous_id']) && !empty($_GET['previous_id']) && $_GET['previo
 
 <!-- update to vendu, add prix de vente START -->
 <div class="modal" id="prixVenteModal">
-	<a href="javascript:;" class="annuler closeBut">&times;</a>
+	<a href="javascript:;" class="annuler closeBut hideModal">&times;</a>
 
 <?php
 // if article is already 'vendu', just show message

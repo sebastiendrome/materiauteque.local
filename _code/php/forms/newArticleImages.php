@@ -22,7 +22,7 @@ if( isset($_GET['context']) ){
 	$context = '';
 }
 ?>
-<div class="modal"><a class="closeBut" href="javascript:;">&times;</a>
+<div class="modal"><a class="closeBut hideModal" href="javascript:;">&times;</a>
 <form enctype="multipart/form-data" name="uploadFileForm" id="uploadFileForm" action="/_code/php/admin/upload_file.php" method="post">
 	<table>
 	<tr>

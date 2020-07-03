@@ -5,7 +5,7 @@
 .adminHeader{position:relative; padding:0 20px; border-bottom: 1px solid #ccc;}
 .adminHeader h1, .adminHeader h2{display:inline-block; margin:5px 20px 5px 0;}
 .adminHeader a.button{position: relative; top: -5px;}
-.adminHeader a.button.paniersBut{top:8px;}
+.adminHeader a.button.paniersBut{top:8px; z-index:25;}
 
 .pagination a{display:inline-block; margin:3px;}
 div.tableContainer{max-width:100%; max-width:1105px; overflow:auto;}
@@ -243,7 +243,7 @@ textarea[name='descriptif'], textarea[name='observations']{height:70px;}
 a.vendre, button.vendre{font-weight:bold; text-align:center; width:calc(100% - 21px);}
 a.vente, button.vente{background-color:rgb(242,202,58); color:#000; text-shadow:none;}
 button.vente:hover{text-shadow:none;}
-a.articles, button.articles{background-color:rgb(194, 207, 223); color:#000; text-shadow:none;}
+a.articles, button.articles{background-color:rgb(199, 218, 241); color:#000; text-shadow:none;}
 button.articles:hover{text-shadow:none;}
 a.caisse, button.caisse{background-color:rgb(226, 38, 38); color:#fff; font-weight:bold; text-shadow:none;}
 button.caisse:hover{text-shadow:none;}
@@ -273,7 +273,7 @@ div#paniersContainer a.closeBut{
 	display: inline-block; padding: 10px; margin: -10px; margin-right:0;
 }*/
 
-/*#panierAjaxTarget div.pCont{
+/*#paniersAjaxTarget div.pCont{
 	min-width:350px;
 	max-width:380px;
 }*/
@@ -337,15 +337,15 @@ div.tAreaResizer, div.tAreaResizer textarea{
 	display:block;
 }
 
-div.particle.removeConfirm{
+div.particle.removeConfirm{text-decoration: line-through; height:1.5em; overflow:hidden;}
+div.particle.removeConfirm div.paActions{visibility:hidden;}
+#ventesPaniersContainer div.particle.removeConfirm{
 	background-color:rgba(255, 255, 255, 0.5);
-	text-decoration: line-through;
-	/*color:#aaa;*/
 	padding-left:5px;
 	border:1px dashed #000 !important;
 	margin-top:-1px;
 }
-div.particle.removeConfirm div.paActions{visibility:hidden;}
+#paniersContainer div.particle.removeConfirm{opacity: .7; margin-bottom:3px;}
 div.particle a.undo{display:none; position:absolute; top:0; right:0; width:18px; height:18px;}
 div.particle.removeConfirm a.undo{display:block; position:absolute;}
 
@@ -356,21 +356,22 @@ div.pCont div.changes{
 
 div.particle{position:relative;}
 
-#panierAjaxTarget div.particle{
+#paniersAjaxTarget div.particle{
 	font-size:smaller; 
-	border:1px solid #ddd; margin-bottom:-1px; 
+	/*border-bottom:1px solid #ddd; margin-bottom:-1px; 
 	background-color:#eee; 
 	padding:0 0 0 57px;
 	position:relative;
-	clear:both;
+	clear:both;*/
 }
-#ventesPaniersAjaxTarget div.particle, #ventesPaniersAjaxTarget div.title{
+#ventesPaniersAjaxTarget div.particle, #ventesPaniersAjaxTarget div.title, #paniersAjaxTarget div.particle, #paniersAjaxTarget div.title{
 	border-bottom:1px solid #ccc;
 }
 div.particle select.statut_id{
 	display:none;
 }
-#panierAjaxTarget div.particle div.imgCont{
+/*
+#paniersAjaxTarget div.particle div.imgCont{
 	display:block; float:left; 
 	width:50px; height:40px; 
 	margin:-2px 0 -2px -57px; 
@@ -378,6 +379,7 @@ div.particle select.statut_id{
 	background-position:50%; 
 	background-repeat:no-repeat;
 }
+*/
 div.particle div.paActions{
 	float:right;
 }
