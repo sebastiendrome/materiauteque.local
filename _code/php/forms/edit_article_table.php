@@ -1,6 +1,16 @@
 <?php 
 if( !isset($item_data) ){
 	$item_data = array();
+}else{
+	if( isset($item_data['titre']) ){
+		$item_data['titre'] = str_replace('"', '&quot;', $item_data['titre']);
+	}
+	if( isset($item_data['descriptif']) ){
+		$item_data['descriptif'] = str_replace('"', '&quot;', $item_data['descriptif']);
+	}
+	if( isset($item_data['observations']) ){
+		$item_data['observations'] = str_replace('"', '&quot;', $item_data['observations']);
+	}
 }
 // $article_form_context will differentiqte between search, edit or create article
 // edit, search, new, vente, scinder
@@ -63,7 +73,7 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 		<td><h3>Titre:</h3><td><h3><input type="text" name="titre" value="<?= $item_data['titre'] ?? '' ?>"<?php echo in_array('titre', $required) ? " required" : ""; ?><?php echo $autofocus; ?>></h3>
 
 		<?php
-		if($article_form_context !== 'vente'){ 
+		if($article_form_context !== 'vente'){
 		?>
 		<tr>
 		<td>Descriptif:<td><textarea name="descriptif"<?php echo in_array('descriptif', $required) ? " required" : ""; ?>><?= $item_data['descriptif'] ?? '' ?></textarea>
@@ -276,16 +286,36 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 		
 		
 		<?php
-		if($article_form_context !== 'vente' && $article_form_context !== 'search'){ 
-		?>
-		<tr>
-		<td>Visible:
-			<td><input type="radio" id="visibleZero" name="visible" value="0"<?php if( (isset($item_data['visible']) && $item_data['visible'] == 0) || (!isset($item_data['visible']) &&  $article_form_context == 'vente') ){echo ' checked';}?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="visibleOne" name="visible" value="1"<?php if( (!isset($item_data['visible']) && $article_form_context !== 'search' && $article_form_context !== 'vente') || (isset($item_data['visible']) && $item_data['visible'] == 1) ){echo ' checked';}?>><label for="1"> oui</label>
-		</select>
-		<?php
-		}
-		?>
-		
+		if($article_form_context !== 'search'){
+			if($article_form_context == 'vente'){
+				$display_none = ' style="display:none;"';
+				
+				$visibleZero_checked = ' checked';
+				$visibleOne_checked = '';
+			}else{
+				$display_none = '';
+				
+				if($article_form_context == 'new'){
+					$visibleZero_checked = '';
+					$visibleOne_checked = ' checked';
+				}else{
+					if($item_data['visible'] == '0'){
+						$visibleZero_checked = ' checked';
+						$visibleOne_checked = '';
+					}else{
+						$visibleZero_checked = '';
+						$visibleOne_checked = ' checked';
+					}
+				}
+			}
+
+			?>
+			<tr<?php echo $display_none; ?>>
+			<td>Visible:
+				<td><input type="radio" id="visibleZero" name="visible" value="0"<?php echo $visibleZero_checked; ?>><label for="0"> non</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="visibleOne" name="visible" value="1"<?php echo $visibleOne_checked; ?>><label for="1"> oui</label>
+			</select>
+		<?php } ?>
+
 		<tr>
 		<td>Observations:<td><textarea name="observations"><?= $item_data['observations'] ?? '' ?></textarea>
 	

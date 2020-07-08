@@ -1,4 +1,81 @@
 <?php
+
+/* COPY DIRECTORY AND ITS CONTENTS */
+function copyr($source, $dest){
+	if (is_file($source)) {// Simple copy for a file
+		return copy($source, $dest);
+	}
+	if (!is_dir($dest)) {// Make destination directory
+		mkdir($dest,0777);
+	}
+	$dir = dir($source);// Loop through the folder
+	while (false !== $entry = $dir->read()) {
+		if (substr($entry, 0, 1) == '.') {// Skip pointers
+			continue;
+		}
+		if ($dest !== "$source/$entry") {// Deep copy directories
+			copyr("$source/$entry", "$dest/$entry");
+		}
+	}
+	$dir->close();// Clean up
+	return true;
+}
+
+/* FUNCTION TO REMOVE DIRECTORY AND ITS CONTENTS */
+function rmdirr($dirname){
+	if (!file_exists($dirname)){// Sanity check
+		return false;
+	}
+	if (is_file($dirname)){// Simple delete for a file
+		return unlink($dirname);
+	}
+	$dir = dir($dirname);// Loop through the folder
+	while (false !== $entry = $dir->read()){
+		if ($entry == '.' || $entry == '..'){// Skip pointers
+			continue;
+		}
+		rmdirr("$dirname/$entry");// Recurse
+	}
+	$dir->close();// Clean up
+	return rmdir($dirname);
+}
+
+/* human file size */
+function FileSizeConvert($bytes){
+	$bytes = floatval($bytes);
+		$arBytes = array(
+			0 => array(
+				"UNIT" => "TB",
+				"VALUE" => pow(1024, 4)
+			),
+			1 => array(
+				"UNIT" => "GB",
+				"VALUE" => pow(1024, 3)
+			),
+			2 => array(
+				"UNIT" => "MB",
+				"VALUE" => pow(1024, 2)
+			),
+			3 => array(
+				"UNIT" => "KB",
+				"VALUE" => 1024
+			),
+			4 => array(
+				"UNIT" => "B",
+				"VALUE" => 1
+			),
+		);
+
+	foreach($arBytes as $arItem){
+		if($bytes >= $arItem["VALUE"]){
+			$result = $bytes / $arItem["VALUE"];
+			$result = str_replace(".", "," , strval(round($result, 2)))." ".$arItem["UNIT"];
+			break;
+		}
+	}
+	return $result;
+}
+
 /* return human file size to bytes */
 function return_bytes($val){
 	preg_match('/(?<value>\d+)(?<option>.?)/i', trim($val), $matches);

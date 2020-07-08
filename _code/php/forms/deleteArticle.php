@@ -32,7 +32,7 @@ if( isset($_POST['deleteArticleSubmitted']) ){
 if( isset($article_id) && !empty($article_id) ){
 	$table = 'articles';
 	$result = delete_item($table, $article_id);
-	$message = '<a class="button" href="/admin/">&lt; Retour</a> '.str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $result).'</p>';
+	$message = '<a class="button" href="/admin/articles.php">&lt; Retour</a> <a class="button articles edit" href="/admin/articles.php">Articles</a> <a class="button vente edit" href="/admin/ventes.php">Ventes</a><br>'.str_replace(array('0|', '1|', '2|'), array('<p class="error">', '<p class="success">', '<p class="note">'), $result).'</p>';
 	echo $message;
 }
 ?>

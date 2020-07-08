@@ -76,7 +76,7 @@ if( strstr($_SERVER['REQUEST_URI'], 'forms/nouvelle-vente.php') || ( isset($_GET
 
 	<div id="direct" style="display:none; padding-top:10px;">
 		<p>Prix: <input type="number" step="any" min="0" class="currency" style="width:60px; min-width:60px; text-align:right;" name="prix" id="prixVente" value="<?php if( isset($item_data['prix']) ){echo $item_data['prix']; } ?>" placeholder="0,00" required> €
-		<input type="checkbox" id="paiement_id" name="paiement_id" value="2" style="margin-left:20px;"> <label for="paiement_id">Paiement par chèque</label></p>
+		<input type="checkbox" name="paiement_id" value="2" style="margin-left:20px;"> <label for="paiement_id">Paiement par chèque</label></p>
 
 		<button type="submit" name="<?php echo $direct_submit; ?>" id="<?php echo $direct_submit; ?>" class="vente" style="width:100%; margin-left:0;"<?php if( !isset($item_data['prix']) || $item_data['prix']<= 0){echo ' disabled';} ?>>Enregistrer la vente</button>
 	</div>

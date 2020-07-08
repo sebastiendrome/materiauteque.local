@@ -19,9 +19,13 @@ if( isset($_POST['savePanierSubmitted']) ){
 }
 
 // display one panier
-// save panier changes
 if( isset($_GET['display_panier']) ){
 	$result = display_panier($_GET['id'], $_GET['context']);
+}
+
+// display one article
+if( isset($_GET['display_article_panier']) ){
+	$result = display_article_panier($_GET['articleId'], $_GET['panierId'], $_GET['context']);
 }
 
 

@@ -135,9 +135,6 @@ z-index:20;
 top:0;left:0;
 width:100%;height:100%;
 background-color:#000;
-_position:absolute;zoom:1; /* IE */
-filter:alpha(opacity=40); /* IE 5-7  */
--ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";  /* IE8 */
 opacity: 0.5;
 }
 .overlayStay{display:block;}
@@ -161,8 +158,6 @@ a{text-decoration: none;}
 a:hover, a.selected{text-decoration: underline;}
 a.imgMore{text-decoration:none; display:block;}
 a.imgMore:hover div.txt, a.imgMore:hover div.html{
-	-webkit-box-shadow:inset 0px 0px 0px 1px #555;
-	-moz-box-shadow:inset 0px 0px 0px 1px #555;
 	box-shadow:inset 0px 0px 0px 1px #555;
 }
 

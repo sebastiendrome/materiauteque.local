@@ -260,7 +260,8 @@ Si l'article n'existe pas ou est introuvable...
 
 <?php
 if($footer){
-	echo '</div><!-- end admin container -->'.PHP_EOL;
+	echo '<div class="clearBoth"></div>
+	</div><!-- end admin container -->'.PHP_EOL;
 	require(ROOT.'/_code/php/admin/admin_footer.php');
 	echo $message_script;
 	echo '</body></html>';

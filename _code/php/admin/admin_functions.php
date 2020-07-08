@@ -1,84 +1,6 @@
 <?php
-/*********** 1: UTILITY FUNCTIONS (USED WITHIN OTHER FUNCTIONS) ***************/
 
-/* COPY DIRECTORY AND ITS CONTENTS */
-function copyr($source, $dest){
-	if (is_file($source)) {// Simple copy for a file
-		return copy($source, $dest);
-	}
-	if (!is_dir($dest)) {// Make destination directory
-		mkdir($dest,0777);
-	}
-	$dir = dir($source);// Loop through the folder
-	while (false !== $entry = $dir->read()) {
-		if (substr($entry, 0, 1) == '.') {// Skip pointers
-			continue;
-		}
-		if ($dest !== "$source/$entry") {// Deep copy directories
-			copyr("$source/$entry", "$dest/$entry");
-		}
-	}
-	$dir->close();// Clean up
-	return true;
-}
-/* FUNCTION TO REMOVE DIRECTORY AND ITS CONTENTS */
-function rmdirr($dirname){
-	if (!file_exists($dirname)){// Sanity check
-		return false;
-	}
-	if (is_file($dirname)){// Simple delete for a file
-		return unlink($dirname);
-	}
-	$dir = dir($dirname);// Loop through the folder
-	while (false !== $entry = $dir->read()){
-		if ($entry == '.' || $entry == '..'){// Skip pointers
-			continue;
-		}
-		rmdirr("$dirname/$entry");// Recurse
-	}
-	$dir->close();// Clean up
-	return rmdir($dirname);
-}
-
-/* human file size */
-function FileSizeConvert($bytes){
-	$bytes = floatval($bytes);
-		$arBytes = array(
-			0 => array(
-				"UNIT" => "TB",
-				"VALUE" => pow(1024, 4)
-			),
-			1 => array(
-				"UNIT" => "GB",
-				"VALUE" => pow(1024, 3)
-			),
-			2 => array(
-				"UNIT" => "MB",
-				"VALUE" => pow(1024, 2)
-			),
-			3 => array(
-				"UNIT" => "KB",
-				"VALUE" => 1024
-			),
-			4 => array(
-				"UNIT" => "B",
-				"VALUE" => 1
-			),
-		);
-
-	foreach($arBytes as $arItem){
-		if($bytes >= $arItem["VALUE"]){
-			$result = $bytes / $arItem["VALUE"];
-			$result = str_replace(".", "," , strval(round($result, 2)))." ".$arItem["UNIT"];
-			break;
-		}
-	}
-	return $result;
-}
-
-
-
-/*********** 2: DISPLAY FUNCTIONS (FUNCTIONS THAT OUTPUT HTML MARKUP) ***************/
+/*********** DISPLAY FUNCTIONS (FUNCTIONS THAT OUTPUT HTML MARKUP) ***************/
 
 // display file
 function display_file_admin($path, $file_name){
@@ -151,6 +73,48 @@ function display_file_admin($path, $file_name){
 	return $display_file;
 }
 
+// display one article
+function display_article_panier($article, $panier_id, $context = ''){
+	$output = '';
+	// $article is either array of article data OR article ID
+	if( is_array($article) ){
+		$a = $article;
+	}elseif( is_numeric($article) ){
+		$a = get_item('articles', $article);
+	}else{
+		return '<p class="error">wrong $article data: '.$article.'</p>';
+	}
+	// context is the div target whose html content is to be updated
+	if($context !== 'paniersAjaxTarget' && $context !== 'ventesPaniersAjaxTarget'){
+		return '<p class="error">wrong context (target): '.$context.'</p>';
+	}
+
+	$statut_vals = get_table('statut');
+	$statut_options = '<select name="'.$a['id'].'[statut_id]" class="statut_id">';
+	foreach($statut_vals as $sv){
+		if($sv['nom'] == 'vendu'){
+			$selected = ' selected';
+		}else{
+			$selected = '';
+		}
+		$statut_options .= '<option value="'.$sv['id'].'"'.$selected.'>'.$sv['nom'].'</option>';
+	}
+	$statut_options .= '</select>';
+
+	$output .= '<div class="particle" data-articleid="'.$a['id'].'">';
+	$output .= $a['titre'].'<div class="paActions">';
+	$output .= $statut_options;
+
+	$output .= '<a href="javascript:;" class="remove" title="supprimer cet article du panier"></a> <input type="number" step="any" min="0" name="'.$a['id'].'[poids]" class="weight aPoids" placeholder="0,000" value="'.$a['poids'].'">kg&nbsp;&nbsp;&nbsp;&nbsp;
+	€<input type="number" step="any" name="'.$a['id'].'[prix]" class="currency aPrix" placeholder="0,00" value="'.$a['prix'].'">';
+	$output .= '</div><a href="javascript:;" class="undo lowkey" title="annuler la suppression de cet article">Remettre l\'article</a>';
+
+	$output .= '<div class="clearBoth"></div>
+	</div>';
+
+	return $output;
+}
+
 // display one panier
 function display_panier($id, $context = ''){
 	$paniers = array();
@@ -184,43 +148,17 @@ function display_paniers_en_cours($paniers){
 			
 			$a_count = count($articles);
 			$poids_total = $total = 0;
-			$articles_output = '';
+			$articles_output = '<div class="articlesCont">';
 			
 			foreach($articles as $a){
 				
-				$statut_options = '<select name="'.$a['id'].'[aStatut_id]" class="statut_id">';
-				foreach($statut_vals as $sv){
-					if($sv['nom'] == 'vendu'){
-						$selected = ' selected';
-					}else{
-						$selected = '';
-					}
-					$statut_options .= '<option value="'.$sv['id'].'"'.$selected.'>'.$sv['nom'].'</option>';
-				}
-				$statut_options .= '</select>';
-				/*
-				$ima = get_article_images($a['id'],'_S');
-				if( !empty($ima) ){
-					$imgCont = '<div class="imgCont" style="background-image:url(/'.$ima[0].');">&nbsp;</div>';
-					$particle_style = '';
-				}else{
-					$imgCont = '';
-					$particle_style = ' style="border-left-width:51px; padding-left:7px;"';
-				}
-				*/
-				$articles_output .= '<div class="particle" data-articleid="'.$a['id'].'">';
-				$articles_output .= $a['titre'].'<div class="paActions">';
-				$articles_output .= $statut_options;
-				$articles_output .= '<a href="javascript:;" class="remove" title="supprimer cet article du panier"></a> <input type="number" step="any" min="0" name="aPoids" id="'.$a['id'].'poids" class="weight" placeholder="0,000" value="'.$a['poids'].'">kg&nbsp;&nbsp;&nbsp;&nbsp;
-				€<input type="number" step="any" name="aPrix" id="'.$a['id'].'prix" class="currency" placeholder="0,00" value="'.$a['prix'].'">';
-				$articles_output .= '</div><a href="javascript:;" class="undo" title="annuler la suppression de cet article"></a>';
-				
-				$articles_output .= '<div class="clearBoth"></div>
-				</div>';
+				$articles_output .= display_article_panier($a, $p['id'], 'paniersAjaxTarget');
 
 				$poids_total += $a['poids'];
 				$total += $a['prix'];
 			}
+
+			$articles_output .= '</div>';
 
 			$total = number_format($total,2);
 
@@ -246,13 +184,16 @@ function display_paniers_en_cours($paniers){
 				$note_button = '<a href="javascript:;" class="note addNote left" style="display:none;">note...</a>';
 			}
 
-			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-paniernom="'.$p['nom'].'">
-			
-			<form name="'.$p['id'].'" action="" method="get">';
+			// output starts
+			$output .= '<div class="pCont" data-panierid="'.$p['id'].'" data-paniernom="'.$p['nom'].'">';
 			
 			$output .= '<div class="title"><b class="n">'.$p['nom'].'</b>';
 			$output .= $count_output;
 			$output .= '</div>';
+
+			$output .= '<form name="'.$p['id'].'" action="" method="get">
+			<input type="hidden" name="id" value="'.$p['id'].'">
+			<input type="hidden" name="savePanierSubmitted" value="savePanierSubmitted">';
 
 			$output .= $articles_output;
 
@@ -270,8 +211,8 @@ function display_paniers_en_cours($paniers){
 			}
 			
 			$output .= '<p class="n" style="text-align:right;">
-			<span style="white-space:nowrap;"><input type="checkbox" id="paiement_id" name="paiement_id" value="2"'.$checked.'> <label for="paiement_id">paiement par chèque</label></span> &nbsp;&nbsp;&nbsp;&nbsp;';
-			$output .= '<span style="white-space:nowrap;">Total €<input type="number" step="any" name="prix" id="'.$p['id'].'total" class="currency prixVentePanier" placeholder="0,00" value="'.$p['total'].'"></span><a href="javascript:;" class="warning" title="le total n\'est pas égal à la somme des articles"'.$show_warn.'></a>
+			<span style="white-space:nowrap;"><input type="checkbox" name="paiement_id" value="2"'.$checked.'> <label for="paiement_id">paiement par chèque</label></span> &nbsp;&nbsp;&nbsp;&nbsp;';
+			$output .= '<span style="white-space:nowrap;">Total €<input type="number" step="any" name="total" id="'.$p['id'].'total" class="currency prixVentePanier" placeholder="0,00" value="'.$p['total'].'"></span><a href="javascript:;" class="warning" title="le total n\'est pas égal à la somme des articles"'.$show_warn.'></a>
 			</p>';
 
 			$output .= '<div>
@@ -305,7 +246,7 @@ function display_paniers_en_cours($paniers){
 	return $output;
 }
 
-// display all paniers (in ventes.php)
+// display sold paniers (in ventes.php)
 function display_paniers($paniers){
 	if( empty($paniers) ){
 		return '<p class="lowkey"> - Aucune vente - </p>';
@@ -313,7 +254,6 @@ function display_paniers($paniers){
 	$output = $last = '';
 	$i = 0;
 	$p_count = count($paniers);
-	
 	$paiement_vals = get_table('paiement');
 	$statut_vals = get_table('statut');
 
@@ -327,34 +267,17 @@ function display_paniers($paniers){
 
 			$a_count = count($articles);
 			$poids_total = $total = 0;
-			$articles_output = '';
+			$articles_output = '<div class="articlesCont">';
 			
 			foreach($articles as $a){
 
-				$statut_options = '<select name="'.$a['id'].'[aStatut_id]" class="statut_id">';
-				foreach($statut_vals as $sv){
-					if($sv['nom'] == 'vendu'){
-						$selected = ' selected';
-					}else{
-						$selected = '';
-					}
-					$statut_options .= '<option value="'.$sv['id'].'"'.$selected.'>'.$sv['nom'].'</option>';
-				}
-				$statut_options .= '</select>';
-				
-				$articles_output .= '<div class="particle" data-articleid="'.$a['id'].'">';
-				$articles_output .= $a['titre'].'<div class="paActions">';
-				$articles_output .= $statut_options;
-				$articles_output .= '<a href="javascript:;" class="remove" title="supprimer cet article du panier"></a> <input type="number" step="any" min="0" name="'.$a['id'].'[aPoids]" id="'.$a['id'].'poids" class="weight" placeholder="0,000" value="'.$a['poids'].'">kg&nbsp;&nbsp;&nbsp;&nbsp;
-				€<input type="number" step="any" name="'.$a['id'].'[aPrix]" id="'.$a['id'].'prix" class="currency" placeholder="0,00" value="'.$a['prix'].'">';
-				$articles_output .= '</div><a href="javascript:;" class="undo" title="remettre cet article"></a>';
-				
-				$articles_output .= '<div class="clearBoth"></div>
-				</div>';
+				$articles_output .= display_article_panier($a, $p['id'], 'ventesPaniersAjaxTarget');
 
 				$poids_total += $a['poids'];
 				$total += $a['prix'];
 			}
+
+			$articles_output .= '</div>';
 
 			$total = number_format($total,2);
 
@@ -454,15 +377,15 @@ function save_panier_changes($post){
 			$article_id = $key;
 			$article_update = array();
 			foreach($value as $k => $v){
-				$update_key = strtolower( substr($k, 1) ); // aStatut_id = statut_id
-				$article_update[$update_key] = $v;
-				if($update_key == 'poids' && $article_update['statut_id'] !== '1'){
+				$article_update[$k] = $v;
+				if($k == 'poids' && $article_update['statut_id'] !== '1'){ // ignore removed articles
 					$poids_total += $v; // in passing, calculate new poids total
 				}
 			}
 
 			if( isset($article_update['statut_id']) && $article_update['statut_id'] == '1'){
-				$article_update['paniers_id'] = '';
+				$article_update['paniers_id'] = ''; // NULL IN SQL DB
+				$article_update['date_vente'] = ''; // NULL
 				$article_update['visible'] = '1';
 			}
 
@@ -475,7 +398,12 @@ function save_panier_changes($post){
 		}
 	}
 
-	$panier_update = array('paiement_id'=>$post['paiement_id'], 'total'=>$post['total'], 'poids'=>$poids_total);
+	if( !isset($post['paiement_id']) || empty($post['paiement_id']) ){
+		$paiement_id = '1';
+	}else{
+		$paiement_id = $post['paiement_id'];
+	}
+	$panier_update = array('paiement_id'=>$paiement_id, 'total'=>$post['total'], 'poids'=>$poids_total);
 	// update panier
 	$result .= update_table('paniers', $post['id'], $panier_update);
 
