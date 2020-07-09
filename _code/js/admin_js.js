@@ -9,15 +9,6 @@ var oldVal = ''; // global var used to store an input value and compare it to it
 // js equivalent to php time(), will be used throughout functions
 var unix_time = Math.round((new Date()).getTime()/1000);
 
-// display 'working' div while processing ajax requests, display 'done' div if message
-$(document).ajaxStart(function(){
-	$('#working').show();
-}).ajaxStop(function(){
-	$('#working').hide();
-	if($('#done').html() != ''){
-		showDone();
-	}
-});
 
 /***** functions *****************************************************/
 
@@ -542,7 +533,7 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 						if( $('div#formsContainer').length ){
 							//alert('yes formsContainer!');
 							$('div#formsContainer').hide();
-							$('div#adminContainer').append('<a class="button" href="javascript:window.history.back();">&lt; Retour</a> <a class="button articles edit" href="/admin/articles.php">Articles</a> <a class="button vente edit" href="/admin/ventes.php">Ventes</a><br>'+message);
+							$('div#adminContainer').append('<a class="button articles edit" href="/admin/articles.php">Articles</a> <a class="button vente edit" href="/admin/ventes.php">Ventes</a><br>'+message);
 						}
 					}
 
@@ -755,7 +746,15 @@ $(window).on('unload', function(){
 
 
 
-
+// display 'working' div while processing ajax requests, display 'done' div if message
+$(document).ajaxStart(function(){
+	$('#working').show();
+}).ajaxStop(function(){
+	$('#working').hide();
+	if($('#done').html() !== ''){
+		showDone();
+	}
+});
 
 
 /******************* document ready BEHAVIORS *******************/
@@ -1427,7 +1426,7 @@ $(document).ready(function(){
 				if( $('div#formsContainer').length ){
 					//alert('yes formsContainer!');
 					$('div#formsContainer').hide();
-					$('div#adminContainer').append('<a class="button" href="javascript:window.history.back();">&lt; Retour</a> <a class="button articles edit" href="/admin/articles.php">Articles</a> <a class="button vente edit" href="/admin/ventes.php">Ventes</a><br>');
+					$('div#adminContainer').append('<a class="button articles edit" href="/admin/articles.php">Articles</a> <a class="button vente edit" href="/admin/ventes.php">Ventes</a><br>');
 				}
 
 				// we need to give time to the 2 updateTable ajax calls above to happen

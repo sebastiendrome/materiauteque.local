@@ -302,7 +302,7 @@ function insert_new($table, $item_data){
 	$array_keys = $array_values = array();
 
 	// add date (php timestamp) for certain tables
-	if($table == 'adhesions' || $table == 'articles' || $table == 'passages' || $table == 'ventes' || $table == 'paniers'){
+	if($table == 'adhesions' || $table == 'articles' || $table == 'passages' || $table == 'paniers'){
 		$array_keys[] = 'date';
 		$array_values[] = time();
 	}

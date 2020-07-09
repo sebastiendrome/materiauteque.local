@@ -1,16 +1,6 @@
 <?php 
 if( !isset($item_data) ){
 	$item_data = array();
-}else{
-	if( isset($item_data['titre']) ){
-		$item_data['titre'] = str_replace('"', '&quot;', $item_data['titre']);
-	}
-	if( isset($item_data['descriptif']) ){
-		$item_data['descriptif'] = str_replace('"', '&quot;', $item_data['descriptif']);
-	}
-	if( isset($item_data['observations']) ){
-		$item_data['observations'] = str_replace('"', '&quot;', $item_data['observations']);
-	}
 }
 // $article_form_context will differentiqte between search, edit or create article
 // edit, search, new, vente, scinder

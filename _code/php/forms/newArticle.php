@@ -12,6 +12,7 @@ $article_form_context = 'new';
 if( isset($_POST['newArticleSubmitted']) ){
 	foreach($_POST as $k => $v){
 		if($k !== 'newArticleSubmitted' && $k !== 'newArticleSubmit' && $k !== 'types' && $k !== 'sizes'){
+			$v = str_replace('"', '&quot;', $v);
 			$new_item_data[$k] = trim($v);
 		}
 	}
@@ -53,15 +54,13 @@ if( !isset($title) ){
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/articles.php" class="button edit articles selected" title="Gérer les articles">Articles</a> <a href="/admin/ventes.php" class="button edit vente" title="Gérer les ventes">Ventes</a> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount">'.$paniers_count.'</span>)</a>'.PHP_EOL;
+	<h1 style="margin-right:0;"><a href="/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/articles.php" class="button edit articles" style="margin-right:20px;">Articles</a> <h2>Nouvel article</h2> <a href="/admin/ventes.php" class="button edit vente" title="Gérer les ventes">Ventes</a> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount">'.$paniers_count.'</span>)</a>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	include(ROOT.'_code/php/forms/paniersModal.php');
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
-
-	echo '<h2>Nouvel article</h2>';
 		
 	$footer = true;
 }else{

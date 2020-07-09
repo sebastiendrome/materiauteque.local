@@ -17,7 +17,7 @@ if( !isset($title) ){
 	
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <h2>'.$title.' </h2>'.PHP_EOL;
+	<h1 style="margin-right:0;"><a href="/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/articles.php" class="button edit articles" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	include(ROOT.'_code/php/forms/paniersModal.php');
@@ -46,6 +46,7 @@ if( isset($_POST['findArticleSubmitted']) ){
 	$key_val_pairs = array();
 	foreach($_POST as $k => $v){
 		if($k !== 'findArticleSubmitted' && $k !== 'findArticleSubmit' && $k !== 'types' && $k !== 'sizes' && $v !== '' && $k !== 'date' ){
+			$v = str_replace('"', '&quot;', $v);
 			$key_val_pairs[$k] = trim($v);
 		// for date, value is an array (date[start] and [end]), so don't trim. 
 		// Also, make sure that not both are empty

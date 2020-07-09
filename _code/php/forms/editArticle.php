@@ -49,6 +49,7 @@ if( isset($_POST['editArticleSubmitted']) ){
 	// new array of data from POST
 	foreach($_POST as $k => $v){
 		if($k !== 'editArticleSubmitted' && $k !== 'editArticleSubmit' && $k !== 'types' && $k !== 'sizes'){
+			$v = str_replace('"', '&quot;', $v);
 			$item_data[$k] = trim($v);
 		}
 	}
@@ -79,7 +80,7 @@ if( !isset($title) ){
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <h2>'.$title.' </h2>'.PHP_EOL;
+	<h1 style="margin-right:0;"><a href="/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/articles.php" class="button edit articles" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
 	echo ' <a href="javascript:;" class="button vente showModal" rel="prixVenteModal?article_id='.$article_id.'">€ Vendre cet article</a> ';
 	echo ' <a href="/_code/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button scinder" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
 	//scinderArticle.php
