@@ -11,7 +11,7 @@ $article_form_context = 'new';
 // process form POST data
 if( isset($_POST['newArticleSubmitted']) ){
 	foreach($_POST as $k => $v){
-		if($k !== 'newArticleSubmitted' && $k !== 'newArticleSubmit' && $k !== 'types' && $k !== 'sizes'){
+		if($k !== 'newArticleSubmitted' && $k !== 'newArticleSubmit'){
 			$v = str_replace('"', '&quot;', $v);
 			$new_item_data[$k] = trim($v);
 		}

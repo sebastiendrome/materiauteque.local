@@ -44,7 +44,7 @@ if( isset($_POST['simpleSearch']) ){
 if( isset($_POST['findArticleSubmitted']) ){
 	$key_val_pairs = array();
 	foreach($_POST as $k => $v){
-		if($k !== 'findArticleSubmitted' && $k !== 'findArticleSubmit' && $k !== 'types' && $k !== 'sizes' && $v !== '' && $k !== 'date' && !empty($v) ){
+		if($k !== 'findArticleSubmitted' && $k !== 'findArticleSubmit' && $v !== '' && $k !== 'date' && !empty($v) ){
 			$key_val_pairs[$k] = trim($v);
 		// for date, value is an array (date[start] and [end]), so don't trim. 
 		// Also, make sure that not both are empty
@@ -71,7 +71,7 @@ if( isset($_POST['findArticleSubmitted']) ){
 // process form POST data (create article)
 if( isset($_POST['form2Submitted']) ){
 	foreach($_POST as $k => $v){
-		if($k !== 'form2Submitted' && $k !== 'types' && $k !== 'sizes'){
+		if($k !== 'form2Submitted'){
 			$new_item_data[$k] = trim($v);
 		}
 	}

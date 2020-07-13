@@ -48,7 +48,7 @@ if( isset($_POST['editArticleSubmitted']) ){
 	}
 	// new array of data from POST
 	foreach($_POST as $k => $v){
-		if($k !== 'editArticleSubmitted' && $k !== 'editArticleSubmit' && $k !== 'types' && $k !== 'sizes'){
+		if($k !== 'editArticleSubmitted' && $k !== 'editArticleSubmit'){
 			$v = str_replace('"', '&quot;', $v);
 			$item_data[$k] = trim($v);
 		}

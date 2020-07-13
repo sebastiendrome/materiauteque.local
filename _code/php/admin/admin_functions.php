@@ -4,11 +4,14 @@
 
 // display file
 function display_file_admin($path, $file_name){
+	
+	global $types;
+	
 	$ext = file_extension($file_name);
 	
 	// various ways to display file depending on extension
 	// 1. resizable types (jpg, png, gif)
-	if( preg_match($_POST['types']['resizable_types'], $ext) ){
+	if( preg_match($types['resizable_types'], $ext) ){
 		$item = $path.'/_M/'.$file_name;
 		// url link to file
 		if(substr($item, 0, 1) != '/'){
@@ -25,7 +28,7 @@ function display_file_admin($path, $file_name){
 		// url link to file
 		$file_link = '/'.$item;
 		
-		if( preg_match($_POST['types']['audio_types'], $ext) ){ // audio, show <audio>
+		if( preg_match($types['audio_types'], $ext) ){ // audio, show <audio>
 			if($ext == '.mp3' || $ext == '.mpg'){
 				$media_type = 'mpeg';
 			}elseif($ext == '.m4a'){
@@ -40,7 +43,7 @@ function display_file_admin($path, $file_name){
 			Sorry, your browser doesn\'t support HTML5 audio.
 			</audio>'.PHP_EOL;
 
-		}elseif( preg_match($_POST['types']['video_types'], $ext) ){ // text video files
+		}elseif( preg_match($types['video_types'], $ext) ){ // text video files
 			if($ext == '.m4v'){
 				$media_type = 'mp4';
 			}elseif($ext == '.ogv'){
@@ -55,10 +58,10 @@ function display_file_admin($path, $file_name){
 
 		
 		}elseif($ext == '.txt'){ // txt
-			$display_file = '<div class="txt admin">'.my_nl2br( strip_tags( file_get_contents(ROOT.$item) , ALLOWED_TAGS ) ).'</div>';
+			$display_file = '<div class="txt admin">'.nl2br( strip_tags( file_get_contents(ROOT.$item) ) ).'</div>';
 		
 		}elseif($ext == '.html'){ // html
-			$display_file = '<div class="html admin">'.strip_tags( file_get_contents(ROOT.$item) , ALLOWED_TAGS ).'</div>';
+			$display_file = '<div class="html admin">'.strip_tags( file_get_contents(ROOT.$item) ).'</div>';
 
 		}elseif($ext == '.emb'){ // embeded media
 			$display_file = '<div class="html admin">'.file_get_contents(ROOT.$item).'</div>';
@@ -369,7 +372,7 @@ function save_panier_changes($post){
 	$poids_total = 0;
 	// remove unwanted posts
 	foreach($post as $key => $value){
-		if($key == 'savePanierSubmitted' || $key == 'types' || $key == 'sizes'){
+		if($key == 'savePanierSubmitted'){
 			unset($post[$key]);
 
 		// go through each article
@@ -413,13 +416,15 @@ function save_panier_changes($post){
 /* delete file, all its size versions
 */
 function delete_file($delete_file){
+
+	global $types; 
 	$message = $error = '';
 	$file_name = basename($delete_file);
 	$ext = file_extension($file_name);
 	
 	// delete files
 	if( file_exists(ROOT.$delete_file) ){
-		if( preg_match($_POST['types']['resizable_types'], $ext) ){ // resizable (images) files
+		if( preg_match($types['resizable_types'], $ext) ){ // resizable (images) files
 			// get all sizes for deletion
 			$xl_file = str_replace('/_S/', '/_XL/', $delete_file);
 			$m_file = str_replace('/_S/', '/_M/', $delete_file);
@@ -541,7 +546,7 @@ function fix_image_orientation($path_to_jpg, $image_orientation){
 function upload_file($path, $replace=''){
 	// initialize upload results
 	$upload_message = $resize_result = $menu_update_result = '';
-	$types = $_POST['types'];
+	global $types;
 
 	$file_name = $_FILES['file']['name']; // 'file' must be the name of the file upload input in the sending html FORM!
 
@@ -664,10 +669,12 @@ function upload_file($path, $replace=''){
 /* resize image to multiple sizes */
 function resize_all($upload_dest, $w, $h){
 	
+	global $sizes; 
+
 	$resize_result = '';
 	
-	// resize image to various sizes as specified by $_POST['sizes'] array
-	foreach($_POST['sizes'] as $key => $val){
+	// resize image to various sizes as specified by $sizes array
+	foreach($sizes as $key => $val){
 		
 		$width = $val['width'];
 		$height = $val['height'];
@@ -690,7 +697,8 @@ function resize_all($upload_dest, $w, $h){
 /* resize image */
 function resize($src, $dest, $width_orig, $height_orig, $width, $height){
 
-	$types = $_POST['types'];
+	global $types;
+
 	$result = '';
 
 	$ext = file_extension($src); //extract extension

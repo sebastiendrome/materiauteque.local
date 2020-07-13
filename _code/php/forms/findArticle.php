@@ -45,7 +45,7 @@ $keywords = $categories_id = '';
 if( isset($_POST['findArticleSubmitted']) ){
 	$key_val_pairs = array();
 	foreach($_POST as $k => $v){
-		if($k !== 'findArticleSubmitted' && $k !== 'findArticleSubmit' && $k !== 'types' && $k !== 'sizes' && $v !== '' && $k !== 'date' ){
+		if($k !== 'findArticleSubmitted' && $k !== 'findArticleSubmit' && $v !== '' && $k !== 'date' ){
 			$v = str_replace('"', '&quot;', $v);
 			$key_val_pairs[$k] = trim($v);
 		// for date, value is an array (date[start] and [end]), so don't trim. 

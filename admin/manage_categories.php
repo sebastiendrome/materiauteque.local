@@ -28,7 +28,7 @@ if(isset($_POST['update'])){
 	
 	foreach($_POST as $k => $v){
 
-		if( $k !== 'update' && $k !== 'types' && $k !== 'sizes'){ // ignore unwanted POSTs
+		if( $k !== 'update'){ // ignore unwanted POSTs
 			foreach($v as $id => $values){
 				$update['nom'] = $values['nom'];
 				$update['visible'] = $values['visible'];

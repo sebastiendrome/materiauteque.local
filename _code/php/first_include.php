@@ -59,7 +59,6 @@ define("DB_USER", $db_user);
 define("DB_PASS", $db_pass);
 define("DB_NAME", $db_name);
 
-
 // error handler
 require(ROOT.'_code/php/errors.php');
 
@@ -77,8 +76,6 @@ $types['video_types'] = '/^\.(mp4|m4v|webm|ogv)$/i';
 $types['resizable_types'] = '/^\.(jpe?g?|png|gif)$/i';
 // only available for download
 $types['download'] = '/^\.(pdf|docx?|msword|odt)$/i';
-// register $types as a $_POST var, so it is accessible within functions scope (like a constant).
-$_POST['types'] = $types;
 
 // FILE SIZES:
 $sizes = array();
@@ -86,10 +83,8 @@ $sizes = array();
 $sizes['L'] = array("width"=>650, "height"=>542);
 $sizes['M'] = array("width"=>300, "height"=>250);
 $sizes['S'] = array("width"=>80, "height"=>70);
-// register $sizes as a $_POST var, so it is accessible within functions scope.
-$_POST['sizes'] = $sizes;
 
-// image size 
+// images default size 
 $size = "_M";
 if(isset($_COOKIE['wW'])){
 	if($_COOKIE['wW'] > 1370 ){
@@ -100,16 +95,13 @@ if(isset($_COOKIE['wW'])){
 }
 define("SIZE", $size);
 
-
 // connect to database
 $db = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME) or die("No DB Connection");
 mysqli_set_charset( $db, 'utf8');
 
-
 // require common functions
 require(ROOT.'_code/php/functions.php');
 require(ROOT.'_code/php/db_functions.php');
-
 
 // admin credentials
 $admin_username = 'd033e22ae348aeb5660fc2140aec35850c4da997';
@@ -117,8 +109,7 @@ $admin_password = '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8';
 $master_username = 'd756b59530a2ad4b4d1bc0468f89631c2bbdb03a';
 $master_password = 'dfc46fa4321fecc8de64ed31087e25c2c9a1b76d';
 
-
-// max upload size (after including functions, for 
+// max upload size (after including functions) 
 $max_upload_size = ini_get('upload_max_filesize');
 $max_upload_bytes = return_bytes($max_upload_size);
 define("MAX_UPLOAD_SIZE", $max_upload_size);
