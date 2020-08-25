@@ -54,22 +54,25 @@ function show_caisses($caisse_array){
 		$c['delta'] = $c['recettes']-$c['ventes'];
 
 		$seconds = time_diff($c['horaire_am_start'], $c['horaire_am_end'])+time_diff($c['horaire_pm_start'], $c['horaire_pm_end']);
-		$c['heures'] = gmdate( "H:i:s", $seconds);
+		//$c['heures'] = gmdate("H:i:s", $seconds);
+		$c['heures'] = $seconds / ( 60 * 60 );
 		
 		foreach($c as $k => $v){
+			// initialize td default class
 			$class = 'norm';
+			// ignore these fields
 			if($k !== 'id' && $k !== 'horaire_am_start' && $k !== 'horaire_am_end' && $k !== 'horaire_pm_start' && $k !== 'horaire_pm_end' && $k !== 'especes_ouverture' && $k !== 'especes_fermeture' && $k !== 'cheques_ouverture' && $k !== 'cheques_fermeture' && $k !== 'depot_especes' && $k !== 'depot_cheques' ){
 				
+				// start output
 				if($i == 0){
-					$thead .= '<th>'.str_replace('_',' ', $k).'</th>';
+					$thead .= '<th>'.str_replace(array('total_','_id','_'),array('','',' '), $k).'</th>';
 				}
 
 				// formatting exceptions:
-				
 				// totals
 				if(  $k == 'total_ouverture' || $k == 'total_fermeture' || $k == 'total_depot_banque'){
 					if($k == 'total_ouverture'){
-						if(isset($prev_fond_de_caisse) && $v !== $prev_fond_de_caisse){
+						if(isset($prev_fond_de_caisse) && strval($v) !== strval($prev_fond_de_caisse)){
 							$class = 'error';
 						}
 						$v_prime = 'espèces:'.$c['especes_ouverture'].'<br>chèques:'.$c['cheques_ouverture'];
@@ -121,24 +124,24 @@ function show_caisses($caisse_array){
 		$i++;
 		$prev_fond_de_caisse = $c['fond_de_caisse'];
 
+		// add to totals
 		$passages_tot += $c['passages'];
 		$ventes_tot += $c['ventes'];
 		$recettes_tot += $c['recettes'];
 		$delta_tot += $c['delta'];
 		$seconds_tot += $seconds;
-
+		$heures_total = $seconds_tot / ( 60 * 60 );
 	}
 
 	// month totals
 	$output .= '<tr class="totals">
-	<td>TOTALS</td>
-	<td colspan="3"></td>
+	<td colspan="4" style="text-align:left;">'.$i.' Jours Ouverts &horbar; Total &rarr;</td>
 	<td>'.$passages_tot.'</td>
 	<td colspan="5"></td>
 	<td>'.$ventes_tot.'</td>
 	<td>'.$recettes_tot.'</td>
 	<td>'.$delta_tot.'</td>
-	<td>'.gmdate( "H:i:s", $seconds_tot).'</td>
+	<td>'.$heures_total.'</td>
 	</tr>';
 	$output .= '</table>';
 
@@ -169,7 +172,7 @@ if( isset($_POST['month']) && isset($_POST['year']) ){
 list($year, $month) = explode('-', $caisse_date);
 
 // get the date's caisse if it already exists, set required values
-if($caisses_table = get_table('caisse', 'MONTH(date) = '.$month.' AND YEAR(date) = '.$year, 'date DESC')){
+if( $caisses_table = get_table('caisse', 'MONTH(date) = '.$month.' AND YEAR(date) = '.$year, 'date') ){
 	$output = show_caisses($caisses_table);
 }else{
 	$output = '<p class="lowkey">Pas de caisses pour cette date: '.$month.' - '.$year.'</p>';
@@ -187,7 +190,7 @@ table td, table th{ background-color: #fff; border:none; padding:3px;}
 table td{text-align:right;}
 table th{background-color:#666; color:#fff;}
 td.error, td.warning, td.success{display:table-cell; overflow:visible; border-radius:0; border:none; padding:3px;}
-table tr.totals td{font-weight:bold;}
+table tr.totals td{font-weight:bold; background-color:transparent;}
 </style>
 
 <?php
