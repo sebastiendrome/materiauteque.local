@@ -2,6 +2,7 @@
 require('../_code/php/first_include.php');
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
+$title = 'ARTICLES';
 require(ROOT.'_code/php/doctype.php');
 if( isset($_SESSION['article_id']) ){
 	unset($_SESSION['article_id']);

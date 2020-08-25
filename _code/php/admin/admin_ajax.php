@@ -3,7 +3,11 @@ require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
 
-
+// refresh ventes in caisse.php on window focus (called from caisse.php)
+if( isset($_GET['refreshVentes']) ){
+	$date = urldecode($_GET['date']);
+	$result = refresh_ventes($date);
+}
 
 // file upload
 if( isset($_POST['contextNewFile']) ){

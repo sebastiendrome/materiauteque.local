@@ -1,7 +1,7 @@
 
 // show Modal window
 function showModal(modal, callback){
-	var $newDiv,
+	var $newdiv,
 		$overlayDiv,
 		query = '';
 		

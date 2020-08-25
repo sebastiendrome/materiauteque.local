@@ -32,6 +32,7 @@ function get_table($table, $where = '', $order = ''){
 		$q .= " ORDER BY ".$order;
 	}
 
+	// debug
 	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
 
 	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
@@ -42,6 +43,25 @@ function get_table($table, $where = '', $order = ''){
 		return($data);
 	}else{
 		return FALSE;
+	}
+}
+
+// get ventes by date
+function get_ventes_total($date){
+	global $db;
+	$time_start = strtotime($date);
+	$time_end = $time_start+86400;
+	$q = "SELECT SUM(total) FROM `paniers` WHERE `statut_id` = '4' AND `date_vente` >= ".$time_start." AND `date_vente` < ".$time_end;
+
+	// debug
+	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
+
+	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
+	$total = mysqli_fetch_row($query);
+	if( !empty($total[0]) ){
+		return $total[0];
+	}else{
+		return 0;
 	}
 }
 
@@ -152,7 +172,7 @@ function get_ventes($time_start='', $time_end=''){
 
 }
 
-// get any item from any table
+// get any item by id from any table
 function get_item($table, $item_id, $fields = '*'){
 	global $db;
 	if( is_array($fields) ){
@@ -334,6 +354,8 @@ function insert_new($table, $item_data){
 		return $new_id;
 	}else{
 		log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
+		// debug
+		echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
 		return false;
 	}
 }
@@ -730,7 +752,7 @@ function present($k, $v){
 
 	// show short descriptif, long on mouse enter
 	}elseif( ($k == 'descriptif' || $k == 'observations') && !empty($v) ){
-		$less = mb_substr($v, 0, 15);
+		$less = substr($v, 0, 15);
 		if($less !== $v){
 			$v = '<div class="short">'.$less.'…<div class="long">'.$v.'</div></div>';
 		}else{

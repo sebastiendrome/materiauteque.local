@@ -4,7 +4,7 @@ required to be defined on top of each page individualy:
 $title, $description
 */
 if( !isset($title) ){
-	$title = 'Materiauteque de DIE';
+	$title = 'ADMIN: Matériauthèque de DIE';
 }
 if( !isset($description) ){
 	$description = '';

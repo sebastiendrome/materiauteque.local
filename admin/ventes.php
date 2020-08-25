@@ -2,6 +2,7 @@
 require('../_code/php/first_include.php');
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
+$title = 'VENTES';
 require(ROOT.'_code/php/doctype.php');
 if( isset($_SESSION['article_id']) ){
 	unset($_SESSION['article_id']);
@@ -39,11 +40,7 @@ if(isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year']) ){
 list($day, $month, $year) = explode('-', $date);
 
 
-// get paniers vendus today
-//$time_start = strtotime('yesterday');
-//$time_start = strtotime('today');
-//$date = date('d-m-Y'); // = today
-//list($day, $month, $year) = explode('-', $date);
+// get paniers vendus by date
 $time_start = mktime(0, 0, 0, $month, $day, $year); // = today
 $time_end = $time_start+86400;
 $vendu = name_to_id('vendu', 'statut');
@@ -73,7 +70,7 @@ echo '<div id="done">'.$message.'</div>';
 <div class="adminHeader">
 <h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<h2 id="ventesDate">Ventes <form name="dateVentes" action="" method="post"><input type="text" name="day" value="<?php echo $day; ?>" size="2" maxlength="2"><input type="text" name="month" value="<?php echo $month; ?>" size="2" maxlength="2"><input type="text" name="year" value="<?php echo $year; ?>" size="4" maxlength="4"><input type="submit" name="submitDateVentes" value="&gt;" style="position:absolute; top:-100px;"></form></h2> 
+<h2>Ventes <form name="dateVentes" class="dateForm" action="" method="post"><input type="text" name="day" value="<?php echo $day; ?>" size="2" maxlength="2"><input type="text" name="month" value="<?php echo $month; ?>" size="2" maxlength="2"><input type="text" name="year" value="<?php echo $year; ?>" size="4" maxlength="4"><input type="submit" name="submitDateVentes" value="&gt;" style="position:absolute; top:-100px;"></form></h2> 
 <a href="/_code/php/forms/nouvelle-vente.php" class="button vente" rel="nouvelle-vente" title="rechercher ou créer un article à vendre">+ Nouvelle vente</a>
 
 <!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span>--> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a><!-- <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a> -->

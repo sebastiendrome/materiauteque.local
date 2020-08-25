@@ -236,7 +236,7 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 <!-- créer article à vendre start -->
 <form name="newArticle" id="newArticle" action="" method="post" style="display:inline-block; float:left;">
 <?php if($show_findArticleForm === true){ ?>
-Si l'article n'existe pas ou est introuvable...
+Si l'article n'existe pas encore...
 <?php } ?>
 <h3>Créer l'article à vendre:</h3>
 

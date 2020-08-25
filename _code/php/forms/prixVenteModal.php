@@ -72,7 +72,7 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 		
 		<p>
 		Poids:
-		<input type="number" step="any" min="0" class="weight" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo $item_data['poids']; ?>" placeholder="0,000" required autofocus> Kg</p>
+		<input type="number" step="any" min="0" class="weight" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo $item_data['poids']; ?>" placeholder="0,000" required> Kg</p>
 
 		<div id="vpLoader">
 		<?php require(ROOT.'_code/php/forms/vente-paniers.php'); ?>

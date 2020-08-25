@@ -242,6 +242,20 @@ function duplicate_vrac_article(id, old_poids, old_prix){
 	});
 }
 
+// refresh ventes (in caisse.php on window focus)
+function refresh_ventes(date){
+	$.ajax({
+		url: '/_code/php/admin/admin_ajax.php?refreshVentes&date='+date,
+		type: 'GET',
+		success : function(msg){
+			$('span#ventes').text(msg.replace('.',','));
+		},
+		error: function(msg){
+			alert('Error with refreshVentes ajax call. date:'+date+"\n"+msg);
+		}
+	});
+}
+
 
 /******** paniers functions ********/
 

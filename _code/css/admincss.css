@@ -3,6 +3,17 @@
 #adminContainer{padding:20px; padding-top:10px; clear:both;}
 #adminContainer h2{margin-top:0;}
 .adminHeader{position:relative; padding:0 20px; border-bottom: 1px solid #ccc;}
+/* fixed header
+html{padding-top:60px;}
+.adminHeader{
+	position:fixed;
+	width:calc( 100% - 40px );
+	top:0; left:0;
+	background-color:rgba(255, 255, 255, 0.9);
+	padding:0 20px; border-bottom: 1px solid #ccc;
+	z-index:10;
+}
+*/
 .adminHeader h1, .adminHeader h2{display:inline-block; margin:5px 20px 5px 0;}
 .adminHeader a.button{position: relative; top: -5px;}
 .adminHeader a.button.paniersBut{top:8px; z-index:25;}
@@ -146,7 +157,7 @@ table.data{background-color:#ddd;}
 table.data td{padding:3px; background-color:#fff;}
 /*table.data.small td{font-size:11px; padding:4px; line-height:11px; white-space:nowrap; max-width:150px; overflow:visible;}*/
 
-tr.topRow td, th{
+tr.topRow td, table.data th{
 	text-align:left;
 	padding:5px 5px 5px 16px; 
 	background-color:#666; 
@@ -247,7 +258,7 @@ a.vente, button.vente{background-color:rgb(242,202,58); color:#000; text-shadow:
 button.vente:hover{text-shadow:none;}
 a.articles, button.articles{background-color:rgb(199, 218, 241); color:#000; text-shadow:none;}
 button.articles:hover{text-shadow:none;}
-a.caisse, button.caisse{background-color:rgb(226, 38, 38); color:#fff; font-weight:bold; text-shadow:none;}
+a.caisse, button.caisse{background-color:rgb(177, 0, 0); color:#fff; font-weight:bold; text-shadow:none;}
 button.caisse:hover{text-shadow:none;}
 
 div.short{position:relative;}
@@ -433,8 +444,8 @@ div.moreOptions:hover a.dots{color:#000;}
 
 span.count{display:inline-block; width:18px; height:18px; line-height:18px; border:1px solid #000; border-radius:18px; text-align:center; background-color: rgb(242,202,58); margin-right:4px;}
 
-#ventesDate form{padding:0; margin:0; background-color:transparent;}
-#ventesDate input{
+form.dateForm{padding:0; margin:0; background-color:transparent;}
+form.dateForm input{
 	border:none;
 	text-align:center;
 	min-width:20px;
