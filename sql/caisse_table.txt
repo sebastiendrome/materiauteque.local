@@ -1,0 +1,20 @@
+CREATE TABLE `caisse` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `statut_id` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1=caisse ouverte, 2=caisse fermée',
+  `especes_ouverture` float DEFAULT '0',
+  `cheques_ouverture` float DEFAULT '0',
+  `especes_fermeture` float DEFAULT '0',
+  `cheques_fermeture` float DEFAULT '0',
+  `depot_especes` float DEFAULT '0',
+  `depot_cheques` float DEFAULT '0',
+  `porteur_depot_banque` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT 'MAX LENGTH: 250',
+  `remarques` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT 'MAX LENGTH: 250',
+  `passages` smallint DEFAULT NULL,
+  `referents` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT 'MAX LENGTH: 250',
+  `horaire_am_start` time DEFAULT NULL,
+  `horaire_am_end` time DEFAULT NULL,
+  `horaire_pm_start` time DEFAULT NULL,
+  `horaire_pm_end` time DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
