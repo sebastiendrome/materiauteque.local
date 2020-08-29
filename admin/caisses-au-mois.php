@@ -50,7 +50,7 @@ function show_caisses($caisse_array){
 		$c['total_depot_banque'] = $c['depot_especes']+$c['depot_cheques'];
 		$c['fond_de_caisse'] = $c['total_fermeture']-$c['total_depot_banque'];
 		$c['ventes'] = get_ventes_total($c['date']);
-		$c['recettes'] = $c['total_ouverture']-$c['total_fermeture'];
+		$c['recettes'] = $c['total_fermeture']-$c['total_ouverture'];
 		$c['delta'] = $c['recettes']-$c['ventes'];
 
 		$seconds = time_diff($c['horaire_am_start'], $c['horaire_am_end'])+time_diff($c['horaire_pm_start'], $c['horaire_pm_end']);

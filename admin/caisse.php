@@ -351,7 +351,7 @@ if($caisse_statut == 'Fermée'){
 
 <div id="extra">
 	<div style="display:inline-block;">
-		<span style="white-space:nowrap;">Référents:<input type="text" name="referents" id="referents" value="<?php if($caisse_statut !== 'Ouverte' && isset($caisse['referents'])){echo $caisse['referents'];}?>" tabindex="<?php echo $tab_index++; ?>"></span>
+		<span style="white-space:nowrap;">Référents:<input type="text" name="referents" id="referents" value="<?php if($caisse_statut !== 'Ouverte' && isset($caisse['referents'])){echo $caisse['referents'];}?>" tabindex="<?php echo $tab_index++; ?>" maxlength="255"></span>
 		<?php
 		if($caisse_statut == 'Ouverte'){ 
 		?> 
@@ -362,14 +362,14 @@ if($caisse_statut == 'Fermée'){
 		?>
 	</div>
 	<div style="display:inline-block; position:relative;">
-		<span style="white-space:nowrap;">Horaires: de<input type="text" class="horaires" name="horaire_am_start" id="horaire_am_start" value="<?php if(isset($caisse['horaire_am_start'])){echo $caisse['horaire_am_start'];}?>" tabindex="<?php echo $tab_index++; ?>"> à<input type="text" class="horaires" name="horaire_am_end" id="horaire_am_end" value="<?php if(isset($caisse['horaire_am_end'])){echo $caisse['horaire_am_end'];}?>" tabindex="<?php echo $tab_index++; ?>"></span><br>
-		<span style="white-space:nowrap;"><span style="color:transparent;">Horaires: </span>de<input type="text" class="horaires" name="horaire_pm_start" id="horaire_pm_start" value="<?php if(isset($caisse['horaire_pm_start'])){echo $caisse['horaire_pm_start'];}?>" tabindex="<?php echo $tab_index++; ?>"> à<input type="text" class="horaires" name="horaire_pm_end" id="horaire_pm_end" value="<?php if(isset($caisse['horaire_pm_end'])){echo $caisse['horaire_pm_end'];}?>" tabindex="<?php echo $tab_index++; ?>"></span>
+		<span style="white-space:nowrap;">Horaires: de<input type="text" maxlength="8" class="horaires" name="horaire_am_start" id="horaire_am_start" value="<?php if(isset($caisse['horaire_am_start'])){echo $caisse['horaire_am_start'];}?>" tabindex="<?php echo $tab_index++; ?>"> à<input type="text" maxlength="8" class="horaires" name="horaire_am_end" id="horaire_am_end" value="<?php if(isset($caisse['horaire_am_end'])){echo $caisse['horaire_am_end'];}?>" tabindex="<?php echo $tab_index++; ?>"></span><br>
+		<span style="white-space:nowrap;"><span style="color:transparent;">Horaires: </span>de<input type="text" maxlength="8" class="horaires" name="horaire_pm_start" id="horaire_pm_start" value="<?php if(isset($caisse['horaire_pm_start'])){echo $caisse['horaire_pm_start'];}?>" tabindex="<?php echo $tab_index++; ?>"> à<input type="text" maxlength="8" class="horaires" name="horaire_pm_end" id="horaire_pm_end" value="<?php if(isset($caisse['horaire_pm_end'])){echo $caisse['horaire_pm_end'];}?>" tabindex="<?php echo $tab_index++; ?>"></span>
 		<div class="error" id="horVal"><a href="javascript:;" class="closeMessage">&times;</a>Veuillez utiliser l'un des formats suivants:<br>
 		9:35 ou 9h35 ou 9 (pour l'heure pile)</div>
 	</div>
 	
 	<div style="margin-bottom:10px;"><a href="javascript:;" class="note addNote left" style="display: inline-block;">Remarques...</a>
-	<div class="tAreaResizer" style="display:<?php if(isset($caisse['remarques']) && !empty($caisse['remarques'])){echo 'block'; $node = $caisse['remarques'];}else{echo 'none'; $node = '&nbsp;';} ?>;"><?php echo $node; ?><textarea class="notes" name="remarques"><?php if(isset($caisse['remarques'])){echo $caisse['remarques'];}?></textarea></div>
+	<div class="tAreaResizer" style="display:<?php if(isset($caisse['remarques']) && !empty($caisse['remarques'])){echo 'block'; $node = $caisse['remarques'];}else{echo 'none'; $node = '&nbsp;';} ?>;"><?php echo $node; ?><textarea class="notes" name="remarques" maxlength="255"><?php if(isset($caisse['remarques'])){echo $caisse['remarques'];}?></textarea></div>
 	</div>
 </div>
 
