@@ -1,4 +1,5 @@
 <?php
+/* RECEIVES AJAX CALLS FROM admin_j.js */
 require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');

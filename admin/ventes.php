@@ -42,7 +42,8 @@ list($day, $month, $year) = explode('-', $date);
 
 // get paniers vendus by date
 $time_start = mktime(0, 0, 0, $month, $day, $year); // = today
-$time_end = $time_start+86400;
+$time_end = $time_start+86400; // ce jour là seulement
+//$time_end = $time_start+time(); // depuis ce jour jusqu'à aujourd'hui
 $vendu = name_to_id('vendu', 'statut');
 $paniers_vendus = get_table('paniers', 'statut_id='.$vendu.' AND date_vente>='.$time_start.' AND date_vente<'.$time_end, 'date DESC');
 

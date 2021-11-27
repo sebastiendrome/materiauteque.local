@@ -12,34 +12,7 @@ var unix_time = Math.round((new Date()).getTime()/1000);
 
 /***** functions *****************************************************/
 
-// save sql data ( ajax call, uses php function update_table() ) 
-// uses 'sep' global var declared above to concatenate more than one value for 'col' and 'value'
-function updateTable(table, id, col, value){
-	$.ajax({
-		// Server script to process the upload
-		url: '/_code/php/admin/admin_ajax.php?updateTable&table='+table+'&id='+id+'&col='+col+'&value='+value,
-		type: 'GET',
-		// on success show message
-		success : function(msg) {
-			var pre = msg.substr(0,2);
-			var mes = msg.substr(2);
-			var message;
-			if(pre == '0|'){
-				message = '<p class="error">'+mes+'</p>';
-			}else if(pre == '1|'){
-				message = '<p class="success">'+mes+'</p>';
-			}else if(pre == '2|'){
-				message = '<p class="note">'+mes+'</p>';
-			}else{
-				alert(msg);
-			}
-			$('#done').html(message);
-			return true;
-			//return message;
-		}
-	});
-}
-
+/*** A few generic functions not directly involving the database but used throughout floowing db functions */
 // remove article images directory when a panier is sold containg this article
 function removeDirs(imgDirs){
 	$.ajax({
@@ -84,7 +57,7 @@ function bytesToReadbale(sizeInBytes){
 	return humanSize;
 }
 
-// show #done div to display message
+// show result message in div#done after a query has been completed
 function showDone(){
 	var t5;
 	$('#done').show();
@@ -101,13 +74,57 @@ function showDone(){
 	}
 }
 
+
+/**** database functions using AJAX */
+
+// save sql data ( ajax call, uses php function update_table() ) 
+// uses 'sep' global var declared above to concatenate more than one value for 'col' and 'value'
+function updateTable(table, id, col, value){
+	$.ajax({
+		// Server script to process the ajax call
+		url: '/_code/php/admin/admin_ajax.php?updateTable&table='+table+'&id='+id+'&col='+col+'&value='+value,
+		type: 'GET',
+		// on success show message
+		success : function(msg) {
+			var pre = msg.substr(0,2);
+			var mes = msg.substr(2);
+			var message;
+			if(pre == '0|'){
+				message = '<p class="error">'+mes+'</p>';
+			}else if(pre == '1|'){
+				message = '<p class="success">'+mes+'</p>';
+			}else if(pre == '2|'){
+				message = '<p class="note">'+mes+'</p>';
+			}else{
+				alert(msg);
+			}
+			$('#done').html(message);
+			return true;
+			//return message;
+		}
+	});
+}
+
 // delete item from table (ajax)
 function deleteItem(table, item_id){
 	$.ajax({
 		url: '/_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+item_id,
 		type: 'GET',
 		success : function(msg){
-			return msg;
+			//return msg;
+			var pre = msg.substr(0,2);
+			var mes = msg.substr(2);
+			var message;
+			if(pre == '0|'){
+				message = '<p class="error">'+mes+'</p>';
+			}else if(pre == '1|'){
+				message = '<p class="success">'+mes+'</p>';
+			}else if(pre == '2|'){
+				message = '<p class="note">'+mes+'</p>';
+			}else{
+				alert(msg);
+			}
+			$('#done').html(message);
 		},
 		error: function(msg){
 			alert('Error with deleteItem ajax call. Table:'+table+' item ID:'+item_id+"\n"+msg);
@@ -136,7 +153,7 @@ function create_article(fields){
 				paniers_id = field.value;
 			}
 		// ... but let's also find out if we need to update paniersModal after article is created
-		}else{
+		}else{ // field.name IS 'panier_statut_id'
 			if(field.value == statut_table['vendu']){
 				updatePaniers = false;
 			}
@@ -145,7 +162,7 @@ function create_article(fields){
 
 	// ajax call that will use db_function insert_new()
 	$.ajax({
-		// Server script to process the upload 
+		// Server script to process the ajax call 
 		url: '/_code/php/admin/admin_ajax.php?create_article'+query_string,
 		type: 'GET',
 
@@ -166,6 +183,7 @@ function create_article(fields){
 				
 				// if we're in nouvelle-vente.php let's show meaningful message and scroll to top of page
 				if(basename(window.location.href) == 'nouvelle-vente.php'){
+					// debug
 					//alert('WE\'RE IN nouvelle-vente.php, js function create_article, admin_ajax.php?create_article');
 					window.scrollTo(0, 0);
 					// reset new article form
@@ -206,7 +224,7 @@ function create_article(fields){
 // ajax call (that will use PHP db_function duplicate_vrac_article() to duplicate article vendu)
 function duplicate_vrac_article(id, old_poids, old_prix){
 	$.ajax({
-		// Server script to process the upload 
+		// Server script to process the ajax call
 		url: '/_code/php/admin/admin_ajax.php?vrac_vente&original_id='+id+'&old_poids='+old_poids+'&old_prix='+old_prix,
 		type: 'GET',
 
@@ -367,7 +385,7 @@ function updatePaniersModal(){
 function display_panier(panierId, context){
 	// ajax call that will use db_function create_panier()
 	$.ajax({
-		// Server script creates the panier
+		// Server script
 		url: '/_code/php/admin/admin_ajax.php?display_panier&id='+panierId+'&context='+context,
 		type: 'GET',
 
@@ -412,7 +430,7 @@ function display_panier(panierId, context){
 
 				// show paniers container
 				$('div#paniersContainer').show();
-				// set cookies for storing the fact that changes have been made
+				// set cookies for storing the fact that the panier Modal is showing
 				setCookie('paniersModalDisplay', 'block', '1');
 				/*paniersChanged = true;
 				setCookie('cPaniersChanged', 'oui', '1');*/
@@ -470,7 +488,7 @@ function display_article_panier(articleId, panierId, context){
 function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac, panier_statut_id){
 	// ajax call that will use db_function create_panier()
 	$.ajax({
-		// Server script creates the panier
+		// Server script
 		url: '/_code/php/admin/admin_ajax.php?create_panier&nom='+nom+'&poids='+poids+'&prix='+prix+'&paiement_id='+paiement_id+'&statut_id='+panier_statut_id,
 		type: 'GET',
 
@@ -771,7 +789,7 @@ $(document).ajaxStart(function(){
 });
 
 
-/******************* document ready BEHAVIORS *******************/
+/******************* document ready BEHAVIORS (User Interface) *******************/
 
 $(document).ready(function(){
 	// redraw paniersModal with sessionStorage.paniersHtml saved on page unload 
@@ -1176,8 +1194,9 @@ $(document).ready(function(){
 		var $container = $(this).closest('div.pCont');
 		var paniers_id = $container.attr('data-panierid');
 		var table = 'paniers';
+		//deleteItem(table, paniers_id);
 		$.ajax({
-			// Server script to process the upload
+			// Server script 
 			url: '/_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+paniers_id,
 			type: 'GET',
 			// on success show message
@@ -1658,7 +1677,7 @@ $(document).ready(function(){
 	});
 
 
-	// modifier un article on tr.pair et tr.impair click
+	// ouvrir editArticle.php pour modifier un article on tr.pair et tr.impair click
 	$("table.data").on('click', 'tr.pair td, tr.pair td div, tr.impair td, tr.impair td div', function(e){
 		var id = $(this).parents('tr').data('id');
 		var $this = $(this);
@@ -1736,7 +1755,7 @@ $(document).ready(function(){
 		$cont.find('a#ajoutPanier').removeClass('selected').addClass('discarded');
 	});
 
-	// enable disabled submit buttons at end of each form : directeVenteSubmit, and ajoutPanierSubmit
+	// enable/disabled submit buttons at end of each form : directeVenteSubmit, and ajoutPanierSubmit
 	$('body').on('keyup', 'input#prixVente', function(){
 		if( $(this).val() !== '' ){
 			$('button#directeVenteSubmit').prop('disabled', false);
@@ -1755,7 +1774,6 @@ $(document).ready(function(){
 			$('button#newArticleDirectVenteSubmit').prop('disabled', true);
 		}
 	});
-
 	$('body').on('keyup', 'input#panierNom', function(){
 		if( $(this).val().length ){
 			$('button#ajoutPanierSubmit').prop('disabled', false);
@@ -1789,17 +1807,19 @@ $(document).ready(function(){
 		}
 	});
 
+	// show paniers modal
 	$('.showPaniers').on('click', function(){
 		$('div#paniersContainer').show();
 		// memory for showing or hiding paniers modal from page to page
 		setCookie('paniersModalDisplay', 'block', '1');
 	});
 
+	// show alert when clicking on a.warning
 	$('a.warning').on('click', function(){
 		alert( $(this).attr('title') );
 	});
 
-	/********** UPLOAD BEHAVIORS START ************/
+	/********** IMAGES UPLOAD BEHAVIORS START ************/
 
 	// #chooseFileLink onclick triggers #fileUpload click
 	$('body').on('click', '#chooseFileLink', function(){

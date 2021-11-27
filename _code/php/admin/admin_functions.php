@@ -418,8 +418,9 @@ function save_panier_changes($post){
 	return $result;
 }
 
-/* delete file, all its size versions
-*/
+
+/******************************* UPLOAD / RESIZE / DELETE FILE (image) *******************************************/
+
 function delete_file($delete_file){
 
 	global $types; 
@@ -459,8 +460,6 @@ function delete_file($delete_file){
 	return $message;
 }
 
-/******************************* UPLOAD / RESIZE FILE *******************************************/
-
 /* straight-up upload file function, used in later function. 
 Requires a FORM-submitted file input named "file"
 */
@@ -483,7 +482,6 @@ function up_file($upload_dest){
 	}
 }
 
-
 /* determine if image can be rotated to correct orientation (only for jpg)
 */
 function get_image_orientation($path_to_jpg){
@@ -497,7 +495,6 @@ function get_image_orientation($path_to_jpg){
 	}
 	return $orientation;
 }
-
 
 /* fix image orientation (only for jpg)
 */
@@ -544,7 +541,6 @@ function fix_image_orientation($path_to_jpg, $image_orientation){
 	}
 
 }
-
 
 /* upload file
 */
@@ -670,7 +666,6 @@ function upload_file($path, $replace=''){
 	return $upload_results;
 }
 
-
 /* resize image to multiple sizes */
 function resize_all($upload_dest, $w, $h){
 	
@@ -697,7 +692,6 @@ function resize_all($upload_dest, $w, $h){
 	
 	return $resize_result;
 }
-
 
 /* resize image */
 function resize($src, $dest, $width_orig, $height_orig, $width, $height){

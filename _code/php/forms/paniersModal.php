@@ -2,7 +2,7 @@
 if($paniers){
 	$output = display_paniers_en_cours($paniers);
 }else{
-	$output = '<p class="lowkey" style="width:200px;"> - Pas de paniers - </p>';
+	$output = '';
 }
 if( isset($_COOKIE['paniersModalDisplay']) && ( $_COOKIE['paniersModalDisplay'] == 'none' || $_COOKIE['paniersModalDisplay'] == 'block') ){
 	$paniers_modal_display = $_COOKIE['paniersModalDisplay'];
