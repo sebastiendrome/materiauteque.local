@@ -1,7 +1,12 @@
-
 <?php
 if( !defined("ROOT") ){
-	require('../../../_code/php/first_include.php');
+	if( file_exists('../../../_code/php/first_include.php') ){
+		require('../../../_code/php/first_include.php');
+	}elseif( file_exists('../../_code/php/first_include.php') ){
+		require('../../_code/php/first_include.php');
+	}else{
+		require('../_code/php/first_include.php');
+	}
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
@@ -13,7 +18,7 @@ if( !isset($article_id) ){
 	echo '<p class="error">Pas d\'article id!</p>';
 	exit();
 }else{
-	$path = 'uploads/'.$article_id.'/';
+	$path = '_ressource_custom/uploads/'.$article_id.'/';
 	$images_array = get_article_images($article_id, '_S');
 }
 if( isset($_GET['context']) ){
@@ -23,12 +28,12 @@ if( isset($_GET['context']) ){
 }
 ?>
 <div class="modal"><a class="closeBut hideModal" href="javascript:;">&times;</a>
-<form enctype="multipart/form-data" name="uploadFileForm" id="uploadFileForm" action="/_code/php/admin/upload_file.php" method="post">
+<form enctype="multipart/form-data" name="uploadFileForm" id="uploadFileForm" action="<?php echo REL; ?>_code/php/admin/upload_file.php" method="post">
 	<table>
 	<tr>
 		<td>Images:<td>
 			<?php 
-			$path = 'uploads/'.$article_id;
+			$path = '_ressource_custom/uploads/'.$article_id;
 			echo '<a class="button submit left" id="chooseFileLink">Ajouter une image</a>
 			<div class="progress">
 				<div class="bar"></div>
@@ -56,7 +61,7 @@ if( isset($_GET['context']) ){
 					echo '<div class="editImageDiv">
 					<!--<a href="javascript:;" class="button change showModal" rel="newFile?path='.urlencode($path).'&replace='.urlencode($i).'">modifier</a>-->
 					<a href="javascript:;" class="button remove cancel showModal" rel="deleteFile?file='.urlencode($i).'">supprimer</a>
-					<a href="/'.$large_image.$rand.'" target="_blank"><img src="/'.$medium_image.$rand.'"></a></div>';
+					<a href="'.REL.$large_image.$rand.'" target="_blank"><img src="'.REL.$medium_image.$rand.'"></a></div>';
 				}
 			}
 			?>

@@ -1,7 +1,10 @@
 <?php
 echo '<a name="top"></a>';
 if( !defined("ROOT") ){
-	require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
+	if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 3) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
+}
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
@@ -13,11 +16,11 @@ if( !isset($title) ){
 	$title = ' Rechercher un Article';
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
-	<link href="/_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
+	<link href="'.REL.'_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
 	
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1 style="margin-right:0;"><a href="/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/articles.php" class="button edit articles" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
+	<h1 style="margin-right:0;"><a href="'.REL.'_code/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="'.REL.'_code/admin/articles.php" class="button edit articles artSH" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	include(ROOT.'_code/php/forms/paniersModal.php');
@@ -144,7 +147,7 @@ if( isset($items) && !empty($items)){
 
 
 <!-- recherche detail start -->
-<form name="findArticle" id="findArticle" action="#top" method="post" style="display:inline-block;">
+<form name="findArticle" id="findArticle" class="artSH" action="#top" method="post" style="display:inline-block;">
 
 <?php
 if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){

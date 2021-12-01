@@ -1,13 +1,14 @@
 <?php
 // redirect to https (if not local test)
-if( !strstr(SITE, '.local') && PROTOCOL != 'https://'){
-	header("Location: https://".SITE."_code/admin/manage_structure.php");
+if( !strstr(SITE, '.local') && PROTOCOL !== 'https://'){
+	//echo $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'<br>';exit;
+	$redirect = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	header("Location: ".$redirect);
 	exit;
 }
 if( !isset($_SESSION) ){
 	session_start();
 }
-
 // initialize vars.
 $message = '';
 $logged_in = FALSE; // let's assume we're not logged in yet...
@@ -42,6 +43,13 @@ if(
 	$message .= '<p class="error">Identifiants incorrects!</p>';
 }
 
+// custom image (logo) to display above login form
+if( file_exists(realpath($_SERVER['DOCUMENT_ROOT']).'/_ressource_custom/logo.png') ){
+	$custom_image = '<img src="/_ressource_custom/logo.png" style="max-width:100%;">';
+}else{
+	$custom_image = '<h2>Admin: '.NAME.'</h2>';
+}
+
 // form action: remove query string (for exemple ?logout)
 $form_action = preg_replace('/\?.*/', '', $_SERVER['REQUEST_URI']);
 
@@ -54,14 +62,14 @@ if(!$logged_in){
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">';
 	$rand = rand(0,100);
-	$login_form .= '<link href="/_code/css/common.css?v='.$rand.'" rel="stylesheet" type="text/css">';
+	$login_form .= '<link href="'.REL.'_code/css/common.css?v='.$rand.'" rel="stylesheet" type="text/css">';
 	$login_form .= '
 	</head>
 	<body>
 
 	<div id="admin" style="position:absolute;width:33%;left:33%;top:5%;">
 	<div style="text-align:center;">
-	<img src="/_code/images/logo-500px.png" style="width:100%;">
+	'.$custom_image.'
 	'.$message.'
 	<form name="l" id="l" action="'.$form_action.'" method="post">
 	<p>

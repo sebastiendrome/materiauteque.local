@@ -43,7 +43,7 @@ if( isset($_GET['previous_id']) && !empty($_GET['previous_id']) && $_GET['previo
 <?php
 // if article is already 'vendu', just show message
 if($previous_statut_id == name_to_id('vendu', 'statut') ){
-	echo '<form name="prixDeVente" id="prixDeVente" action="/_code/php/admin/admin_ajax.php" method="post" style="margin:0 !important;">
+	echo '<form name="prixDeVente" id="prixDeVente" action="'.REL.'_code/php/admin/admin_ajax.php" method="post" style="margin:0 !important;">
 	<h3 class="warning">Cet article a déjà été vendu.</h3>
 	<input type="hidden" name="previous_id" value="'.$previous_statut_id.'">
 	</form>
@@ -59,9 +59,9 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 		$img = '';
 	}
 	?>
-	<form name="prixDeVente" id="prixDeVente" action="/_code/php/admin/admin_ajax.php" method="post">
+	<form name="prixDeVente" id="prixDeVente" action="<?php echo REL; ?>_code/php/admin/admin_ajax.php" method="post">
 	<?php 
-	echo '<div class="'.$class.'" style="background-image:url(/'.$img.');">
+	echo '<div class="'.$class.'" style="background-image:url('.REL.$img.');">
 	<h3>'.$item_data['titre'].'</h3>
 	</div>'; ?>
 		<input type="hidden" name="id" value="<?php echo $id; ?>">
@@ -84,7 +84,7 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 			<h3 style="text-align:center; margin:20px 0; clear:both;"> —— OU —— </h3>
 
 			<span style="color:#383838; font-weight:bold; font-size:larger;">Vente partielle:</span> 
-			<a href="/_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left scinder">Scinder l'article en 2</a>
+			<a href="<?php echo REL; ?>_code/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left scinder">Scinder l'article en 2</a>
 		<?php } ?>
 		
 

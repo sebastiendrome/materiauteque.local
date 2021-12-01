@@ -1,6 +1,9 @@
 <?php
 if( !defined("ROOT") ){
-	require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
+	if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 3) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
+}
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
@@ -61,14 +64,14 @@ if( !isset($title) ){
 	$title = ' Scinder un article en 2'.$pour_la_vente;
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
-	<link href="/_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
+	<link href="'.REL.'_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
 
 	echo '<div id="working"><div class="note">working...</div></div>';
 	echo '<div id="done">'.$message.'</div>';
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1 style="margin-right:0;"><a href="/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/articles.php" class="button edit articles" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
+	<h1 style="margin-right:0;"><a href="'.REL.'_code/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="'.REL.'_code/admin/articles.php" class="button edit articles artSH" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	include(ROOT.'_code/php/forms/paniersModal.php');
@@ -201,7 +204,7 @@ $("form#dualForm").on("submit", function(e){
 	console.log(copy);
 	*/
 	$.ajax({
-		url: '/_code/php/admin/admin_ajax.php',
+		url: rel+'_code/php/admin/admin_ajax.php',
 		type: "POST",
 		data: {original, copy},
 		
@@ -253,7 +256,7 @@ $("form#dualForm").on("submit", function(e){
 					// update article id in form!
 					$('form#copy input[name="id"]').val(newId);
 					$('form#copy table.editArticle').hide();
-					$('form#copy div#vpLoader').load('/_code/php/forms/vente-paniers.php', function(){
+					$('form#copy div#vpLoader').load(rel+'_code/php/forms/vente-paniers.php', function(){
 						$(this).css('padding', '10px');
 					});
 				}else{

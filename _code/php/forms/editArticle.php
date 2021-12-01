@@ -1,6 +1,9 @@
 <?php
 if( !defined("ROOT") ){
-	require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
+	if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 3) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
+}
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
@@ -73,16 +76,16 @@ if( !isset($title) ){
 	$title = ' Modifier un Article';
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
-	<link href="/_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
+	<link href="'.REL.'_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
 
 	echo '<div id="working"><div class="note">working...</div></div>';
 	echo '<div id="done">'.$message.'</div>';
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1 style="margin-right:0;"><a href="/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="/admin/articles.php" class="button edit articles" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
-	echo ' <a href="javascript:;" class="button vente showModal" rel="prixVenteModal?article_id='.$article_id.'">€ Vendre cet article</a> ';
-	echo ' <a href="/_code/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button scinder" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
+	<h1 style="margin-right:0;"><a href="'.REL.'_code/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="'.REL.'_code/admin/articles.php" class="button edit articles artSH" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
+	echo ' <a href="javascript:;" class="button vente showModal venSH" rel="prixVenteModal?article_id='.$article_id.'">€ Vendre cet article</a> ';
+	echo ' <a href="'.REL.'_code/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button scinder" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
 	//scinderArticle.php
 	echo ' <a href="javascript:;" class="showModal button remove" rel="deleteArticleModal?article_id='.$article_id.'">Supprimer cet article</a>';
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;

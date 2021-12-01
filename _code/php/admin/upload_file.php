@@ -1,6 +1,9 @@
 <?php
 // upload file form POST process (from uploadFile.php, modal window)
-require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
+if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 3) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
+}
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
 

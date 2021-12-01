@@ -27,7 +27,7 @@ function showModal(modal, callback){
 	}else{
 		$newdiv = $('div#'+modal);
 	}
-	$newdiv.load('/_code/php/forms/'+modal+'.php'+query);
+	$newdiv.load(rel+'_code/php/forms/'+modal+'.php'+query);
 	$newdiv.show();
 	checkModalHeight('#'+modal);
 	if(callback !== undefined && typeof callback === 'function') {
@@ -70,7 +70,7 @@ function checkModalHeight(elem){
 function get_children($target, table, id_parent){
 	$.ajax({
 		// Server script to process the upload
-		url: '/_code/php/admin/admin_ajax.php?get_children&table='+table+'&id_parent='+id_parent,
+		url: rel+'_code/php/admin/admin_ajax.php?get_children&table='+table+'&id_parent='+id_parent,
 		type: 'GET',
 		// on success show message
 		success : function(msg){

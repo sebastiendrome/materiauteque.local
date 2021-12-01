@@ -276,7 +276,8 @@ function id_to_name($id, $table){
 function name_to_id($name, $table){
 	global $db;
 	$q = "SELECT id FROM $table WHERE nom = '$name'";
-	//echo $q.'<br>';
+	// debug
+	//echo '<pre>'.$q.'</pre>';
 	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Query: '.$q.' Function: '.__FUNCTION__ );
 	$id = mysqli_fetch_row($query);
 	return $id[0];
@@ -349,7 +350,7 @@ function insert_new($table, $item_data){
 		// create images directory if article
 		$new_id = mysqli_insert_id($db);
 		if($table == 'articles'){
-			copyr(ROOT.'templates/img_dir', ROOT.'uploads/'.$new_id);
+			copyr(ROOT.'_code/templates/img_dir', ROOT.'_ressource_custom/uploads/'.$new_id);
 		}
 		return $new_id;
 	}else{
@@ -422,7 +423,7 @@ function delete_item($table, $item_id){
 	}
 	// delete image directory from articles dir=id
 	if($table == 'articles'){
-		$dir = ROOT.'uploads/'.$item_id;
+		$dir = ROOT.'_ressource_custom/uploads/'.$item_id;
 		if( is_dir($dir) ){
 			rmdirr($dir);
 		}
@@ -769,7 +770,7 @@ function present($k, $v){
 
 
 // get article images
-function get_article_images($article_id = '', $size = '_M', $path = 'uploads'){
+function get_article_images($article_id = '', $size = '_M', $path = '_ressource_custom/uploads'){
 	$images_array = array();
 	if( preg_match('/\/(_L|_M|_XL|_S)\//', $path) ){
 		$size = '';
@@ -778,7 +779,7 @@ function get_article_images($article_id = '', $size = '_M', $path = 'uploads'){
 	$scan_dir = preg_replace('/\/+/', '/', ROOT.$img_dir);
 	// make sure the directory exists
 	if( !is_dir($scan_dir) ){
-		copyr(ROOT.'templates/img_dir', ROOT.'uploads/'.$article_id);
+		copyr(ROOT.'_code/templates/img_dir', ROOT.'_ressource_custom/uploads/'.$article_id);
 	}
 	$img_dir = preg_replace('/\/+/', '/', $img_dir); // make sure there are no duplicate slashes
 	$files = scandir($scan_dir);
@@ -842,7 +843,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 				// th for 'modifier' button
 				//$output .= '<th style="background-image:none; padding-left:5px;">Modifier</th>';
 				// th for 'vendre' button
-				$output .= '<th style="background-image:none; padding-left:5px;">Vendre</th>';
+				$output .= '<th style="background-image:none; padding-left:5px;" class="venSH">Vendre</th>';
 
 				$output .= '</tr>';
 				$output .= '</thead><tbody>'; 
@@ -861,7 +862,7 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			$output .= '<td>';
 			$output .= '<a href="javascript:;" title="Modifier ou ajouter une image" class="showModal" rel="newArticleImages?article_id='.$article_id.'">';
 			if(!empty($images_array)){
-				$output .= '<img src="/'.$images_array[0].'" style="display:block; width:70px; margin:-3px;">';
+				$output .= '<img src="'.REL.$images_array[0].'" style="display:block; width:70px; margin:-3px;">';
 			}else{
 				$output .= '<span class="warning">ajouter</span>';
 			}
@@ -891,12 +892,12 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			<option name="modifier" value="modifier">modifier...</option>
 			</select>
 			</div>-->
-			<a href="/_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button edit">modifier</a> 
+			<a href="'.REL.'_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button edit">modifier</a> 
 			</td>';*/
 
-			$output .= '<td>';
+			$output .= '<td class="venSH">';
 			if($value['statut_id'] < 4){
-				$output .= '<a href="/_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button vente vendre" style="margin:0 !important;" title="vendre cet article">&rarr;&nbsp;€</a>';
+				$output .= '<a href="'.REL.'_code/php/forms/editArticle.php?article_id='.$article_id.'" class="button vente vendre" style="margin:0 !important;" title="vendre cet article">&rarr;&nbsp;€</a>';
 			}else{
 				$output .= '';
 			}
@@ -979,7 +980,7 @@ function ventes_table_output($result_array, $limit = NULL, $offset = 0){
 			$output .= '<td>';
 			$output .= '<a href="javascript:;" title="Modifier ou ajouter une image" class="showModal" rel="newArticleImages?article_id='.$article_id.'">';
 			if(!empty($images_array)){
-				$output .= '<img src="/'.$images_array[0].'" style="display:block; width:70px; margin:-3px;">';
+				$output .= '<img src="'.REL.$images_array[0].'" style="display:block; width:70px; margin:-3px;">';
 			}else{
 				$output .= '<span class="warning">ajouter</span>';
 			}
@@ -1069,7 +1070,7 @@ function echo_item_table($item){
 	$output = '';
 	if( !empty($item['images']) ){
 		$other_imgs = count($item['images']);
-		$item['images'] = '<img src="/'.$item['images'][0].'">';
+		$item['images'] = '<img src="'.REL.$item['images'][0].'">';
 		if($other_imgs > 1){
 			if($other_imgs > 2){$s='s';}else{$s='';} // plural or singular
 			$item['images'] .= '<p>+ '.$other_imgs.' autre'.$s.'...</p>';
@@ -1130,18 +1131,18 @@ function show_article($item_array){
 				}else{
 					$extra = '';
 				}
-				$img_nav .= '<a href="/'.$item_array['images'][$i].'" class="showModal'.$extra.'" rel="imageGallery?path='.urlencode('/uploads/'.$item_array['id'].'/_L/').'&img='.$i.'">•</a>';
+				$img_nav .= '<a href="/'.$item_array['images'][$i].'" class="showModal'.$extra.'" rel="imageGallery?path='.urlencode(REL.'_ressource_custom/uploads/'.$item_array['id'].'/_L/').'&img='.$i.'">•</a>';
 			}
 			$img_nav .= '</span>';
 		}
-		$inner_img_output = '<a href="/'.$img.'" class="clicker showModal" rel="imageGallery?path='.urlencode('/uploads/'.$item_array['id']).'">&nbsp;</a>'.$img_nav;
+		$inner_img_output = '<a href="'.REL.$img.'" class="clicker showModal" rel="imageGallery?path='.urlencode(REL.'_ressource_custom/uploads/'.$item_array['id']).'">&nbsp;</a>'.$img_nav;
 	}else{
 		$img = '_code/images/404.gif';
 	}
 
 	$output = '';
 	$output .= '<!-- start article -->'.PHP_EOL.'<div class="article" id="'.$item_array['id'].'">'.PHP_EOL;
-	$output .= '<div class="imgContainer" style="background-image:url(/'.$img.');">'.$inner_img_output.'</div>'.PHP_EOL;
+	$output .= '<div class="imgContainer" style="background-image:url('.REL.$img.');">'.$inner_img_output.'</div>'.PHP_EOL;
 
 	$output .= '<!-- start detail -->'.PHP_EOL.'<div class="detail">'.PHP_EOL;
 	$output .= '<p class="title">'.$item_array['titre'].'</p>'.PHP_EOL;

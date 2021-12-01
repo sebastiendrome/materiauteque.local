@@ -1,38 +1,69 @@
 <?php
 /******** TO DO ********
- * Admin main sections:
- * * Gérer les articles à la vente (c'est fait)
- * * Tous les articles
  * * Statistiques
  * * Fermer / ouvrir la caisse
  * * Gérer Catégories & Matières (master only)
  * * Gérer les utilisateurs (master only)
- 
  * 'master' and 'guest' user (guest cannot access Catégories/Matières, Utilisateurs)
- * 
- 
  * order images for articles (move up/down)
- 
- * pagination des résultats (admin et public)
  */
 session_start();
-date_default_timezone_set('Europe/Paris');
 
 // set version, to load fresh css and js
-$version = 16;
+$version = 1;
 
+// software author
+define("AUTHOR_REF", 'sebdedie@gmail.com');
 // initialize site 
-define("SITE", $_SERVER['HTTP_HOST'].'/');
+define("SITE", $_SERVER['HTTP_HOST']);
+// both vars above are needed for processing _ressource_custom.php required below
+
+// document root (beware of inconsistent trailing slash depending on environment, hence the use of realpath)
+$root = realpath($_SERVER['DOCUMENT_ROOT']);
+
+// include custom parameters, or set default values
+if( file_exists($root.'/_ressource_custom/params.php') ){
+	require $root.'/_ressource_custom/params.php';
+}else{
+	date_default_timezone_set('Europe/Paris');
+	$resource_custom = false;
+	define("NAME", 'Le Nom');
+	define("TITLE", 'Ressourcerie');
+	$public_site_visible = 1;
+	$caisse_visible = 1;
+	$ventes_visible = 1;
+	$articles_visible = 1;
+}
+
+// admin credentials
+if(!$resource_custom || !isset($admin_username) ){
+	$admin_username = 'd033e22ae348aeb5660fc2140aec35850c4da997';
+	$admin_password = '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8';
+}
+$master_username = 'd756b59530a2ad4b4d1bc0468f89631c2bbdb03a';
+$master_password = 'dfc46fa4321fecc8de64ed31087e25c2c9a1b76d';
+
+/* 
+We KNOW that this file is within '_code/php', which may or may not be at web root 
+(/_code/php, OR /dir/_code/php) 
+so let's see if there's anything between ROOT and '_code/php',
+if yes, it is the directory we have to add to all our relative paths
+*/
+$rel = preg_replace('/('.preg_quote($root, '/').'|_code\/php)/', '', realpath(__DIR__));
+/* debug */
+//echo '<h1>REL: '.$rel.'</h1>';
+
+define("ROOT", $root.$rel);
+
+// site relative root
+define("REL", $rel);
+
 // Protocol: http vs https
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 define("PROTOCOL", $protocol);
-// document root (beware of inconsistent trailing slash depending on environment, hence the use of realpth)
-define("ROOT", realpath($_SERVER['DOCUMENT_ROOT']).'/');
-// reference to site author...
-define("AUTHOR_REF", 'sebdedie@gmail.com');
 
 // php root and error reporting, local vs. remote
-if( strstr(SITE,'.local') ){ 					// local server
+if( !$resource_custom && strstr(SITE,'.local') ){ 	// default local server, no custom params
 	ini_set('error_reporting', E_ALL);
 	ini_set('display_errors', 1);
 	$display_debug = TRUE;
@@ -41,15 +72,9 @@ if( strstr(SITE,'.local') ){ 					// local server
 	$db_user = "root";
 	$db_pass = '';
 	$db_name = 'materiauteque';
-}else{ 											// remote server
-	ini_set('display_errors', 0);
-	$display_debug = FALSE;
-	$log_errors = TRUE;
-	$db_host = "mysql.materiauteque.org";
-	$db_user = "materiautequedb";
-	$db_pass = "dKy-UzMo!@qlJk";
-	$db_name = 'materiauteque';
-	define("SEND_ERRORS_TO", AUTHOR_REF);
+}elseif( !$resource_custom || !isset($db_host) ){ // no custom remote server: Abort.
+	echo '<p style="color:red;">ERROR: No DB connection data!...</p>';
+	exit;
 }
 
 define("LOG_ERRORS", $log_errors);
@@ -60,7 +85,7 @@ define("DB_PASS", $db_pass);
 define("DB_NAME", $db_name);
 
 // error handler
-require(ROOT.'_code/php/errors.php');
+require ROOT.'_code/php/errors.php';
 
 // FILE TYPES
 $types = array();
@@ -100,14 +125,8 @@ $db = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME) or die("No DB Connectio
 mysqli_set_charset( $db, 'utf8');
 
 // require common functions
-require(ROOT.'_code/php/functions.php');
-require(ROOT.'_code/php/db_functions.php');
-
-// admin credentials
-$admin_username = 'd033e22ae348aeb5660fc2140aec35850c4da997';
-$admin_password = '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8';
-$master_username = 'd756b59530a2ad4b4d1bc0468f89631c2bbdb03a';
-$master_password = 'dfc46fa4321fecc8de64ed31087e25c2c9a1b76d';
+require ROOT.'_code/php/functions.php';
+require ROOT.'_code/php/db_functions.php';
 
 // max upload size (after including functions) 
 $max_upload_size = ini_get('upload_max_filesize');

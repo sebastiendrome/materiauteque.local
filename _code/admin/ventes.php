@@ -1,5 +1,5 @@
 <?php
-require('../_code/php/first_include.php');
+require('../php/first_include.php');
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
 $title = 'VENTES';
@@ -50,7 +50,7 @@ $paniers_vendus = get_table('paniers', 'statut_id='.$vendu.' AND date_vente>='.$
 ?>
 
 <!-- admin css -->
-<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
+<link href="<?php echo REL; ?>_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
 
 <?php
 if( isset($_GET['message']) ){
@@ -69,13 +69,11 @@ echo '<div id="done">'.$message.'</div>';
 
 <!-- adminHeader start -->
 <div class="adminHeader">
-<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
+<h1><a href="<?php echo REL; ?>admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
 <h2>Ventes <form name="dateVentes" class="dateForm" action="" method="post"><input type="text" name="day" value="<?php echo $day; ?>" size="2" maxlength="2"><input type="text" name="month" value="<?php echo $month; ?>" size="2" maxlength="2"><input type="text" name="year" value="<?php echo $year; ?>" size="4" maxlength="4"><input type="submit" name="submitDateVentes" value="&gt;" style="position:absolute; top:-100px;"></form></h2> 
-<a href="/_code/php/forms/nouvelle-vente.php" class="button vente" rel="nouvelle-vente" title="rechercher ou créer un article à vendre">+ Nouvelle vente</a>
-
-<!--<a href="/admin/manage_adhesions.php" class="button edit">Adhésions</a> <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span>--> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a><!-- <span style="font-size:20px; display:inline-block; margin-left:10px; margin-right:6px;">•</span> <a href="/admin/manage_categories.php?table=categories" class="button edit" title="gérer les catégories">Catégories</a> <a href="/admin/manage_categories.php?table=matieres" class="button edit" title="gérer les matières">Matières</a> -->
-<a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount"><?php echo $paniers_count; ?></span>)</a>
+<a href="<?php echo REL; ?>_code/php/forms/nouvelle-vente.php" class="button vente" rel="nouvelle-vente" title="rechercher ou créer un article à vendre">+ Nouvelle vente</a> <a href="<?php echo REL; ?>_code/admin/articles.php" class="button articles edit artSH" title="Gérer les articles">Articles</a> 
+<a href="javascript:;" class="button paniersBut right showPaniers venSH"><img src="<?php echo REL; ?>_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount"><?php echo $paniers_count; ?></span>)</a>
 
 <div class="clearBoth"></div>
 </div>

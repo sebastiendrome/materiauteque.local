@@ -27,10 +27,10 @@ if(isset($_GET['article_id']) && !empty($_GET['article_id']) ){
 <div class="modal" id="deleteArticleContainer">
 	<a href="javascript:;" class="closeBut hideModal">&times;</a>
 	<h3 class="first">Êtes vous sûr.e de vouloir supprimer cet article?</h3>
-	<?php echo '<div class="'.$class.'" style="background-image:url(/'.$img.');"><h3>'.$item_data['titre'].'</h3></div>'; ?>
+	<?php echo '<div class="'.$class.'" style="background-image:url('.REL.$img.');"><h3>'.$item_data['titre'].'</h3></div>'; ?>
 	<p>Article ID: <?php echo $article_id; ?></p>
 	
-	<form name="deleteArticle" id="deleteArticle" action="/_code/php/forms/deleteArticle.php" method="post">
+	<form name="deleteArticle" id="deleteArticle" action="<?php echo REL; ?>_code/php/forms/deleteArticle.php" method="post">
 	<input type="hidden" name="delete_id" id="delete_id" value="<?php echo $article_id; ?>">
 	<input type="hidden" name="table" id="table" value="articles">
 	<input type="hidden" name="deleteArticleSubmitted" id="deleteArticleSubmitted" value="deleteArticleSubmitted">

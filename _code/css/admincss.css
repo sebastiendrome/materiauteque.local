@@ -164,7 +164,7 @@ tr.topRow td, table.data th{
 	color:#fff;
 	text-transform:capitalize; 
 	cursor: pointer; 
-	background-image:url('/_code/images/sort.gif'); 
+	background-image:url('../../_code/images/sort.gif'); 
 	background-repeat:no-repeat; 
 	background-position: 5px center;
 }
@@ -174,10 +174,10 @@ th.headerSortUp, th.headerSortDown {
 	color:#fff;
 }
 th.headerSortUp{
-	background-image: url('/_code/images/up.gif');
+	background-image: url('../../_code/images/up.gif');
 }
 th.headerSortDown{
-	background-image: url('/_code/images/down.gif');
+	background-image: url('../../_code/images/down.gif');
 }
 table.data.small tr.topRow td{background-color:#000 !important;}
 tr.topRow td a.selected::before{content:url(/images/arrowDown.png);}

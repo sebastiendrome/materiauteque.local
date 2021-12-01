@@ -1,7 +1,10 @@
 <?php
 // 
 if( !defined("ROOT") ){
-	require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
+	if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 3) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
+}
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }

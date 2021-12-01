@@ -16,7 +16,7 @@ if(isset($_GET['file']) && !empty($_GET['file']) ){
 	$file_name = basename($file);
 	$path = preg_replace('/\/(_XL|_S|_M|_L)\/'.preg_quote($file_name).'$/', '', $file);
 	//echo '$path: '.$path.'<br>';
-	$display_file = display_file_admin($path, $file_name);
+	$display_file = display_file_admin(REL.$path, $file_name);
 	
 }else{
 	exit;
@@ -28,7 +28,7 @@ if(isset($_GET['file']) && !empty($_GET['file']) ){
 	<h3 class="first">Êtes vous sûr.e de vouloir supprimer cette image?</h3>
 	<?php echo $display_file; ?>
 	<p><?php echo filename($path, 'decode').'/'.filename($file_name, 'decode'); ?></p>
-	<form name="deleteFileForm" action="/_code/php/admin/delete_file.php" method="post">
+	<form name="deleteFileForm" action="<?php echo REL; ?>_code/php/admin/delete_file.php" method="post">
 		<input type="hidden" name="deleteFile" value="<?php echo urlencode($file); ?>">
 	<a class="button hideModal left">Non</a> <button type="submit" name="deleteFileSubmit" class="cancel right">Supprimer</button>
 </form>	

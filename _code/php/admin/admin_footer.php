@@ -32,11 +32,11 @@ if(isset($paniers) && $paniers){
 </script>
 
 <!-- jQuery -->
-<script type="text/javascript" src="/_code/js/jquery-3.2.1.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="<?php echo REL; ?>_code/js/jquery-3.2.1.min.js" charset="utf-8"></script>
 <!-- table sorter -->
-<script type="text/javascript" src="/_code/js/jquery.tablesorter.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="<?php echo REL; ?>_code/js/jquery.tablesorter.min.js" charset="utf-8"></script>
 <!-- common custom js -->
-<script type="text/javascript" src="/_code/js/js.js?v=<?php echo $version; ?>" charset="utf-8"></script>
+<script type="text/javascript" src="<?php echo REL; ?>_code/js/js.js?v=<?php echo $version; ?>" charset="utf-8"></script>
 <!-- js for admin -->
-<script type="text/javascript" src="/_code/js/admin_js.js?v=<?php echo $version; ?>" charset="utf-8"></script>
+<script type="text/javascript" src="<?php echo REL; ?>_code/js/admin_js.js?v=<?php echo $version; ?>" charset="utf-8"></script>
 

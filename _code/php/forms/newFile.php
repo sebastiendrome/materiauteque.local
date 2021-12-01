@@ -24,7 +24,7 @@ if( !isset($replace) || empty($replace) ){
 
 	<!-- upload file start -->
 	<div>
-	<form enctype="multipart/form-data" name="uploadFileForm" id="uploadFileForm" action="/_code/php/admin/upload_file.php" method="post">
+	<form enctype="multipart/form-data" name="uploadFileForm" id="uploadFileForm" action="<?php echo REL; ?>_code/php/admin/upload_file.php" method="post">
 	<a class="button submit left" id="chooseFileLink">Choisir une image</a>
 	<div class="progress">
 		<div class="bar"></div>

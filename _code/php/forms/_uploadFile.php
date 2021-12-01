@@ -1,5 +1,5 @@
 <?php
-$path = 'uploads/'.$article_id.'/';
+$path = '_ressource_custom/uploads/'.$article_id.'/';
 ?>
 <div class="modal" id="uploadFileContainer">
 
@@ -7,7 +7,7 @@ $path = 'uploads/'.$article_id.'/';
 
 	<!-- upload file start -->
 	<div>
-	<form enctype="multipart/form-data" name="uploadFileForm" id="uploadFileForm" action="/_code/php/admin/up_file.php" method="post">
+	<form enctype="multipart/form-data" name="uploadFileForm" id="uploadFileForm" action="<?php echo REL; ?>_code/php/admin/up_file.php" method="post">
 		<input type="hidden" name="path" value="<?php echo $path; ?>">
 		<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo MAX_UPLOAD_BYTES; ?>">
 		<input type="hidden" name="contextUploadFile" value="contextUploadFile">

@@ -67,7 +67,7 @@ function display_file_admin($path, $file_name){
 			$display_file = '<div class="html admin">'.file_get_contents(ROOT.$item).'</div>';
 		
 		}else{
-			$display_file = '<a href="'.str_replace('/_S/', '/_XL/', $file_link).'" title="view file in a new window" target="_blank"><img src="/_code/images/'.substr($ext,1).'.png" id="'.$file_name.'"></a>';
+			$display_file = '<a href="'.str_replace('/_S/', '/_XL/', $file_link).'" title="view file in a new window" target="_blank"><img src="'.REL.'_code/images/'.substr($ext,1).'.png" id="'.$file_name.'"></a>';
 		}
 	}
 	if( !isset($display_file) || empty($display_file) ){
@@ -654,7 +654,7 @@ function upload_file($path, $replace=''){
 
 			$new_file_name = basename($upload_dest);
 			//unlink(ROOT.$upload_dest); // get rid of original file in _XL dir (usually very big)
-			$upload_message .= '1|Fichier mis en ligne: '.filename($new_file_name, 'decode');
+			$upload_message .= '1|Fichier mis en ligne';
 			
 		}else{
 			$upload_message .= '0|Erreur: Assurez-vous que le poids du fichier ne dépasse pas '.MAX_UPLOAD_SIZE.'!';

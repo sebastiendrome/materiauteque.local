@@ -33,5 +33,5 @@ foreach($categories as $c){
 	echo '>'.$c['nom'].'</option>'.PHP_EOL;
 }
 ?>
-</select><button type="submit" name="searchSubmit"><img src="/_code/images/search-white.svg" style="width:14px; vertical-align:middle;"></button>
+</select><button type="submit" name="searchSubmit"><img src="<?php echo REL; ?>_code/images/search-white.svg" style="width:14px; vertical-align:middle;"></button>
 </form>

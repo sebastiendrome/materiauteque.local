@@ -17,7 +17,7 @@ var unix_time = Math.round((new Date()).getTime()/1000);
 function removeDirs(imgDirs){
 	$.ajax({
 		// Server script to process the upload
-		url: '/_code/php/admin/admin_ajax.php?removeDirs='+imgDirs,
+		url: rel+'_code/php/admin/admin_ajax.php?removeDirs='+imgDirs,
 		type: 'GET',
 		// on success show message
 		success : function(msg) {
@@ -82,7 +82,7 @@ function showDone(){
 function updateTable(table, id, col, value){
 	$.ajax({
 		// Server script to process the ajax call
-		url: '/_code/php/admin/admin_ajax.php?updateTable&table='+table+'&id='+id+'&col='+col+'&value='+value,
+		url: rel+'_code/php/admin/admin_ajax.php?updateTable&table='+table+'&id='+id+'&col='+col+'&value='+value,
 		type: 'GET',
 		// on success show message
 		success : function(msg) {
@@ -108,7 +108,7 @@ function updateTable(table, id, col, value){
 // delete item from table (ajax)
 function deleteItem(table, item_id){
 	$.ajax({
-		url: '/_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+item_id,
+		url: rel+'_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+item_id,
 		type: 'GET',
 		success : function(msg){
 			//return msg;
@@ -163,7 +163,7 @@ function create_article(fields){
 	// ajax call that will use db_function insert_new()
 	$.ajax({
 		// Server script to process the ajax call 
-		url: '/_code/php/admin/admin_ajax.php?create_article'+query_string,
+		url: rel+'_code/php/admin/admin_ajax.php?create_article'+query_string,
 		type: 'GET',
 
 		// on success
@@ -225,7 +225,7 @@ function create_article(fields){
 function duplicate_vrac_article(id, old_poids, old_prix){
 	$.ajax({
 		// Server script to process the ajax call
-		url: '/_code/php/admin/admin_ajax.php?vrac_vente&original_id='+id+'&old_poids='+old_poids+'&old_prix='+old_prix,
+		url: rel+'_code/php/admin/admin_ajax.php?vrac_vente&original_id='+id+'&old_poids='+old_poids+'&old_prix='+old_prix,
 		type: 'GET',
 
 		// on success, message is either "(0|2)|[error or note string]", or "1|[new_id]" (success, new id of duplicated vrac article)
@@ -263,7 +263,7 @@ function duplicate_vrac_article(id, old_poids, old_prix){
 // refresh ventes (in caisse.php on window focus)
 function refresh_ventes(date){
 	$.ajax({
-		url: '/_code/php/admin/admin_ajax.php?refreshVentes&date='+date,
+		url: rel+'_code/php/admin/admin_ajax.php?refreshVentes&date='+date,
 		type: 'GET',
 		success : function(msg){
 			$('span#ventes').text(msg.replace('.',','));
@@ -290,7 +290,7 @@ function savePanierChanges(panierId, context){
 
 	$.ajax({
 		// server script belows responds to $_POST[savePanierSubmitted]
-		url: '/_code/php/admin/admin_ajax.php',
+		url: rel+'_code/php/admin/admin_ajax.php',
 		type: 'POST',
 
 		// Form data
@@ -344,7 +344,7 @@ function save_paniers_state(context){
 /* NOT USED
 function updatePaniersModal(){
 	$.ajax({
-		url: '/_code/php/admin/admin_ajax.php?updatePaniersModal',
+		url: rel+'_code/php/admin/admin_ajax.php?updatePaniersModal',
 		type: 'GET',
 		success : function(msg){
 			// msg is: "1234|paniers html output" the number before | is the number of paniers
@@ -364,7 +364,7 @@ function updatePaniersModal(){
 			if($('body div#vpLoader').length !== 0){
 				var context = window.location;
 				$('body div#vpLoader').html('');
-				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
+				$('body div#vpLoader').load(rel+'_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
 			}
 
 			// update paniers count in span#paniersCount if found
@@ -386,7 +386,7 @@ function display_panier(panierId, context){
 	// ajax call that will use db_function create_panier()
 	$.ajax({
 		// Server script
-		url: '/_code/php/admin/admin_ajax.php?display_panier&id='+panierId+'&context='+context,
+		url: rel+'_code/php/admin/admin_ajax.php?display_panier&id='+panierId+'&context='+context,
 		type: 'GET',
 
 		// on success; msg is either new panier ID, or an error message
@@ -422,7 +422,7 @@ function display_panier(panierId, context){
 				if($('body div#vpLoader').length){
 					var vpContext = window.location;
 					$('body div#vpLoader').html('');
-					$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(vpContext));
+					$('body div#vpLoader').load(rel+'_code/php/forms/vente-paniers.php?context='+encodeURIComponent(vpContext));
 				}
 
 				// update paniers count in span#paniersCount if found
@@ -450,7 +450,7 @@ function display_article_panier(articleId, panierId, context){
 	// ajax call that will use db_function create_panier()
 	$.ajax({
 		// Server script creates the panier
-		url: '/_code/php/admin/admin_ajax.php?display_article_panier&articleId='+articleId+'&panierId='+panierId+'&context='+context,
+		url: rel+'_code/php/admin/admin_ajax.php?display_article_panier&articleId='+articleId+'&panierId='+panierId+'&context='+context,
 		type: 'GET',
 
 		// on success; msg is either new panier ID, or an error message
@@ -489,7 +489,7 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 	// ajax call that will use db_function create_panier()
 	$.ajax({
 		// Server script
-		url: '/_code/php/admin/admin_ajax.php?create_panier&nom='+nom+'&poids='+poids+'&prix='+prix+'&paiement_id='+paiement_id+'&statut_id='+panier_statut_id,
+		url: rel+'_code/php/admin/admin_ajax.php?create_panier&nom='+nom+'&poids='+poids+'&prix='+prix+'&paiement_id='+paiement_id+'&statut_id='+panier_statut_id,
 		type: 'GET',
 
 		// on success; msg is either new panier ID, or an error message
@@ -565,7 +565,7 @@ function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac
 						if( $('div#formsContainer').length ){
 							//alert('yes formsContainer!');
 							$('div#formsContainer').hide();
-							$('div#adminContainer').append('<a class="button articles edit" href="/admin/articles.php">Articles</a> <a class="button vente edit" href="/admin/ventes.php">Ventes</a><br>'+message);
+							$('div#adminContainer').append('<a class="button articles edit artSH" href="'+rel+'_code/admin/articles.php">Articles</a> <a class="button vente edit venSH" href="'+rel+'_code/admin/ventes.php">Ventes</a><br>'+message);
 						}
 					}
 
@@ -656,6 +656,12 @@ function remove_article_from_panier(article_id, panier_id, container){
 		if( $article.length ){
 			setTimeout(function(){
 				$article.remove();
+				/* !!!!!!! BUG: 
+				1. remove article from panier (so panier is empty) and the following happens
+				2. go to articles.php, find the article that was just removed from panier
+				3. Sell it to add it back to same panier
+				4. function display_article_panier() outputs alert message: alert('target not found! paniersAjaxTarget'); and panier display is NOT updated 
+				!!!!!!!!! */
 				// if panier is empty, replace its html content with the following
 				if(a == 1){
 					$cont.find('form').replaceWith('<span class="lowkey">- panier vide -</span> <a href="javascript:;" class="button remove right deletePanier">supprimer</a><div class="clearBoth"></div>');
@@ -912,7 +918,7 @@ $(document).ready(function(){
 					if($('div#vpLoader').length){
 						var context = window.location;
 						$('body div#vpLoader').html('');
-						$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
+						$('body div#vpLoader').load(rel+'_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
 					}
 					// update paniers count in span#paniersCount if found
 					updatePaniersCount('remove');
@@ -1056,7 +1062,7 @@ $(document).ready(function(){
 			if($('div#vpLoader').length){
 				var context = window.location;
 				$('body div#vpLoader').html('');
-				$('body div#vpLoader').load('/_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
+				$('body div#vpLoader').load(rel+'_code/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
 			}
 		},150);
 	});
@@ -1197,7 +1203,7 @@ $(document).ready(function(){
 		//deleteItem(table, paniers_id);
 		$.ajax({
 			// Server script 
-			url: '/_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+paniers_id,
+			url: rel+'_code/php/admin/admin_ajax.php?deleteItem&table='+table+'&id='+paniers_id,
 			type: 'GET',
 			// on success show message
 			success : function(msg) {
@@ -1459,7 +1465,7 @@ $(document).ready(function(){
 				if( $('div#formsContainer').length ){
 					//alert('yes formsContainer!');
 					$('div#formsContainer').hide();
-					$('div#adminContainer').append('<a class="button articles edit" href="/admin/articles.php">Articles</a> <a class="button vente edit" href="/admin/ventes.php">Ventes</a><br>');
+					$('div#adminContainer').append('<a class="button articles edit artSH" href="'+rel+'_code/admin/articles.php">Articles</a> <a class="button vente edit venSH" href="'+rel+'_code/admin/ventes.php">Ventes</a><br>');
 				}
 
 				// we need to give time to the 2 updateTable ajax calls above to happen
@@ -1685,7 +1691,7 @@ $(document).ready(function(){
 		console.log($origin);
 		console.log($this[0]);
 		if($this[0] == $origin){
-			window.location.href="/_code/php/forms/editArticle.php?article_id="+id;
+			window.location.href = rel+"_code/php/forms/editArticle.php?article_id="+id;
 		}
 	});
 
@@ -1862,7 +1868,7 @@ $(document).ready(function(){
 	});
 
 	// #uploadFileSubmit onchange sets #chooseFileLink innerHTML to #fileUpload value (fileName)
-	// AND initiates ajax call to upload via /_code/php/admin/admin_ajax.php -> upload_file()
+	// AND initiates ajax call to upload via _code/php/admin/admin_ajax.php -> upload_file()
 	$('body').on('click', '#uploadFileSubmit', function(e){
 		e.preventDefault();
 		var path = $('#fileUpload').val();
@@ -1876,7 +1882,7 @@ $(document).ready(function(){
 		
 		$.ajax({
 			// Your server script to process the upload
-			url: '/_code/php/admin/admin_ajax.php',
+			url: rel+'_code/php/admin/admin_ajax.php',
 			type: 'POST',
 
 			// Form data

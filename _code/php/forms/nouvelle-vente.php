@@ -1,7 +1,10 @@
 <?php
 echo '<a name="top"></a>';
 if( !defined("ROOT") ){
-	require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
+	if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 3) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
+}
 	require(ROOT.'_code/php/admin/not_logged_in.php');
 	require(ROOT.'_code/php/admin/admin_functions.php');
 }
@@ -80,7 +83,7 @@ if( isset($_POST['form2Submitted']) ){
 		$new_item[0] = get_article_data($article_id);
 		$items_table = items_table_output($new_item);
 		$message = '1|Nouvel Article créé. ID: '.$article_id;
-		$path = 'uploads/'.$article_id;
+		$path = '_ressource_custom/uploads/'.$article_id;
 		
 	}else{
 		$message = '0|'.mysqli_error($db);
@@ -100,14 +103,14 @@ if( !isset($title) ){
 	$title = ' Nouvelle Vente';
 	require(ROOT.'_code/php/doctype.php');
 	echo '<!-- admin css -->
-	<link href="/_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
+	<link href="'.REL.'_code/css/admincss.css?v='.$version.'" rel="stylesheet" type="text/css">'.PHP_EOL;
 
 	echo '<div id="working"><div class="note">working...</div></div>';
 	echo '<div id="done">'.$message.'</div>';
 
 	echo '<!-- adminHeader start -->
 	<div class="adminHeader">
-	<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <h2>Nouvelle vente</h2> <a href="/admin/ventes.php" class="button vente edit selected" title="Gérer les ventes">Ventes</a> <a href="/admin/articles.php" class="button articles edit" title="Gérer les articles">Articles</a> <a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount">'.$paniers_count.'</span>)</a>'.PHP_EOL;
+	<h1><a href="'.REL.'admin" class="admin">Admin <span class="home">&#8962;</span></a></h1> <h2>Nouvelle vente</h2> <a href="'.REL.'_code/admin/ventes.php" class="button vente edit selected venSH" title="Gérer les ventes">Ventes</a> <a href="'.REL.'_code/admin/articles.php" class="button articles edit artSH" title="Gérer les articles">Articles</a> <a href="javascript:;" class="button paniersBut right showPaniers venSH"><img src="'.REL.'_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount">'.$paniers_count.'</span>)</a>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	
@@ -203,7 +206,7 @@ if( isset($items) && !empty($items)){
 if($show_findArticleForm === true){ ?>
 
 <!-- recherche detail start -->
-<form name="findArticle" id="findArticle" action="#top" method="post" style="display:inline-block; float:left; margin-right:20px;">
+<form name="findArticle" id="findArticle" class="artSH" action="#top" method="post" style="display:inline-block; float:left; margin-right:20px;">
 
 <?php
 if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
@@ -236,7 +239,7 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 <!-- créer article à vendre start -->
 <form name="newArticle" id="newArticle" action="" method="post" style="display:inline-block; float:left;">
 <?php if($show_findArticleForm === true){ ?>
-Si l'article n'existe pas encore...
+<span class="artSH">Si l'article n'existe pas encore...</span>
 <?php } ?>
 <h3>Créer l'article à vendre:</h3>
 

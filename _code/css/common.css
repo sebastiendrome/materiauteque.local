@@ -67,7 +67,7 @@ body, .modal{background-color: #FFFFFF;}
 	display:block;
 	min-width:300px; min-height:225px;
 	background-color:rgba(0,0,0,0);
-	background-image:url(/_code/images/search-white.svg); background-repeat: no-repeat; background-position:97% 3%;
+	background-image:url(../../_code/images/search-white.svg); background-repeat: no-repeat; background-position:97% 3%;
 }
 .imgContainer a.clicker:hover{text-decoration: none; background-color:rgba(0,0,0,.2);}
 span.imgNav{position: absolute; right:10px; bottom:10px;}
@@ -170,8 +170,8 @@ button[type=submit], input[type=submit], a.button.submit{background-color:rgb(1,
 button.cancel, a.button.cancel{background-color:#bb0808; color:#fff; border-color:#7c0011;}
 button.cancel, a.button.cancel, button[type=submit], a.button.submit{text-shadow:-1px -1px rgb(0, 0, 0);}
 button.cancel:hover, a.cancel:hover, button[type=submit]:hover, a.submit:hover{text-shadow:1px 1px rgb(0, 0, 0);}
-button.disabled, a.button.disabled, button:disabled, input:disabled, select:disabled{opacity:.7;  background-image:url(/_code/images/hidden-bg.png); cursor: not-allowed;}
-button.scinder, a.button.scinder{background-image:url(/_code/images/scinde-bg.gif); background-position:50% 50%;}
+button.disabled, a.button.disabled, button:disabled, input:disabled, select:disabled{opacity:.7;  background-image:url(../../_code/images/hidden-bg.png); cursor: not-allowed;}
+button.scinder, a.button.scinder{background-image:url(../../_code/images/scinde-bg.gif); background-position:50% 50%;}
 button.right, .button.right{float:right; margin-right:0;}
 button.left, .button.left{margin-left:0;}
 .button.discret{background-color:#fff; border:none;}
@@ -183,12 +183,12 @@ a.button.big:hover{background-color:#ddd}
 .error, .success, .note{padding:2px 10px; border-radius:3px; position:relative; overflow: hidden;}
 .note{border:none; background-color:#ffd; color:#555; box-shadow:0 2px 3px rgba(125,125,125,.5); border-radius:0; font-family:monospace;}
 
-input[name="keywords"]{border-radius:3px; border:1px solid #aaa; padding:4px; min-width:275px; background-image:url(/_code/images/search-grey.svg); background-repeat: no-repeat; background-position: 2% 50%;
+input[name="keywords"]{border-radius:3px; border:1px solid #aaa; padding:4px; min-width:275px; background-image:url(../../_code/images/search-grey.svg); background-repeat: no-repeat; background-position: 2% 50%;
 padding-left:25px;}
 select{
 	-webkit-appearance: none; 
 	-moz-appearance: none;
 	appearance: none;	   /* remove default arrow */
 	padding-right:25px !important;
-	background: #fff url(/_code/images/arrow-down-dark.gif) no-repeat 96% 50%;/* add custom arrow */
+	background: #fff url(../../_code/images/arrow-down-dark.gif) no-repeat 96% 50%;/* add custom arrow */
 }

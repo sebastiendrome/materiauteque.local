@@ -7,7 +7,7 @@
  * Message si Fond de caisse precedente != ouverture
  * Page Voir Caisses du Mois
  * */
-require('../_code/php/first_include.php');
+require('../php/first_include.php');
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
 $title = 'CAISSE';
@@ -268,7 +268,7 @@ $fond_de_caisse = $total_fermeture-$total_depot_banque;
 ?>
 
 <!-- admin css -->
-<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
+<link href="<?php echo REL; ?>_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
 
 <style>
 table.amountsDetail{border:5px solid #f5f5f5; float:left; margin-right:20px;}
@@ -310,10 +310,10 @@ echo '<div id="done">'.$message.'</div>';
 <!-- adminHeader start -->
 <div class="adminHeader">
 <h1 style="color:rgb(177, 0, 0);">CAISSE</h1>
-<h2><?php echo ' <u>'.$caisse_statut.'</u>'; ?> <form name="dateVentes" class="dateForm" action="/admin/caisse.php" method="post"><input type="text" name="day" value="<?php echo $day; ?>" size="2" maxlength="2"><input type="text" name="month" value="<?php echo $month; ?>" size="2" maxlength="2"><input type="text" name="year" value="<?php echo $year; ?>" size="4" maxlength="4"><input type="submit" name="submitDateVentes" value="&gt;" style="position:absolute; top:-100px;"></form></h2>
-<?php if($caisse_date !== $today){echo '<a class="button" href="/admin/caisse.php">Voir la Caisse d\'aujourd\'hui</a>';} ?>
+<h2><?php echo ' <u>'.$caisse_statut.'</u>'; ?> <form name="dateVentes" class="dateForm" action="<?php echo REL; ?>_code/admin/caisse.php" method="post"><input type="text" name="day" value="<?php echo $day; ?>" size="2" maxlength="2"><input type="text" name="month" value="<?php echo $month; ?>" size="2" maxlength="2"><input type="text" name="year" value="<?php echo $year; ?>" size="4" maxlength="4"><input type="submit" name="submitDateVentes" value="&gt;" style="position:absolute; top:-100px;"></form></h2>
+<?php if($caisse_date !== $today){echo '<a class="button" href="<?php echo REL; ?>_code/admin/caisse.php">Voir la Caisse d\'aujourd\'hui</a>';} ?>
 <!--
-<a href="javascript:;" class="button paniersBut right showPaniers"><img src="/_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount"><?php echo $paniers_count; ?></span>)</a> -->
+<a href="javascript:;" class="button paniersBut right showPaniers venSH"><img src="<?php echo REL; ?>_code/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount"><?php echo $paniers_count; ?></span>)</a> -->
 
 <div class="clearBoth"></div>
 </div>
@@ -343,7 +343,7 @@ if($caisse_statut == 'Fermée'){
 }
 ?>
 
-<form name="caisse" action="/admin/caisse.php" method="post">
+<form name="caisse" action="<?php echo REL; ?>_code/admin/caisse.php" method="post">
 <input type="hidden" name="caisseSubmitted" value="caisseSubmitted">
 <input type="hidden" name="date" value="<?php echo $caisse_date; ?>">
 <input type="hidden" name="statut_id" value="<?php echo $statut_id; ?>">

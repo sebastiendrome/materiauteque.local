@@ -1,6 +1,9 @@
 <?php
 /* RECEIVES AJAX CALLS FROM admin_j.js */
-require($_SERVER['DOCUMENT_ROOT'].'/_code/php/first_include.php');
+if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 3) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
+}
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
 
@@ -77,8 +80,8 @@ if( isset($_GET['removeDirs']) && !empty($_GET['removeDirs']) ){
 	$dir_string = $_GET['removeDirs'];
 	$dir_array = explode('qQq', $dir_string);
 	foreach($dir_array as $dir){
-		if( !empty($dir) && file_exists(ROOT.'uploads/'.$dir) ){
-			rmdirr(ROOT.'uploads/'.$dir);
+		if( !empty($dir) && file_exists(ROOT.'_ressource_custom/uploads/'.$dir) ){
+			rmdirr(ROOT.'_ressource_custom/uploads/'.$dir);
 		}
 	}
 	$result = '1|image directories deleted: '.str_replace('qQq', ' ', $dir_string);

@@ -5,7 +5,7 @@
  * Delta = Recettes - Ventes
  * Fond de caisse = total_fermeture - total_depot_banque
  * */
-require('../_code/php/first_include.php');
+require('../php/first_include.php');
 require(ROOT.'_code/php/admin/not_logged_in.php');
 require(ROOT.'_code/php/admin/admin_functions.php');
 $title = 'Caisses au Mois';
@@ -181,7 +181,7 @@ if( $caisses_table = get_table('caisse', 'MONTH(date) = '.$month.' AND YEAR(date
 ?>
 
 <!-- admin css -->
-<link href="/_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
+<link href="<?php echo REL; ?>_code/css/admincss.css?v=<?php echo $version; ?>" rel="stylesheet" type="text/css">
 
 <style>
 table{background-color:#ccc; border-spacing:1px; border:none;}
@@ -202,7 +202,7 @@ echo '<div id="done">'.$message.'</div>';
 
 <!-- adminHeader start -->
 <div class="adminHeader">
-<h1><a href="/admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
+<h1><a href="<?php echo REL; ?>admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 <h2>Caisses du mois: <form name="dateVentes" class="dateForm" action="" method="post"><input type="text" name="month" value="<?php echo $month; ?>" size="2" maxlength="2"><input type="text" name="year" value="<?php echo $year; ?>" size="4" maxlength="4"><input type="submit" name="submitDateVentes" value="&gt;" style="position:absolute; top:-100px;"></form></h2>
 
 <div class="clearBoth"></div>
