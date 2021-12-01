@@ -1,11 +1,9 @@
 .DS_Store
-_content/
 _extra/
 *.psd
 .vscode/settings.json
 _uploads/
-uploads/
+_ressource_custom/
 _excel/
 tests/
 php.ini
-hGtDjkpPWSXk.php

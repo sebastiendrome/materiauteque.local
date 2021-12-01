@@ -1,2 +1,2 @@
 <?php
-require('../_code/php/public_search.php');
+require('../c/php/public_search.php');

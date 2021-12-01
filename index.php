@@ -1,7 +1,7 @@
 <?php
-require '_code/php/first_include.php';
+require 'c/php/first_include.php';
 if($public_site_visible == false){
-	header("Location: _code/admin/");
+	header("Location: c/admin/");
 }else{
-	require '_code/php/index.php';
+	require 'c/php/index.php';
 }
