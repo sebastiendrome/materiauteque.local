@@ -453,6 +453,8 @@ form.dateForm input{
 	margin:0;
 }
 
+/* for error handler output */
+aside{background-color:#111; color:#eee; font-family: monospace; word-wrap: break-word; text-align: left; padding:2px;}
 
 a.discarded{opacity:.6;}
 a.discarded:hover{opacity:1;}

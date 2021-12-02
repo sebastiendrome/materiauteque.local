@@ -69,18 +69,18 @@ function log_custom_error($error, $errlvl){
 	$headers .= 'From: '.str_replace(array('.','/','http:','https:'), '', SITE).' <admin@'.$_SERVER['HTTP_HOST'].'>'."\r\n";
 
 	if( defined('SITE') ){
-		$message = '<p>----------------------------------<br>An error has occurred on '.SITE.':</p>';
+		$message = '<aside>----------------------------------<br>An error has occurred on '.SITE.':</aside>';
 	}else{
-		$message = '<p>----------------------------------</p>';
+		$message = '<aside>----------------------------------</aside>';
 	}
 
-	$message .= '<p>Error at '.date('Y-m-d H:i:s').': ';
+	$message .= '<aside>Error at '.date('Y-m-d H:i:s').': ';
 	$message .= 'URI: '.$_SERVER['REQUEST_URI'].': ';
 	$error = explode('|', $error);
 	foreach($error as $e){
 		$message .= $e.'<br>';
 	}
-	$message .= 'Severity: '.$errlvl.'</p>';
+	$message .= 'Severity: '.$errlvl.'</aside>';
 
 	if( defined('SEND_ERRORS_TO') ){
 		mail(SEND_ERRORS_TO , 'Error on '.$_SERVER['HTTP_HOST'], $message, $headers);
@@ -94,7 +94,7 @@ function log_custom_error($error, $errlvl){
 
 		$logfile = ROOT.'_ressource_custom/hGtDjkpPWSXk.php';
 		$message = strip_tags( $message, '<p><br>' );
-		$message = str_replace( array( '<p>', '</p>', '<br />', '<br>' ), PHP_EOL, $message );
+		$message = str_replace( array( '<p>', '</p>', '<aside>', '</aside>', '<br />', '<br>' ), PHP_EOL, $message );
 		// add HTTP_REF (added aug 4 2014)
 		if( isset($_SERVER['HTTP_REFERER']) ){
 			$message .= 'http_ref: '.$_SERVER['HTTP_REFERER'].PHP_EOL;

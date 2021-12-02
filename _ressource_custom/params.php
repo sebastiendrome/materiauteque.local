@@ -10,19 +10,19 @@ define("NAME", 'Bis Usus');
 define("TITLE", 'Matériauthèque de Die');
 
 // will show or hide functions/buttons if following are visible or not
-$public_site_visible = 1;
+$public_site_visible = 0;
 $caisse_visible = 1;
 $ventes_visible = 1;
-$articles_visible = 1;
-$categories_visible = 1;
+$articles_visible = 0;
+$categories_visible = 0;
 
 // Errors handling and database connection parameters
 if( strstr(SITE,'.local') ){ 	// this local server DB
 	// errors
-	ini_set('error_reporting', E_ALL);
-	ini_set('display_errors', 1);
-	$display_debug = TRUE;
+	ini_set('display_errors', 0);
+	$display_debug = FALSE;
 	$log_errors = TRUE;
+	//define("SEND_ERRORS_TO", AUTHOR_REF);
 	
 	// CUSTOM database
 	$db_host = "127.0.0.1";
