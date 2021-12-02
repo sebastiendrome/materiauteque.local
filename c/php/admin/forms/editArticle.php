@@ -1,11 +1,7 @@
 <?php
-if( !defined("ROOT") ){
-	if(!defined("ROOT")){
-	$code = basename( dirname(__FILE__, 3) );
+if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 4) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
-}
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
 }
 
 // set $article_form_context for edit_article_table.php vars
@@ -85,12 +81,12 @@ if( !isset($title) ){
 	<div class="adminHeader">
 	<h1 style="margin-right:0;"><a href="'.REL.'c/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="'.REL.'c/admin/articles.php" class="button edit articles artSH" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
 	echo ' <a href="javascript:;" class="button vente showModal venSH" rel="prixVenteModal?article_id='.$article_id.'">€ Vendre cet article</a> ';
-	echo ' <a href="'.REL.'c/php/forms/scinderArticle.php?article_id='.$article_id.'" class="button scinder" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
+	echo ' <a href="'.REL.'c/php/admin/forms/scinderArticle.php?article_id='.$article_id.'" class="button scinder" rel="scinderArticle.php?article_id='.$article_id.'">Scinder l\'article en 2</a> ';
 	//scinderArticle.php
 	echo ' <a href="javascript:;" class="showModal button remove" rel="deleteArticleModal?article_id='.$article_id.'">Supprimer cet article</a>';
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
-	include(ROOT.'c/php/forms/paniersModal.php');
+	include(ROOT.'c/php/admin/forms/paniersModal.php');
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
@@ -109,7 +105,7 @@ if( !isset($title) ){
 
 
 	<?php
-	require(ROOT.'c/php/forms/edit_article_table.php');
+	require(ROOT.'c/php/admin/forms/edit_article_table.php');
 	?>
 
 	<input type="hidden" name="editArticleSubmitted" id="editArticleSubmitted" value="editArticleSubmitted">
@@ -118,7 +114,7 @@ if( !isset($title) ){
 </form>
 
 
-<?php require(ROOT.'/c/php/forms/newArticleImages.php'); ?>
+<?php require(ROOT.'/c/php/admin/forms/newArticleImages.php'); ?>
 
 </div>
 

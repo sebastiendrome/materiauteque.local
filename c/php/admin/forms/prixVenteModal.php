@@ -1,11 +1,9 @@
 <?php
-// upload file form
-// used inline or loaded via ajax, so check for necessary vars and require files accordingly
 if( !defined("ROOT") ){
-	require('../../../c/php/first_include.php');
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
+	$code = basename( dirname(__FILE__, 4) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
 }
+
 if( isset($_GET['article_id']) ){
 	$id = urldecode($_GET['article_id']);
 }
@@ -75,7 +73,7 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 		<input type="number" step="any" min="0" class="weight" style="width:60px; min-width:60px; text-align:right;" name="poids" value="<?php echo $item_data['poids']; ?>" placeholder="0,000" required> Kg</p>
 
 		<div id="vpLoader">
-		<?php require(ROOT.'c/php/forms/vente-paniers.php'); ?>
+		<?php require(ROOT.'c/php/admin/forms/vente-paniers.php'); ?>
 		</div>
 
 		
@@ -84,7 +82,7 @@ if($previous_statut_id == name_to_id('vendu', 'statut') ){
 			<h3 style="text-align:center; margin:20px 0; clear:both;"> —— OU —— </h3>
 
 			<span style="color:#383838; font-weight:bold; font-size:larger;">Vente partielle:</span> 
-			<a href="<?php echo REL; ?>c/php/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left scinder">Scinder l'article en 2</a>
+			<a href="<?php echo REL; ?>c/php/admin/forms/scinderArticle.php?article_id=<?php echo $id; ?>&vendre" class="button left scinder">Scinder l'article en 2</a>
 		<?php } ?>
 		
 

@@ -1,7 +1,5 @@
 <?php
 require('../php/first_include.php');
-require(ROOT.'c/php/admin/not_logged_in.php');
-require(ROOT.'c/php/admin/admin_functions.php');
 $title = 'VENTES';
 require(ROOT.'c/php/doctype.php');
 if( isset($_SESSION['article_id']) ){
@@ -72,7 +70,7 @@ echo '<div id="done">'.$message.'</div>';
 <h1><a href="<?php echo REL; ?>admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
 <h2>Ventes <form name="dateVentes" class="dateForm" action="" method="post"><input type="text" name="day" value="<?php echo $day; ?>" size="2" maxlength="2"><input type="text" name="month" value="<?php echo $month; ?>" size="2" maxlength="2"><input type="text" name="year" value="<?php echo $year; ?>" size="4" maxlength="4"><input type="submit" name="submitDateVentes" value="&gt;" style="position:absolute; top:-100px;"></form></h2> 
-<a href="<?php echo REL; ?>c/php/forms/nouvelle-vente.php" class="button vente" rel="nouvelle-vente" title="rechercher ou créer un article à vendre">+ Nouvelle vente</a> <a href="<?php echo REL; ?>c/admin/articles.php" class="button articles edit artSH" title="Gérer les articles">Articles</a> 
+<a href="<?php echo REL; ?>c/php/admin/forms/nouvelle-vente.php" class="button vente" rel="nouvelle-vente" title="rechercher ou créer un article à vendre">+ Nouvelle vente</a> <a href="<?php echo REL; ?>c/admin/articles.php" class="button articles edit artSH" title="Gérer les articles">Articles</a> 
 <a href="javascript:;" class="button paniersBut right showPaniers venSH"><img src="<?php echo REL; ?>c/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount"><?php echo $paniers_count; ?></span>)</a>
 
 <div class="clearBoth"></div>
@@ -80,7 +78,7 @@ echo '<div id="done">'.$message.'</div>';
 <!-- adminHeader end -->
 
 <?php 
-include(ROOT.'c/php/forms/paniersModal.php');
+include(ROOT.'c/php/admin/forms/paniersModal.php');
 ?>
 
 

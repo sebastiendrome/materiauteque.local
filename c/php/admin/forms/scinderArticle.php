@@ -1,11 +1,7 @@
 <?php
 if( !defined("ROOT") ){
-	if(!defined("ROOT")){
-	$code = basename( dirname(__FILE__, 3) );
+	$code = basename( dirname(__FILE__, 4) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
-}
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
 }
 
 // set $article_form_context for edit_article_table.php vars
@@ -74,7 +70,7 @@ if( !isset($title) ){
 	<h1 style="margin-right:0;"><a href="'.REL.'c/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="'.REL.'c/admin/articles.php" class="button edit articles artSH" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
-	include(ROOT.'c/php/forms/paniersModal.php');
+	include(ROOT.'c/php/admin/forms/paniersModal.php');
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
@@ -103,7 +99,7 @@ if( !isset($article_id) || empty($article_id) ){
 	
 	<?php
 	$article_form_context = $context_1;
-	require(ROOT.'c/php/forms/edit_article_table.php');
+	require(ROOT.'c/php/admin/forms/edit_article_table.php');
 	?>
 
 	<input type="hidden" name="id" value="<?php echo $article_id; ?>">
@@ -122,7 +118,7 @@ if( !isset($article_id) || empty($article_id) ){
 	<?php
 	$item_data = $item_data_copy;
 	$article_form_context = $context_2;
-	require(ROOT.'c/php/forms/edit_article_table.php');
+	require(ROOT.'c/php/admin/forms/edit_article_table.php');
 	?>
 
 	<!-- the following div is used to load vente-paniers.php in the context of scinderArticle.php, when the scission of an article to be sold has been succesfully made. vente-paniers.php allows us to finalize the sale, by choosing between 'Vendre directement' & 'Ajouter au panier'
@@ -256,7 +252,7 @@ $("form#dualForm").on("submit", function(e){
 					// update article id in form!
 					$('form#copy input[name="id"]').val(newId);
 					$('form#copy table.editArticle').hide();
-					$('form#copy div#vpLoader').load(rel+'c/php/forms/vente-paniers.php', function(){
+					$('form#copy div#vpLoader').load(rel+'c/php/admin/forms/vente-paniers.php', function(){
 						$(this).css('padding', '10px');
 					});
 				}else{

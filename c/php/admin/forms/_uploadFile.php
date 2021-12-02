@@ -1,4 +1,9 @@
 <?php
+if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 4) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
+}
+
 $path = '_ressource_custom/uploads/'.$article_id.'/';
 ?>
 <div class="modal" id="uploadFileContainer">

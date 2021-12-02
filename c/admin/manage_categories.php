@@ -1,8 +1,6 @@
 <?php
 if( !defined("ROOT") ){
 	require('../php/first_include.php');
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
 }
 
 if( isset($_GET['table']) ){

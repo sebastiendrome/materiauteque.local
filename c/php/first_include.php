@@ -26,7 +26,7 @@ if( file_exists($root.'/_ressource_custom/params.php') ){
 	require $root.'/_ressource_custom/params.php';
 }else{
 	date_default_timezone_set('Europe/Paris');
-	$resource_custom = false;
+	$ressource_custom = false;
 	define("NAME", 'Le Nom');
 	define("TITLE", 'Ressourcerie');
 	$public_site_visible = 1;
@@ -35,8 +35,8 @@ if( file_exists($root.'/_ressource_custom/params.php') ){
 	$articles_visible = 1;
 }
 
-// admin credentials
-if(!$resource_custom || !isset($admin_username) ){
+// admin credentials (default, if not specified in ressource_custom.php/params.php)
+if(!$ressource_custom || !isset($admin_username) ){
 	$admin_username = 'd033e22ae348aeb5660fc2140aec35850c4da997';
 	$admin_password = '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8';
 }
@@ -63,7 +63,7 @@ $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVE
 define("PROTOCOL", $protocol);
 
 // php root and error reporting, local vs. remote
-if( !$resource_custom && strstr(SITE,'.local') ){ 	// default local server, no custom params
+if( !$ressource_custom && strstr(SITE,'.local') ){ 	// default local server, no custom params
 	ini_set('error_reporting', E_ALL);
 	ini_set('display_errors', 1);
 	$display_debug = TRUE;
@@ -72,7 +72,7 @@ if( !$resource_custom && strstr(SITE,'.local') ){ 	// default local server, no c
 	$db_user = "root";
 	$db_pass = '';
 	$db_name = 'materiauteque';
-}elseif( !$resource_custom || !isset($db_host) ){ // no custom remote server: Abort.
+}elseif( !$ressource_custom || !isset($db_host) ){ // no custom remote server: Abort.
 	echo '<p style="color:red;">ERROR: No DB connection data!...</p>';
 	exit;
 }
@@ -128,20 +128,25 @@ mysqli_set_charset( $db, 'utf8');
 require ROOT.'c/php/functions.php';
 require ROOT.'c/php/db_functions.php';
 
-// max upload size (after including functions) 
-$max_upload_size = ini_get('upload_max_filesize');
-$max_upload_bytes = return_bytes($max_upload_size);
-define("MAX_UPLOAD_SIZE", $max_upload_size);
-define("MAX_UPLOAD_BYTES", $max_upload_bytes);
+// require admin functions if within admin directory
+if( strstr($_SERVER['REQUEST_URI'], '/admin/') ){
+	// get paniers en cours (as array) and count them
+	if( $paniers = get_table('paniers', 'statut_id=1', 'date DESC') ){
+		$paniers_count = count($paniers);
+	}else{
+		$paniers_count = '0';
+	}
+	// get statut table, paiement table as arrays
+	/*
+	$statut_array = get_table('statut');
+	$paiement_array = get_table('paiement');
+	*/
+	require ROOT.'c/php/admin/not_logged_in.php';
+	require ROOT.'c/php/admin/admin_functions.php';
 
-// get paniers en cours (as array) and count them
-if( $paniers = get_table('paniers', 'statut_id=1', 'date DESC') ){
-	$paniers_count = count($paniers);
-}else{
-	$paniers_count = '0';
+	// max upload size (after including functions) 
+	$max_upload_size = ini_get('upload_max_filesize');
+	$max_upload_bytes = return_bytes($max_upload_size);
+	define("MAX_UPLOAD_SIZE", $max_upload_size);
+	define("MAX_UPLOAD_BYTES", $max_upload_bytes);
 }
-// get statut table, paiement table as arrays
-/*
-$statut_array = get_table('statut');
-$paiement_array = get_table('paiement');
-*/

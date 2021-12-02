@@ -1,10 +1,7 @@
 <?php
-// delete file form
-// used inline or loaded via ajax, so check for necessary vars and require files accordingly
-if( !defined("ROOT") ){
-	require('../../../c/php/first_include.php');
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
+if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 4) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
 }
 
 // for creating sub-sections, we need the parent section:
@@ -30,7 +27,7 @@ if(isset($_GET['article_id']) && !empty($_GET['article_id']) ){
 	<?php echo '<div class="'.$class.'" style="background-image:url('.REL.$img.');"><h3>'.$item_data['titre'].'</h3></div>'; ?>
 	<p>Article ID: <?php echo $article_id; ?></p>
 	
-	<form name="deleteArticle" id="deleteArticle" action="<?php echo REL; ?>c/php/forms/deleteArticle.php" method="post">
+	<form name="deleteArticle" id="deleteArticle" action="<?php echo REL; ?>c/php/admin/forms/deleteArticle.php" method="post">
 	<input type="hidden" name="delete_id" id="delete_id" value="<?php echo $article_id; ?>">
 	<input type="hidden" name="table" id="table" value="articles">
 	<input type="hidden" name="deleteArticleSubmitted" id="deleteArticleSubmitted" value="deleteArticleSubmitted">

@@ -4,8 +4,6 @@ if(!defined("ROOT")){
 	$code = basename( dirname(__FILE__, 3) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
 }
-require(ROOT.'c/php/admin/not_logged_in.php');
-require(ROOT.'c/php/admin/admin_functions.php');
 
 /// increase memory size to allow heavy image manipulations (rotating large image and generating sized-down copies)
 ini_set('memory_limit','512M');

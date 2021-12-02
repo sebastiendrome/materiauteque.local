@@ -1,13 +1,9 @@
 <?php
-// 
 if( !defined("ROOT") ){
-	if(!defined("ROOT")){
-	$code = basename( dirname(__FILE__, 3) );
+	$code = basename( dirname(__FILE__, 4) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
 }
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
-}
+
 /* We can be loading or ajax-re-loading the form, to:
 1. Vendre un article existant
 2. Créer un article pour le vendre

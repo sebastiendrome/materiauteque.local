@@ -1,10 +1,6 @@
 <?php
 require('first_include.php');
-require(ROOT.'c/php/doctype.php');
-?>
-
-
-<?php 
+require(ROOT.'c/php/doctype.php'); 
 // header.php includes search.php, which returns $search_result if $_POST[keywords] and/or [categories_id] are set
 require(ROOT.'/c/inc/header.php'); 
 ?>

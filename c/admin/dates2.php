@@ -1,8 +1,6 @@
 <?php
 if( !defined("ROOT") ){
 	require('../php/first_include.php');
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
 }
 $date_debut = array(13,1,2020);
 $date_fin = array(13,1,2020);
@@ -16,6 +14,11 @@ if (isset($_GET['mois'])){
     $date_debut[1] = $_GET['mois'];
     if (isset($_GET['mois2'])) $date_fin[1] = $_GET['mois2'];
     else $date_fin[1] = $_GET['mois'];
+}
+if (isset($_GET['an'])){
+    $date_debut[2] = $_GET['an'];
+    if (isset($_GET['an2'])) $date_fin[2] = $_GET['an2'];
+    else $date_fin[2] = $_GET['an'];
 }
 ?>
 Debut : <?php echo $date_debut[0] ?>/<?php echo $date_debut[1] ?>/<?php echo $date_debut[2] ?></br>

@@ -27,7 +27,7 @@ function showModal(modal, callback){
 	}else{
 		$newdiv = $('div#'+modal);
 	}
-	$newdiv.load(rel+'c/php/forms/'+modal+'.php'+query);
+	$newdiv.load(rel+'c/php/admin/forms/'+modal+'.php'+query);
 	$newdiv.show();
 	checkModalHeight('#'+modal);
 	if(callback !== undefined && typeof callback === 'function') {

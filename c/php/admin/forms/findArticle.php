@@ -1,13 +1,10 @@
 <?php
-echo '<a name="top"></a>';
-if( !defined("ROOT") ){
-	if(!defined("ROOT")){
-	$code = basename( dirname(__FILE__, 3) );
+if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 4) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
 }
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
-}
+
+echo '<a name="top"></a>';
 
 // set $article_form_context for edit_article_table.php vars
 $article_form_context = 'search';
@@ -23,7 +20,7 @@ if( !isset($title) ){
 	<h1 style="margin-right:0;"><a href="'.REL.'c/admin/" class="admin">Admin <span class="home">&#8962;</span></a></h1> <a href="'.REL.'c/admin/articles.php" class="button edit articles artSH" style="margin-right:20px;">Articles</a> <h2>'.$title.' </h2>'.PHP_EOL;
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
-	include(ROOT.'c/php/forms/paniersModal.php');
+	include(ROOT.'c/php/admin/forms/paniersModal.php');
 
 	echo '<!-- start admin container -->
 	<div id="adminContainer">'.PHP_EOL;
@@ -159,7 +156,7 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 <p class="below">Saisir au moins 1 des champs.</p>
 	
 	<?php
-	require(ROOT.'c/php/forms/edit_article_table.php');
+	require(ROOT.'c/php/admin/forms/edit_article_table.php');
 	?>
 
 	<input type="hidden" name="findArticleSubmitted" id="findArticleSubmitted" value="findArticleSubmitted">

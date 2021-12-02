@@ -1,7 +1,5 @@
 <?php
 require('../php/first_include.php');
-require(ROOT.'c/php/admin/not_logged_in.php');
-require(ROOT.'c/php/admin/admin_functions.php');
 $title = 'ARTICLES';
 require(ROOT.'c/php/doctype.php');
 if( isset($_SESSION['article_id']) ){
@@ -138,7 +136,7 @@ echo '<div id="done">'.$message.'</div>';
 <div class="adminHeader">
 <h1><a href="<?php echo REL; ?>admin" class="admin">Admin <span class="home">&#8962;</span></a></h1>
 
-<h2>Articles</h2> <a href="<?php echo REL; ?>c/php/forms/newArticle.php" class="button add articles left" title="créer un article">Nouvel article</a> 
+<h2>Articles</h2> <a href="<?php echo REL; ?>c/php/admin/forms/newArticle.php" class="button add articles left" title="créer un article">Nouvel article</a> 
 <a href="<?php echo REL; ?>c/admin/ventes.php" class="button vente edit venSH" title="Gérer les ventes">Ventes</a> <a href="javascript:;" class="button paniersBut right showPaniers venSH"><img src="<?php echo REL; ?>c/images/panier.svg" style="width:15px;height:15px; margin-bottom:-2px; margin-right:10px;">Paniers en cours (<span id="paniersCount"><?php echo $paniers_count; ?></span>)</a>
 
 
@@ -147,7 +145,7 @@ echo '<div id="done">'.$message.'</div>';
 <!-- adminHeader end -->
 
 <?php 
-include(ROOT.'c/php/forms/paniersModal.php');
+include(ROOT.'c/php/admin/forms/paniersModal.php');
 ?>
 
 
@@ -174,7 +172,7 @@ foreach($categories as $c){
 <option value="">Toutes matières</option>
 </select>
 -->
-<button type="submit" name="searchSubmit">Rechercher</button> <a href="<?php echo REL; ?>c/php/forms/findArticle.php">&nbsp;>Recherche détaillée</a>
+<button type="submit" name="searchSubmit">Rechercher</button> <a href="<?php echo REL; ?>c/php/admin/forms/findArticle.php">&nbsp;>Recherche détaillée</a>
 </form>
 <!-- recherche simple end -->
 

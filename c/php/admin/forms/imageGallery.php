@@ -1,9 +1,7 @@
 <?php
 if( !defined("ROOT") ){
-	if(!defined("ROOT")){
-	$code = basename( dirname(__FILE__, 3) );
+	$code = basename( dirname(__FILE__, 4) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
-}
 }
 
 if( isset($_GET['path']) ){

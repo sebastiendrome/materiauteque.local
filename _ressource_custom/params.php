@@ -3,18 +3,18 @@
 date_default_timezone_set('Europe/Paris');
 
 // set var to generaly know we're pulling this file's parameters
-$resource_custom = true;
+$ressource_custom = true;
 
 // CUSTOM vars...
 define("NAME", 'Bis Usus');
 define("TITLE", 'Matériauthèque de Die');
 
 // will show or hide functions/buttons if following are visible or not
-$public_site_visible = 0;
+$public_site_visible = 1;
 $caisse_visible = 1;
 $ventes_visible = 1;
-$articles_visible = 0;
-$categories_visible = 0;
+$articles_visible = 1;
+$categories_visible = 1;
 
 // Errors handling and database connection parameters
 if( strstr(SITE,'.local') ){ 	// this local server DB

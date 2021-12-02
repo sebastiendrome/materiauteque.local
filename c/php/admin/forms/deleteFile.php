@@ -1,10 +1,7 @@
 <?php
-// delete file form
-// used inline or loaded via ajax, so check for necessary vars and require files accordingly
-if( !defined("ROOT") ){
-	require('../../../c/php/first_include.php');
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
+if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 4) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
 }
 
 // for creating sub-sections, we need the parent section:

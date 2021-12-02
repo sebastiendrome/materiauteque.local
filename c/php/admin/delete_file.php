@@ -1,12 +1,8 @@
 <?php
 // delete file form POST process (from deleteFile.php, modal window)
-if( !defined("ROOT") ){
-	if(!defined("ROOT")){
+if(!defined("ROOT")){
 	$code = basename( dirname(__FILE__, 3) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
-}
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
 }
 
 $referer = preg_replace('/\?.*$/', '', $_SERVER['HTTP_REFERER'] );

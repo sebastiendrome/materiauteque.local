@@ -1,14 +1,7 @@
 <?php
 if( !defined("ROOT") ){
-	if( file_exists('../../../c/php/first_include.php') ){
-		require('../../../c/php/first_include.php');
-	}elseif( file_exists('../../c/php/first_include.php') ){
-		require('../../c/php/first_include.php');
-	}else{
-		require('../c/php/first_include.php');
-	}
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
+	$code = basename( dirname(__FILE__, 4) );
+	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
 }
 
 if( isset($_GET['article_id']) ){

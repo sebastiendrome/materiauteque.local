@@ -1,11 +1,7 @@
 <?php
-if( !defined("ROOT") ){
-	if(!defined("ROOT")){
-	$code = basename( dirname(__FILE__, 3) );
+if(!defined("ROOT")){
+	$code = basename( dirname(__FILE__, 4) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
-}
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
 }
 
 if( isset($_GET['id']) && !empty($_GET['id']) ){
@@ -44,7 +40,7 @@ echo '</pre>';
 
 
 	<?php
-	//require(ROOT.'c/php/forms/edit_panier_table.php');
+	//require(ROOT.'c/php/admin/forms/edit_panier_table.php');
 	?>
 
 	<input type="hidden" name="editPanierSubmitted" id="editPanierSubmitted" value="editPanierSubmitted">

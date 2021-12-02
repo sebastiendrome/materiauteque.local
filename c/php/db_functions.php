@@ -892,12 +892,12 @@ function items_table_output($result_array, $limit = NULL, $offset = 0){
 			<option name="modifier" value="modifier">modifier...</option>
 			</select>
 			</div>-->
-			<a href="'.REL.'c/php/forms/editArticle.php?article_id='.$article_id.'" class="button edit">modifier</a> 
+			<a href="'.REL.'c/php/admin/forms/editArticle.php?article_id='.$article_id.'" class="button edit">modifier</a> 
 			</td>';*/
 
 			$output .= '<td class="venSH">';
 			if($value['statut_id'] < 4){
-				$output .= '<a href="'.REL.'c/php/forms/editArticle.php?article_id='.$article_id.'" class="button vente vendre" style="margin:0 !important;" title="vendre cet article">&rarr;&nbsp;€</a>';
+				$output .= '<a href="'.REL.'c/php/admin/forms/editArticle.php?article_id='.$article_id.'" class="button vente vendre" style="margin:0 !important;" title="vendre cet article">&rarr;&nbsp;€</a>';
 			}else{
 				$output .= '';
 			}

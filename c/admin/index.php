@@ -1,7 +1,5 @@
 <?php
 require('../php/first_include.php');
-require(ROOT.'c/php/admin/not_logged_in.php');
-require(ROOT.'c/php/admin/admin_functions.php');
 require(ROOT.'c/php/doctype.php');
 if( isset($_SESSION['article_id']) ){
 	unset($_SESSION['article_id']);
@@ -42,7 +40,7 @@ echo '<div id="done">'.$message.'</div>';
 <!-- adminHeader end -->
 
 <?php 
-include(ROOT.'c/php/forms/paniersModal.php');
+include(ROOT.'c/php/admin/forms/paniersModal.php');
 ?>
 
 

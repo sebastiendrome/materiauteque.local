@@ -1,13 +1,10 @@
 <?php
-echo '<a name="top"></a>';
 if( !defined("ROOT") ){
-	if(!defined("ROOT")){
-	$code = basename( dirname(__FILE__, 3) );
+	$code = basename( dirname(__FILE__, 4) );
 	require preg_replace('/\/'.$code.'\/.*$/', '/'.$code.'/php/first_include.php', __FILE__);
 }
-	require(ROOT.'c/php/admin/not_logged_in.php');
-	require(ROOT.'c/php/admin/admin_functions.php');
-}
+
+echo '<a name="top"></a>';
 
 /**** !!!!!!! SEARCH ARTICLE can be hidden by changing this to false... */
 $show_findArticleForm = true;
@@ -114,7 +111,7 @@ if( !isset($title) ){
 	echo '</div><!-- adminHeader end -->'.PHP_EOL;
 
 	
-	include(ROOT.'c/php/forms/paniersModal.php');
+	include(ROOT.'c/php/admin/forms/paniersModal.php');
 
 
 	echo '<!-- start admin container -->
@@ -219,7 +216,7 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 
 	<?php
 	$article_form_context = 'search';
-	require(ROOT.'c/php/forms/edit_article_table.php');
+	require(ROOT.'c/php/admin/forms/edit_article_table.php');
 	?>
 
 	<input type="hidden" name="findArticleSubmitted" id="findArticleSubmitted" value="findArticleSubmitted">
@@ -245,13 +242,13 @@ if( empty($key_val_pairs) && isset($_POST['findArticleSubmitted']) ){
 
 	<?php
 	$article_form_context = 'vente';
-	require(ROOT.'c/php/forms/edit_article_table.php');
+	require(ROOT.'c/php/admin/forms/edit_article_table.php');
 	?>
 	<input type="hidden" name="visible" value="0">
 	<input type="hidden" name="date_vente" value="<?php echo time(); ?>">
 	
 	<div id="vpLoader">
-	<?php require(ROOT.'c/php/forms/vente-paniers.php'); ?>
+	<?php require(ROOT.'c/php/admin/forms/vente-paniers.php'); ?>
 	</div>
 	
 

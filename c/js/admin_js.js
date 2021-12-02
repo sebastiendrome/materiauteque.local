@@ -364,7 +364,7 @@ function updatePaniersModal(){
 			if($('body div#vpLoader').length !== 0){
 				var context = window.location;
 				$('body div#vpLoader').html('');
-				$('body div#vpLoader').load(rel+'c/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
+				$('body div#vpLoader').load(rel+'c/php/admin/forms/vente-paniers.php?context='+encodeURIComponent(context));
 			}
 
 			// update paniers count in span#paniersCount if found
@@ -422,7 +422,7 @@ function display_panier(panierId, context){
 				if($('body div#vpLoader').length){
 					var vpContext = window.location;
 					$('body div#vpLoader').html('');
-					$('body div#vpLoader').load(rel+'c/php/forms/vente-paniers.php?context='+encodeURIComponent(vpContext));
+					$('body div#vpLoader').load(rel+'c/php/admin/forms/vente-paniers.php?context='+encodeURIComponent(vpContext));
 				}
 
 				// update paniers count in span#paniersCount if found
@@ -918,7 +918,7 @@ $(document).ready(function(){
 					if($('div#vpLoader').length){
 						var context = window.location;
 						$('body div#vpLoader').html('');
-						$('body div#vpLoader').load(rel+'c/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
+						$('body div#vpLoader').load(rel+'c/php/admin/forms/vente-paniers.php?context='+encodeURIComponent(context));
 					}
 					// update paniers count in span#paniersCount if found
 					updatePaniersCount('remove');
@@ -1062,7 +1062,7 @@ $(document).ready(function(){
 			if($('div#vpLoader').length){
 				var context = window.location;
 				$('body div#vpLoader').html('');
-				$('body div#vpLoader').load(rel+'c/php/forms/vente-paniers.php?context='+encodeURIComponent(context));
+				$('body div#vpLoader').load(rel+'c/php/admin/forms/vente-paniers.php?context='+encodeURIComponent(context));
 			}
 		},150);
 	});
@@ -1691,7 +1691,7 @@ $(document).ready(function(){
 		console.log($origin);
 		console.log($this[0]);
 		if($this[0] == $origin){
-			window.location.href = rel+"c/php/forms/editArticle.php?article_id="+id;
+			window.location.href = rel+"c/php/admin/forms/editArticle.php?article_id="+id;
 		}
 	});
 
