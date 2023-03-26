@@ -486,6 +486,9 @@ function display_article_panier(articleId, panierId, context){
 
 // ajax call to create panier (and create article, OR update article)
 function create_panier(article_id_or_fields, nom, poids, prix, paiement_id, vrac, panier_statut_id){
+	if(nom == ''){
+		nom = 'panier x';
+	}
 	// ajax call that will use db_function create_panier()
 	$.ajax({
 		// Server script

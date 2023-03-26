@@ -328,6 +328,14 @@ function insert_new($table, $item_data){
 		$array_values[] = time();
 	}
 
+	if($table == 'articles'){
+		if( !array_key_exists('titre', $item_data) ){
+			$array_keys[] = 'titre';
+			$array_values[] = "'article x'";
+		}elseif( empty($item_data['titre']) ){
+			$item_data['titre'] = 'article x';
+		}
+	}
 	foreach($item_data as $k => $v){
 		if( ( !empty($v) && !is_numeric($v) ) || $v === '0' ){ // string values that are not empty or '0'
 			$array_keys[] = strtolower($k);
@@ -356,7 +364,7 @@ function insert_new($table, $item_data){
 	}else{
 		log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__ );
 		// debug
-		echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
+		echo '<pre>SQL Error: '.mysqli_error($db).PHP_EOL.'Function: '.__FUNCTION__.PHP_EOL.'File: '.__FILE__.PHP_EOL.'SQL Query: '.$q.'</pre>';
 		return false;
 	}
 }
