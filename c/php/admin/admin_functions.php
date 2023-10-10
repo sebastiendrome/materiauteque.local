@@ -140,6 +140,7 @@ function display_paniers_en_cours($paniers){
 	$i = 0;
 	$p_count = count($paniers);
 	$statut_vals = get_table('statut');
+	$paiement_vals = get_table('paiement');
 
 	foreach($paniers as $p){
 		$i++;
@@ -169,12 +170,6 @@ function display_paniers_en_cours($paniers){
 				$count_output = '&nbsp;&nbsp;&nbsp;'.$a_count.' articles, '. str_replace('.', ',', $poids_total).' kg<br>';
 			}else{
 				$count_output = '';
-			}
-
-			if($p['paiement_id'] == '2'){
-				$checked = ' checked';
-			}else{
-				$checked = '';
 			}
 
 			if( empty($p['notes']) ){
@@ -214,7 +209,22 @@ function display_paniers_en_cours($paniers){
 			}
 			
 			$output .= '<p class="n" style="text-align:right;">
-			<span style="white-space:nowrap;"><input type="checkbox" name="paiement_id" value="2"'.$checked.'> <label for="paiement_id">paiement par chèque</label></span> &nbsp;&nbsp;&nbsp;&nbsp;';
+			<span style="white-space:nowrap;">';
+			
+			$paiement_options = 'paiement: <select name="paiement_id">';
+			foreach($paiement_vals as $pv){
+				if($pv['id'] == $p['paiement_id']){
+					$selected = ' selected';
+				}else{
+					$selected = '';
+				}
+				$paiement_options .= '<option value="'.$pv['id'].'"'.$selected.'>'.$pv['nom'].'</option>';
+			}
+			$paiement_options .= '</select>';
+
+			$output .= $paiement_options;
+
+			$output .= '</span> &nbsp;&nbsp;&nbsp;&nbsp;';
 			$output .= '<span style="white-space:nowrap;">Total €<input type="number" step="any" name="total" id="'.$p['id'].'total" class="currency prixVentePanier" placeholder="0,00" value="'.$p['total'].'"></span><a href="javascript:;" class="warning" title="le total n\'est pas égal à la somme des articles"'.$show_warn.'></a>
 			</p>';
 
@@ -309,7 +319,7 @@ function display_paniers($paniers){
 				$show_warn = '';
 			}
 
-			$paiement_options = 'paiement:<select name="paiement_id">';
+			$paiement_options = 'paiement: <select name="paiement_id">';
 			foreach($paiement_vals as $pv){
 				if($pv['id'] == $p['paiement_id']){
 					$selected = ' selected';

@@ -689,6 +689,11 @@ function saveChangedValue($this){
 		var table = 'paniers';
 		var id = $this.closest('div.pCont').attr('data-panierid');
 		var col = 'total';
+	}else if($this.attr('name') == 'paiement_id'){
+		var table = 'paniers';
+		var id = $this.closest('div.pCont').attr('data-panierid');
+		var col = 'paiement_id';
+	
 	// articles
 	}else{
 		var table = 'articles';
@@ -852,12 +857,8 @@ $(document).ready(function(){
 		var id = $container.attr('data-panierid');
 		var nom = $container.attr('data-paniernom');
 		var total = $container.find('input.prixVentePanier').val();
-		var $paiement_cheque = $container.find('input[name="paiement_id"]');
-		if($paiement_cheque.prop('checked') == true){
-			var paiement_id = paiement_table['chèque'];
-		}else{
-			var paiement_id = paiement_table['espèces'];
-		}
+		var paiement_id = $container.find('select[name="paiement_id"]').val();
+		
 		// calculate panier poids from articles poids
 		var poids = 0;
 		$container.find('div.particle input.weight').each( function(){
@@ -1007,7 +1008,7 @@ $(document).ready(function(){
 
 	// store input value on focus, to compare it on blur (oldVal is a global var declared at top of page)
 	// this is used instead of on.change, which would save to DB each time a value is changed while still in focus...
-	// checkbox(paiement_id) and textarea(notes) are ignored, because they have their own logic
+	// textarea(notes) is ignored, because it has its own logic
 	$('div#paniersAjaxTarget').on('focus', 'input, select', function(){
 		oldVal = $(this).val();
 	})
@@ -1024,21 +1025,6 @@ $(document).ready(function(){
 			/** !!!!! BUT firefox does not register focus/blur on number inputs ****/
 			saveChangedValue( $(this) ); // calls updateTable function
 		}
-	});
-	// paniersChanged on checkbox click (does not register focus/blur)
-	$('div#paniersAjaxTarget').on('click', 'input[type="checkbox"]', function(){
-		/*paniersChanged = true;
-		setCookie('cPaniersChanged', 'oui', '1');*/
-		// save into DB on the fly
-		var table = 'paniers';
-		var id = $(this).closest('div.pCont').attr('data-panierid');
-		var col = 'paiement_id';
-		if( $(this).prop('checked') ){
-			val = '2';
-		}else{
-			val = '1';
-		}
-		updateTable(table, id, col, val);
 	});
 	
 	// quick undo after paniers en cours vendu, to put it back to statut 'en cours' (statut_id=1)
@@ -1252,16 +1238,11 @@ $(document).ready(function(){
 	$('body').on('click', 'button#directeVenteSubmit', function(e){
 		e.preventDefault();
 
-		var $form = $(this).parents('form');
-		var $poids = $form.find('input[name="poids"]');
-		var $paiement_cheque = $form.find('input[name="paiement_id"]');
-		if($paiement_cheque.prop('checked') == true){
-			var paiement_id = paiement_table['chèque'];
-		}else{
-			var paiement_id = paiement_table['espèces'];
-		}
-		var article_id = $form.find('input[name="id"]').val(); // article[id]
-		var prix = $form.find('input[name="prix"]').val().replace(',','.');
+		var $container = $(this).parents('form');
+		var $poids = $container.find('input[name="poids"]');
+		var paiement_id = $container.find('select[name="paiement_id"]').val();
+		var article_id = $container.find('input[name="id"]').val(); // article[id]
+		var prix = $container.find('input[name="prix"]').val().replace(',','.');
 		var poids = $poids.val().replace(',','.');
 
 		if(poids.length == 0){
@@ -1271,20 +1252,20 @@ $(document).ready(function(){
 		}
 
 		// used as nom du panier if new panier is to be created
-		var panier_nom = $form.find('input[name="titre"]').val();
+		var panier_nom = $container.find('input[name="titre"]').val();
 		panier_nom = encodeURIComponent(panier_nom);
 
 		// hide modal
 		hideModal( $(this).parents('div.modal') );
 
 		/* vrac? */ 
-		var vrac = $form.find('input[name="vrac"]').val();
+		var vrac = $container.find('input[name="vrac"]').val();
 
 		// if vrac, duplicate article vendu ( update original minus poids vente? ...)
 		if(vrac*1 == 1/* && new_poids > 0*/){
 			// these vars will be used to duplicate item with pre-sale prix and poids
-			var old_prix = $form.find('input[name="old_prix"]').val();
-			var old_poids = $form.find('input[name="old_poids"]').val().replace(',','.');
+			var old_prix = $container.find('input[name="old_prix"]').val();
+			var old_poids = $container.find('input[name="old_poids"]').val().replace(',','.');
 			//var new_poids = parseFloat(old_poids)-parseFloat(poids);
 			// ajax call (that will use php db_function duplicate_vrac_article() to duplicate vrac article)
 			duplicate_vrac_article(article_id, old_poids, old_prix);
@@ -1322,17 +1303,12 @@ $(document).ready(function(){
 	$('body').on('click', 'button#ajoutPanierSubmit', function(e){
 		e.preventDefault();
 
-		var $form = $(this).parents('form');
-		var $poids = $form.find('input[name="poids"]');
-		var $paiement_cheque = $form.find('input[name="paiement_id"]');
-		if($paiement_cheque.prop('checked') == true){
-			var paiement_id = paiement_table['chèque'];
-		}else{
-			var paiement_id = paiement_table['espèces'];
-		}
-		var article_id = $form.find('input[name="id"]').val(); // article[id]
-		var prix = $form.find('input[name="prix"]').val().replace(',','.');
-		var poids = $form.find('input[name="poids"]').val().replace(',','.');
+		var $container = $(this).parents('form');
+		var $poids = $container.find('input[name="poids"]');
+		var paiement_id = $container.find('select[name="paiement_id"]').val();
+		var article_id = $container.find('input[name="id"]').val(); // article[id]
+		var prix = $container.find('input[name="prix"]').val().replace(',','.');
+		var poids = $container.find('input[name="poids"]').val().replace(',','.');
 
 		if(poids.length == 0){
 			$poids.focus();
@@ -1341,19 +1317,19 @@ $(document).ready(function(){
 		}
 
 		// used as nom du panier if new panier is to be created
-		var panier_nom = $form.find('input[name="titre"]').val();
+		var panier_nom = $container.find('input[name="titre"]').val();
 
 		// hide modal
 		hideModal( $(this).parents('div.modal') );
 
 		/* vrac? */ 
-		var vrac = $form.find('input[name="vrac"]').val();
+		var vrac = $container.find('input[name="vrac"]').val();
 
 		// if vrac, duplicate article vendu, ( update original minus poids vente? ...)
 		if(vrac*1 == 1){
 			//these vars will be used to duplicate item with pre-sale prix and poids
-			var old_prix = $form.find('input[name="old_prix"]').val();
-			var old_poids = $form.find('input[name="old_poids"]').val().replace(',','.');
+			var old_prix = $container.find('input[name="old_prix"]').val();
+			var old_poids = $container.find('input[name="old_poids"]').val().replace(',','.');
 			// ajax call (that will use php db_function duplicate_vrac_article() to duplicate vrac article)
 			duplicate_vrac_article(article_id, old_poids, old_prix);
 			// ↑ when completed and if successfull, the above ajax call will update the value of global js var new_vrac_id to id of newly created vrac article. In which case, this new_vrac_id should be used as article_id in create_panier call below
@@ -1370,7 +1346,7 @@ $(document).ready(function(){
 
 		/**  are we creating a new panier, or using a 'panier en cours' ? **/
 		// If 'nouveau panier' option was selected, we can get new panier nom from panierNom field
-		var $panierNomInput = $form.find('input[name="panierNom"]');
+		var $panierNomInput = $container.find('input[name="panierNom"]');
 		if( $panierNomInput.val().length ){ // we are creating a new panier
 			var createPanier = true;
 			var panier_nom = $panierNomInput.val();
@@ -1379,7 +1355,7 @@ $(document).ready(function(){
 		// else, we are using a 'panier en cours', don't need its name but its ID
 		}else{
 			var createPanier = false;
-			var paniers_id = $form.find('select[name="paniers_id"]').val();
+			var paniers_id = $container.find('select[name="paniers_id"]').val();
 		}
 
 		// if new panier needs to be created
@@ -1485,10 +1461,10 @@ $(document).ready(function(){
 	$('body').on('click', 'button#newArticleDirectVenteSubmit', function(e){
 		e.preventDefault();
 		error = false;
-		var $form = $(this).parents('form');
+		var $container = $(this).parents('form');
 		
 		// make sure all required fields have a value
-		$required = $form.find('input, select, textarea').filter('[required]');
+		$required = $container.find('input, select, textarea').filter('[required]');
 		$required.each(function( index ) {
 			if( !$(this).val().length ){
 				error = true;
@@ -1502,7 +1478,7 @@ $(document).ready(function(){
 			return false; // stop the execution of the function
 		}
 
-		var fields = $form.serializeArray();
+		var fields = $container.serializeArray();
 		// debug
 		//console.log( fields );
 
@@ -1544,10 +1520,10 @@ $(document).ready(function(){
 	$('body').on('click', 'button#newArticleAjoutPanierSubmit', function(e){
 		e.preventDefault();
 		error = false;
-		var $form = $(this).parents('form');
+		var $container = $(this).parents('form');
 		
 		// make sure all required fields have a value
-		$required = $form.find('input, select, textarea').filter('[required]');
+		$required = $container.find('input, select, textarea').filter('[required]');
 		$required.each(function( index ) {
 			if( !$(this).val().length ){
 				error = true;
@@ -1561,7 +1537,7 @@ $(document).ready(function(){
 			return false; // stop the execution of the function
 		}
 		
-		var fields = $form.serializeArray();
+		var fields = $container.serializeArray();
 		// debug
 		//console.log( fields );
 
@@ -1738,30 +1714,30 @@ $(document).ready(function(){
 	// show/hide last steps of form, depending on choice between 'vendre directement' et 'ajouter au panier'
 	$('body').on('click', 'a#ajoutPanier', function(e){
 		e.preventDefault();
-		var $cont = $(this).closest('div#vpLoader');
-		$cont.find('div#paniers select, div#paniers input').prop('disabled', false);
-		$cont.find('input#prixVente').prop('required', false);
-		$cont.find('div#direct').hide();
-		$cont.find('div#paniers').show();
+		var $container = $(this).closest('div#vpLoader');
+		$container.find('div#paniers select, div#paniers input').prop('disabled', false);
+		$container.find('input#prixVente').prop('required', false);
+		$container.find('div#direct').hide();
+		$container.find('div#paniers').show();
 		$(this).removeClass('discarded').addClass('selected');
 		if(!paniers){
-			$cont.find('input#panierNom').focus();
+			$container.find('input#panierNom').focus();
 		}else{
 			// debug
 			//alert('should focus on select');
-			$cont.find('select#paniers').focus();
+			$container.find('select#paniers').focus();
 		}
-		$cont.find('a#directVente').removeClass('selected').addClass('discarded');
+		$container.find('a#directVente').removeClass('selected').addClass('discarded');
 	});
 	$('body').on('click', 'a#directVente', function(e){
 		e.preventDefault();
-		var $cont = $(this).closest('div#vpLoader');
-		$cont.find('div#paniers select, div#paniers input').prop('disabled', true);
-		$cont.find('div#paniers').hide();
-		$cont.find('div#direct').show();
-		$cont.find('input#prixVente').prop('required', true).focus();
+		var $container = $(this).closest('div#vpLoader');
+		$container.find('div#paniers select, div#paniers input').prop('disabled', true);
+		$container.find('div#paniers').hide();
+		$container.find('div#direct').show();
+		$container.find('input#prixVente').prop('required', true).focus();
 		$(this).removeClass('discarded').addClass('selected');
-		$cont.find('a#ajoutPanier').removeClass('selected').addClass('discarded');
+		$container.find('a#ajoutPanier').removeClass('selected').addClass('discarded');
 	});
 
 	// enable/disabled submit buttons at end of each form : directeVenteSubmit, and ajoutPanierSubmit

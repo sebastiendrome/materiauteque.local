@@ -43,10 +43,9 @@ function show_caisses($caisse_array){
 		*/
 
 		$c['total_ouverture'] = $c['especes_ouverture']+$c['cheques_ouverture'];
-		$c['total_fermeture'] = $c['especes_fermeture']+$c['cheques_fermeture'];
-		$c['total_fermeture'] = $c['especes_fermeture']+$c['cheques_fermeture'];
+		$c['total_fermeture'] = $c['especes_fermeture']+$c['cheques_fermeture']+$c['CB_fermeture'];
 		$c['total_depot_banque'] = $c['depot_especes']+$c['depot_cheques'];
-		$c['fond_de_caisse'] = $c['total_fermeture']-$c['total_depot_banque'];
+		$c['fond_de_caisse'] = ($c['especes_fermeture']+$c['cheques_fermeture'])-$c['total_depot_banque'];
 		$c['ventes'] = get_ventes_total($c['date']);
 		$c['recettes'] = $c['total_fermeture']-$c['total_ouverture'];
 		$c['delta'] = $c['recettes']-$c['ventes'];
@@ -59,7 +58,7 @@ function show_caisses($caisse_array){
 			// initialize td default class
 			$class = 'norm';
 			// ignore these fields
-			if($k !== 'id' && $k !== 'horaire_am_start' && $k !== 'horaire_am_end' && $k !== 'horaire_pm_start' && $k !== 'horaire_pm_end' && $k !== 'especes_ouverture' && $k !== 'especes_fermeture' && $k !== 'cheques_ouverture' && $k !== 'cheques_fermeture' && $k !== 'depot_especes' && $k !== 'depot_cheques' ){
+			if($k !== 'id' && $k !== 'horaire_am_start' && $k !== 'horaire_am_end' && $k !== 'horaire_pm_start' && $k !== 'horaire_pm_end' && $k !== 'especes_ouverture' && $k !== 'especes_fermeture' && $k !== 'cheques_ouverture' && $k !== 'cheques_fermeture' && $k !== 'CB_ouverture' && $k !== 'CB_fermeture' && $k !== 'depot_especes' && $k !== 'depot_cheques' ){
 				
 				// start output
 				if($i == 0){
@@ -75,7 +74,7 @@ function show_caisses($caisse_array){
 						}
 						$v_prime = 'espèces:'.$c['especes_ouverture'].'<br>chèques:'.$c['cheques_ouverture'];
 					}elseif($k == 'total_fermeture'){
-						$v_prime = 'espèces:'.$c['especes_fermeture'].'<br>chèques:'.$c['cheques_fermeture'];
+						$v_prime = 'espèces:'.$c['especes_fermeture'].'<br>chèques:'.$c['cheques_fermeture'].'<br>CB:'.$c['CB_fermeture'];
 					}else{
 						$v_prime = 'espèces:'.$c['depot_especes'].'<br>chèques:'.$c['depot_cheques'];
 					}
@@ -97,7 +96,7 @@ function show_caisses($caisse_array){
 				// statut
 				}elseif($k == 'statut_id'){
 					if($v == 1){
-						$class = 'success';
+						$class = 'error';
 						$v = 'Ouverte';
 					}else if($v == 2){
 						$v = 'Fermée';

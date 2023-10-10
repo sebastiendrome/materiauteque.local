@@ -2,8 +2,10 @@
 if( !defined("ROOT") ){
 	require('../php/first_include.php');
 }
-$date_debut = array(13,1,2020);
-$date_fin = array(13,1,2020);
+
+// set default date range (=today)
+$date_debut = array(date('d'),date('m'),date('Y'));
+$date_fin = array(date('d'),date('m'),date('Y'));
 
 if (isset($_GET['jour'])){
     $date_debut[0] = $_GET['jour'];
@@ -21,21 +23,36 @@ if (isset($_GET['an'])){
     else $date_fin[2] = $_GET['an'];
 }
 ?>
-Debut : <?php echo $date_debut[0] ?>/<?php echo $date_debut[1] ?>/<?php echo $date_debut[2] ?></br>
-Fin : <?php echo $date_fin[0] ?>/<?php echo $date_fin[1] ?>/<?php echo $date_fin[2] ?></br>
-Time : <?php echo time() ?></br>
+<style>
+body, table td, input{font-family: 'Courier New', Courier, monospace;}
+form input[type=text]{width:30px; border:1px solid #ccc; font-size:15px;}
+form input.an{width:50px;}
+table td{padding:1px 10px 1px 0;}
+td.right{text-align: right;}
+</style>
+<form name="daterange" method="GET" action="">
+<table>
+<tr>
+<td>Date début :<td><input type="text" name="jour" value="<?php echo $date_debut[0] ?>">/<input type="text" name="mois" value="<?php echo $date_debut[1] ?>">/<input type="text" name="an" class="an" value="<?php echo $date_debut[2] ?>"><td></tr>
+<tr>
+<td>Date fin &nbsp;&nbsp;:<td><input type="text" name="jour2" value="<?php echo $date_fin[0] ?>">/<input type="text" name="mois2" value="<?php echo $date_fin[1] ?>">/<input type="text" name="an2" class="an" value="<?php echo $date_fin[2] ?>"><td><input type="submit" value="CALCULER"></tr>
+</table>
+</form>
+<!--
+	Time : <?php echo time() ?></br>
 Début hier : <?php echo mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]) ?></br>
 Fin hier : <?php echo mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]) ?></br>
 </br>
-
+-->
+	
 <?php
 $query = mysqli_query($db,'SELECT SUM(total) AS `Ventes`, SUM(poids) AS `Poids` FROM `paniers` WHERE `date_vente`>'.mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]).' AND `date_vente`<'.mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]).'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
 	while( $row = mysqli_fetch_assoc($query) ){
 		$data[] = $row;
 	}
 	if( !empty($data) ){
-		echo 'Ventes : '.$data[0]['Ventes'].' €</br>';
-		echo 'Poids : '.$data[0]['Poids'].' Kg</br>';
+		echo '<b>Ventes : '.str_replace('.',',',$data[0]['Ventes']).' &nbsp;€</b></br>';
+		echo '<b>Poids &nbsp;: '.str_replace('.',',',$data[0]['Poids']).' kg</b></br>';
 	}else{
 		echo 'Aucune vente';
 	}
@@ -44,9 +61,9 @@ $query = mysqli_query($db,'SELECT SUM(total) AS `Ventes`, SUM(poids) AS `Poids` 
 </br>
 <table>
     <tr>
-        <td>MATIÈRE</td>
-        <td>VENTES</td>
-        <td>POIDS</td>
+        <td><u>MATIÈRE</u></td>
+        <td class="right"><u>VENTES</u></td>
+        <td class="right"><u>POIDS</u></td>
     </tr>
 <?php
 $query = mysqli_query($db,'SELECT * FROM `matieres` WHERE `id_parent`=0') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
@@ -59,10 +76,10 @@ while( $row = mysqli_fetch_assoc($query) ){$somme2 = array(0,0);
     echo '<td>';
     echo '<b>'.$row['nom'].'</b>';
     echo '</td>';
-    echo '<td>';
+    echo '<td class="right">';
     echo '<b>'.$somme['Ventes'].'</b>';
     echo '</td>';
-    echo '<td>';
+    echo '<td class="right">';
     echo '<b>'.$somme['Poids'].'</b>';
     echo '</td>';
 		$query2 = mysqli_query($db,'SELECT * FROM `matieres` WHERE `id_parent`='.$row['id'].'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
@@ -75,10 +92,10 @@ while( $row = mysqli_fetch_assoc($query) ){$somme2 = array(0,0);
         echo '<td>';
         echo ''.$row2['nom'].'';
         echo '</td>';
-        echo '<td>';
+        echo '<td class="right">';
         echo ''.$somme2['Ventes'].'';
         echo '</td>';
-        echo '<td>';
+        echo '<td class="right">';
         echo ''.$somme2['Poids'].'';
         echo '</td>';
         echo '</tr>';
