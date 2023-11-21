@@ -1,11 +1,8 @@
 <?php
-/* Fond de caisse: inclus chèques, ou seulement espèces?...
- * Recettes = fermeture - ouverture
- * Delta = Recettes - Ventes
+/* 
+ * Recettes = (total_fermeture + ventes_cb) - total_ouverture
+ * Delta = Recettes - (Ventes - ventes_cb)????
  * Fond de caisse = total_fermeture - total_depot_banque
- * Possibilité de rouvrir la caisse just apres fermeture.. (message)
- * Message si Fond de caisse precedente != ouverture
- * Page Voir Caisses du Mois
  * */
 require('../php/first_include.php');
 $title = 'CAISSE';
@@ -72,8 +69,8 @@ if( isset($_GET['rouvrir']) ){
 				}
 				// debug
 				//echo $val.'<br>';
-			// replace coma with dot for number values (especes|cheques|CB)
-			}elseif(preg_match('/(especes|cheques|CB)/', $key)){
+			// replace coma with dot for number values (especes|cheques)
+			}elseif(preg_match('/(especes|cheques)/', $key)){
 				$val = str_replace(',', '.', $val);
 			}
 			$item_data[$key] = $val;
@@ -87,7 +84,7 @@ if( isset($_GET['rouvrir']) ){
 	echo 'Item Data:<br><pre>';
 	print_r($item_data);
 	echo '</pre>';
-	exit();
+	//exit();
 	*/
 
 	// $_POST['statut_id'] will be next statut id if form processed successfully
@@ -189,7 +186,6 @@ if($caisse_table = get_table('caisse', 'date="'.$caisse_date.'"')){
 		$caisse_action = 'FERMER LA CAISSE';
 		$total_especes = 'especes_fermeture';
 		$total_cheques = 'cheques_fermeture';
-		$total_CB = 'CB_fermeture';
 		$total_element = 'total_fermeture';
 	
 	}else if($statut_id == 2){ /** !!!!! what to show in the form then? */
@@ -211,9 +207,11 @@ if($caisse_table = get_table('caisse', 'date="'.$caisse_date.'"')){
 // get total ventes of this date's caisse, if caisse has already been opened
 if($statut_id > 0){ // caisse déjà créée
 	$ventes = get_ventes_total($caisse_date);
+	$ventes_cb = get_ventes_cb($caisse_date);
+	$ventes_no_cb = $ventes-$ventes_cb;
 	$previous_fond_de_caisse = false;
 }else{ // nouvelle caisse, 'Ouverture'. Get previous caisse 'fond de caisse' to compare with total_ouverture
-	$ventes = 0;
+	$ventes = $ventes_cb = $ventes_no_cb = 0;
 	// get most recent previous caisse
 	if($previous = get_table('caisse', 'date < "'.$caisse_date.'"', 'date DESC')){
 		if( !empty($previous[0]) ){
@@ -251,18 +249,15 @@ if( isset($caisse['especes_ouverture']) && isset($caisse['cheques_ouverture']) )
 }
 // total fermeture
 if( isset($caisse['especes_fermeture']) && isset($caisse['cheques_fermeture']) ){
-	$total_fermeture = $caisse['especes_fermeture']+$caisse['cheques_fermeture']+$caisse['CB_fermeture'];
+	$total_fermeture = $caisse['especes_fermeture']+$caisse['cheques_fermeture'];
 }
 // total depot banque
 if( isset($caisse['depot_especes']) && isset($caisse['depot_cheques']) ){
 	$total_depot_banque = $caisse['depot_especes']+$caisse['depot_cheques'];
 }
-// recettes (fermeture - ouverture)
-$recettes = $total_fermeture-$total_ouverture;
-// Delta = Recettes - Ventes
-$delta = $recettes-$ventes;
-// Fond de caisse = Fermeture - Depot banque
-$fond_de_caisse = $total_fermeture-$total_depot_banque;
+$recettes = ($total_fermeture + $ventes_cb) - $total_ouverture;
+$delta = $recettes - ($ventes - $ventes_cb);
+$fond_de_caisse = $total_fermeture - $total_depot_banque;
 
 ?>
 
@@ -280,7 +275,7 @@ table.amountsDetail thead td{text-align: left; font-weight: bold; padding:3px;}
 div#verification{display:inline-block;/* float:left;*/}
 /*div#verification div{color:red;}*/
 div#extra input.horaires, div#extra input#passages{width:60px; min-width:60px;}
-div#extra textarea{margin:0 10px 10px 0; width:70%; min-width:350px;}
+div#extra textarea{margin:0 10px 10px 0; min-width:350px;}
 div#horVal{
 	display:none;
 	position:absolute; 
@@ -350,7 +345,7 @@ if($caisse_statut == 'Fermée'){
 
 <div id="extra">
 	<div style="display:inline-block;">
-		<span style="white-space:nowrap;">Référents:<input type="text" name="referents" id="referents" value="<?php if($caisse_statut !== 'Ouverte' && isset($caisse['referents'])){echo $caisse['referents'];}?>" tabindex="<?php echo $tab_index++; ?>" maxlength="255"></span>
+		<span style="white-space:nowrap;">Référents:<input type="text" name="referents" id="referents" value="<?php if($caisse_statut !== 'Ouverte' && isset($caisse['referents'])){echo $caisse['referents'];}?>" tabindex="<?php echo $tab_index++; ?>" maxlength="240"></span>
 		<?php
 		if($caisse_statut == 'Ouverte'){ 
 		?> 
@@ -367,8 +362,8 @@ if($caisse_statut == 'Fermée'){
 		9:35 ou 9h35 ou 9 (pour l'heure pile)</div>
 	</div>
 	
-	<div style="margin-bottom:10px;"><a href="javascript:;" class="note addNote left" style="display: inline-block;">Remarques...</a>
-	<div class="tAreaResizer" style="display:<?php if(isset($caisse['remarques']) && !empty($caisse['remarques'])){echo 'block'; $node = $caisse['remarques'];}else{echo 'none'; $node = '&nbsp;';} ?>;"><?php echo $node; ?><textarea class="notes" name="remarques" maxlength="255"><?php if(isset($caisse['remarques'])){echo $caisse['remarques'];}?></textarea></div>
+	<div style="margin-bottom:10px;" class="pCont"><a href="javascript:;" class="note addNote left" style="display: inline-block;">Remarques...</a>
+	<div class="tAreaResizer" style="display:<?php if(isset($caisse['remarques']) && !empty($caisse['remarques'])){echo 'block'; $node = $caisse['remarques'];}else{echo 'none'; $node = '&nbsp;';} ?>;"><?php echo $node; ?><textarea class="notes" name="remarques" maxlength="240"><?php if(isset($caisse['remarques'])){echo $caisse['remarques'];}?></textarea></div>
 	</div>
 </div>
 
@@ -489,31 +484,6 @@ if($caisse_statut == 'Fermée'){
 				<td><input type="number" step="any" min="0" class="currency cheque" value="" tabindex="<?php echo $tab_index++; ?>"> €</td>
 				</tr>
 			</table>
-
-			<?php
-			if($caisse_statut !== 'Ouverture'){
-			?>
-				<div style="clear:both;"></div>
-
-				<table style="float:right;" class="tCB">
-					<tr style="font-weight:bold;">
-					<td style="text-align:right;">CB</td>
-					<td class="below" style="text-align:right;">montant</td>
-					</tr>
-					<tr>
-					<td>N°1</td>
-					<td><input type="number" step="any" min="0" class="currency cb" value="" tabindex="<?php echo $tab_index++; ?>"> €</td>
-					</tr>
-					<tr>
-					<td>N°2</td>
-					<td><input type="number" step="any" min="0" class="currency cb" value="" tabindex="<?php echo $tab_index++; ?>"> €</td>
-					</tr>
-					<tr>
-					<td>N°3</td>
-					<td><input type="number" step="any" min="0" class="currency cb" value="" tabindex="<?php echo $tab_index++; ?>"> €</td>
-					</tr>
-				</table>
-			<?php } ?>
 		</td>
 	</tr>
 	
@@ -522,10 +492,6 @@ if($caisse_statut == 'Fermée'){
 	<tr>
 	<td style="text-align:right;">Total Espèces:<input type="text" name="<?php echo $total_especes; ?>" id="<?php echo $total_especes; ?>" class="totalEspeces disabled" value="<?php if(isset($caisse[$total_especes])){echo number_format($caisse[$total_especes], 2, ',', '');}else{echo '0,00';} ?>"> €</td>
 	<td style="text-align:right;">Total Chèques:<input type="text" name="<?php echo $total_cheques; ?>" id="<?php echo $total_cheques; ?>" class="totalCheques disabled" value="<?php if(isset($caisse[$total_cheques])){echo number_format($caisse[$total_cheques], 2, ',', '');}else{echo '0,00';} ?>"> €</td>
-	</tr>
-	<tr>
-	<td></td>
-	<td style="text-align:right;">Total CB:<input type="text" name="<?php echo $total_CB; ?>" id="<?php echo $total_CB; ?>" class="totalCB disabled" value="<?php if(isset($caisse[$total_CB])){echo number_format($caisse[$total_CB], 2, ',', '');}else{echo '0,00';} ?>"> €</td>
 	</tr>
 	</thead>
 
@@ -671,9 +637,6 @@ if($caisse_statut == 'Ouverte'){
 
 	<thead>
 	<tr>
-	<td colspan="2">&nbsp;</td>
-	</tr>
-	<tr>
 	<td style="text-align:center;" colspan="2"><h3>TOTAL DÉPÔT BANQUE: <span class="total total_depot_banque"><?php echo $total_depot_banque; ?></span> €</h3></td>
 	</tr>
 	</thead>
@@ -690,19 +653,23 @@ if($caisse_statut == 'Ouverte'){
 	</tr>
 		<tr>
 			<td>Ouverture</td>
-			<td style="text-align:right;"><span class="total_ouverture"><?php echo number_format($total_ouverture, 2, ',', ''); ?></span> €</td>
+			<td style="text-align:right;"><span class="total_ouverture" id="total_ouverture"><?php echo number_format($total_ouverture, 2, ',', ''); ?></span> €</td>
 		</tr>
 		<tr>
 			<td>Fermeture</td>
-			<td style="text-align:right;"><span class="total_fermeture"><?php echo number_format($total_fermeture, 2, ',', ''); ?></span> €</td>
+			<td style="text-align:right;"><span class="total_fermeture" id="total_fermeture"><?php echo number_format($total_fermeture, 2, ',', ''); ?></span> €</td>
+		</tr>
+		<tr>
+			<td>Ventes CB</td>
+			<td style="text-align:right;"><span id="ventes_cb"><?php echo number_format($ventes_cb, 2, ',', ''); ?></span> €</td>
+		</tr>
+		<tr>
+			<td>Total Ventes</td>
+			<td style="text-align:right;"><span id="ventes"><?php echo number_format($ventes, 2, ',', ''); ?></span> €</td>
 		</tr>
 		<tr>
 			<td>Recettes</td>
 			<td style="text-align:right;"><span id="recettes"><?php echo number_format($recettes, 2, ',', ''); ?></span> €</td>
-		</tr>
-		<tr>
-			<td>Ventes</td>
-			<td style="text-align:right;"><span id="ventes"><?php echo number_format($ventes, 2, ',', ''); ?></span> €</td>
 		</tr>
 		<tr>
 			<td>Delta</td>
@@ -801,13 +768,24 @@ if(caisse_statut == 'Ouverte'){
 	var total_element = 'total_ouverture';
 }
 // calculs
+// default values (set on page load/reload via php)
 var total_ouverture = <?php echo $total_ouverture; ?>;
 var total_fermeture = <?php echo $total_fermeture; ?>;
 var total_depot_banque = <?php echo $total_depot_banque; ?>;
+var ventes_cb = <?php echo $ventes_cb; ?>;
 var recettes = <?php echo $recettes; ?>;
 var ventes = <?php echo $ventes; ?>;
 var delta = <?php echo $delta; ?>;
 var fond_de_caisse = <?php echo $fond_de_caisse; ?>;
+
+
+// refresh ventes, ventes_cb, recettes and delta on window focus
+$(window).on('focus', function(){
+	if($('span#ventes').length){
+		refresh_ventes('<?php echo $caisse_date; ?>');
+		refresh_ventes_cb('<?php echo $caisse_date; ?>');
+	}
+});
 
 <?php 
 // previous fond de caisse (if applicable)
@@ -845,30 +823,34 @@ $('table.amountsDetail input.disabled').on('focus', function(){
 });
 
 // calculate especes total & update ouverture/fermeture/depot banque total
-$('table.amountsDetail tr input.qty').on('blur', function(){
-	var $thisTable = $(this).closest('table.amountsDetail');
-	if($thisTable.attr('id') == 'of'){ // ouverture | fermeture
+$('table.amountsDetail tr input.qty').on('input', function(){
+	var $this = $(this);
+	var $thisTable = $this.closest('table.amountsDetail');
+	// the following can apply to the total of ouverture, fermeture or depot banque, so deptermine which
+	if($thisTable.attr('id') == 'of'){ // ouverture or fermeture
 		var verif = 'VerifCaisse';
 		if(caisse_statut == 'Ouverte'){
-			total_element = 'total_fermeture';
+			total_element = 'total_fermeture'; // fermeture
 		}else if(caisse_statut == 'Ouverture'){
-			total_element = 'total_ouverture';
+			total_element = 'total_ouverture'; // ouverture
 		}
 	}else if($thisTable.attr('id') == 'banque'){ // depot banque
 		var verif = 'VerifDepot';
 		total_element = 'total_depot_banque';
 	}
+	// get values of all sub-totals (espaces and cheques)
 	var $totalEspeces = $thisTable.find('input.totalEspeces');
 	var $totalCheques = $thisTable.find('input.totalCheques');
+	// find grand total elemet
 	var $totalSpans = $thisTable.closest('form').find('span.'+total_element);
 	var especeTotal = 0;
-	var $row = $(this).closest('tr');
-	var billet = $(this).attr('name');
+	var $row = $this.closest('tr');
+	var billet = $this.attr('name');
 	var $sousTotal = $row.find('input.sousTotal');
-	var val = $(this).val();
+	var val = $this.val();
 	if(val === ''){
 		val = 0;
-		$(this).attr('value', 0);
+		$this.attr('value', 0);
 	}
 	var tot = parseFloat(val)*parseFloat(billet);
 	//alert(tot);
@@ -906,11 +888,17 @@ $('table.amountsDetail tr input.qty').on('blur', function(){
 	var v = totalVal.toFixed(2);
 	$totalSpans.text( v.replace(".",",") );
 	// calculs
+	/*
+	$recettes = ($total_fermeture + $ventes_cb) - $total_ouverture;
+	$delta = $recettes - ($ventes - $ventes_cb);
+	*/
 	if(total_element == 'total_fermeture'){
 		total_fermeture = totalVal;
-		recettes = total_fermeture-total_ouverture;
-		//console.log(recettes);
-		delta = recettes-ventes;
+		recettes = (total_fermeture + ventes_cb) - total_ouverture;
+		delta = recettes - (ventes - ventes_cb);
+		// debug
+		//console.log('('+total_fermeture+' + '+ventes_cb+') - '+total_ouverture);
+		//console.log((20 + 0.00) - 107);
 		$('span#recettes').text( recettes.toFixed(2).replace(".",",") );
 		$('span#delta').text( delta.toFixed(2).replace(".",",") );
 	
@@ -929,7 +917,7 @@ $('table.amountsDetail tr input.qty').on('blur', function(){
 });
 
 // calculate cheques total & update ouverture/fermeture/depot banque total
-$('table.tCheques').on('blur', 'tr input.cheque', function(){
+$('table.tCheques').on('input', 'tr input.cheque', function(){
 	var $thisTable = $(this).closest('table.amountsDetail');
 	if($thisTable.attr('id') == 'of'){
 		var verif = 'VerifCaisse';
@@ -939,7 +927,6 @@ $('table.tCheques').on('blur', 'tr input.cheque', function(){
 	}
 	var $totalEspeces = $thisTable.find('input.totalEspeces');
 	var $totalCheques = $thisTable.find('input.totalCheques');
-	var $totalCB = $thisTable.find('input.totalCB');
 	var $totalSpans = $thisTable.closest('form').find('span.'+total_element);
 	var chequeTotal = 0;
 	var $allCheq = $thisTable.find('input.cheque');
@@ -953,7 +940,7 @@ $('table.tCheques').on('blur', 'tr input.cheque', function(){
 		$totalCheques.val( s.replace(".",",") );
 		$totalCheques.attr('value', s);
 	});
-	totalVal = chequeTotal+ parseFloat( $totalCB.val().replace(",",".") ) + parseFloat( $totalEspeces.val().replace(",",".") );
+	totalVal = chequeTotal+ parseFloat( $totalEspeces.val().replace(",",".") );
 	if(verif == 'VerifCaisse'){
 		if(totalVal>0){
 			$('div#'+verif).css('display','none');
@@ -961,7 +948,7 @@ $('table.tCheques').on('blur', 'tr input.cheque', function(){
 			$('div#'+verif).css('display','block');
 		}
 		total_fermeture = totalVal;
-		fond_de_caisse = total_fermeture-total_depot_banque;
+		fond_de_caisse = total_fermeture - total_depot_banque;
 	}else if(verif == 'VerifDepot'){
 		if(totalVal>0 && $('input#porteur_depot_banque').val() == ''){
 			$('div#VerifDepot').css('display','block');
@@ -969,7 +956,7 @@ $('table.tCheques').on('blur', 'tr input.cheque', function(){
 			$('div#VerifDepot').css('display','none');
 		}
 		total_depot_banque = totalVal;
-		fond_de_caisse = total_fermeture-total_depot_banque;
+		fond_de_caisse = total_fermeture - total_depot_banque;
 	}
 
 	// compare fond de caisse et previous fond (if applicable)
@@ -988,38 +975,9 @@ $('table.tCheques').on('blur', 'tr input.cheque', function(){
 	$('span#fond_de_caisse').text( fond_de_caisse.toFixed(2).replace(".",",") );
 });
 
-// calculate CB total & update ouverture/fermeture/depot banque total
-$('table.tCB').on('blur', 'tr input.cb', function(){
-	var $thisTable = $(this).closest('table.amountsDetail');
-	var verif = 'VerifCaisse';
-	var total_element = 'total_fermeture';
-	var $totalEspeces = $thisTable.find('input.totalEspeces');
-	var $totalCheques = $thisTable.find('input.totalCheques');
-	var $totalCB = $thisTable.find('input.totalCB');
-	var $totalSpans = $thisTable.closest('form').find('span.'+total_element);
-	var CBTotal = 0;
-	var $allCB = $thisTable.find('input.cb');
-	$allCB.each(function(){
-		var v = $(this).val().replace(",",".");
-		if(v == ''){
-			v = 0;
-		}
-		CBTotal += parseFloat(v);
-		var s = CBTotal.toFixed(2);
-		$totalCB.val( s.replace(".",",") );
-		$totalCB.attr('value', s);
-	});
-	totalVal = CBTotal+ parseFloat( $totalCheques.val().replace(",",".") ) + parseFloat( $totalEspeces.val().replace(",",".") );
-	if(totalVal>0){
-		$('div#'+verif).css('display','none');
-	}else{
-		$('div#'+verif).css('display','block');
-	}
-	total_fermeture = totalVal;
-	
-	var v = totalVal.toFixed(2);
-	$totalSpans.text( v.replace(".",",") );
-});
+
+
+
 
 // validate caisse on page load
 if( (total_element == 'total_ouverture' && total_ouverture > 0) || (total_element == 'total_fermeture' && total_fermeture > 0) ){
@@ -1137,12 +1095,6 @@ $('button[name="caisseSubmit"]').on('click', function(e){
 	}
 });
 
-// refresh ventes on window focus
-$(window).on('focus', function(){
-	if($('span#ventes').length){
-		refresh_ventes('<?php echo $caisse_date; ?>');
-	}
-});
 
 // warn user before page unload 
 window.onbeforeunload = function(e){
@@ -1157,23 +1109,6 @@ window.onbeforeunload = function(e){
 	}
 };
 
-/* window open memory between admin home to this page */
-/*
-// save the fact that this child window is open, into opener page
-window.reconnect = function(){
-	var i =0;
-	var timer = setInterval(function(){
-		i++;
-		if(window.opener && window.opener.saveChildReference){
-			window.opener.saveChildReference(window);
-			clearTimeout(timer);
-		}
-		if(i > 100){
-			clearTimeout(timer);// stop trying as parent may be closed.
-		}
-	}, 1000);
-};
-*/
 </script>
 
 </body>

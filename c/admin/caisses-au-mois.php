@@ -1,7 +1,7 @@
 <?php
 /* 
  * Page Voir Caisses du Mois
- * Recettes = fermeture - ouverture
+ * Recettes = fermeture + ventes_cb - ouverture
  * Delta = Recettes - Ventes
  * Fond de caisse = total_fermeture - total_depot_banque
  * */
@@ -30,24 +30,14 @@ function show_caisses($caisse_array){
 	$i = $passages_tot = $recettes_tot = $ventes_tot = $seconds_tot = $delta_tot = 0;
 	foreach($caisse_array as $c){
 		$caisse_output = $thead = '';
-		
-		/*
-		$total_ouverture = $c['especes_ouverture']+$c['cheques_ouverture'];
-		$total_fermeture = $c['especes_fermeture']+$c['cheques_fermeture'];
-		$total_fermeture = $c['especes_fermeture']+$c['cheques_fermeture'];
-		$total_depot_banque = $c['depot_especes']+$c['depot_cheques'];
-		$fond_de_caisse = $total_fermeture-$total_depot_banque;
-		$ventes = $ventes = get_ventes_total($c['date']);
-		$recettes = $total_ouverture-$total_fermeture;
-		$delta = $recettes-$ventes;
-		*/
 
 		$c['total_ouverture'] = $c['especes_ouverture']+$c['cheques_ouverture'];
-		$c['total_fermeture'] = $c['especes_fermeture']+$c['cheques_fermeture']+$c['CB_fermeture'];
+		$c['total_fermeture'] = $c['especes_fermeture']+$c['cheques_fermeture'];
 		$c['total_depot_banque'] = $c['depot_especes']+$c['depot_cheques'];
 		$c['fond_de_caisse'] = ($c['especes_fermeture']+$c['cheques_fermeture'])-$c['total_depot_banque'];
+		$c['cb'] = get_ventes_cb($c['date']);
 		$c['ventes'] = get_ventes_total($c['date']);
-		$c['recettes'] = $c['total_fermeture']-$c['total_ouverture'];
+		$c['recettes'] = $c['total_fermeture']+$c['cb']-$c['total_ouverture'];
 		$c['delta'] = $c['recettes']-$c['ventes'];
 
 		$seconds = time_diff($c['horaire_am_start'], $c['horaire_am_end'])+time_diff($c['horaire_pm_start'], $c['horaire_pm_end']);
@@ -57,6 +47,7 @@ function show_caisses($caisse_array){
 		foreach($c as $k => $v){
 			// initialize td default class
 			$class = 'norm';
+			
 			// ignore these fields
 			if($k !== 'id' && $k !== 'horaire_am_start' && $k !== 'horaire_am_end' && $k !== 'horaire_pm_start' && $k !== 'horaire_pm_end' && $k !== 'especes_ouverture' && $k !== 'especes_fermeture' && $k !== 'cheques_ouverture' && $k !== 'cheques_fermeture' && $k !== 'CB_ouverture' && $k !== 'CB_fermeture' && $k !== 'depot_especes' && $k !== 'depot_cheques' ){
 				
@@ -74,11 +65,11 @@ function show_caisses($caisse_array){
 						}
 						$v_prime = 'espèces:'.$c['especes_ouverture'].'<br>chèques:'.$c['cheques_ouverture'];
 					}elseif($k == 'total_fermeture'){
-						$v_prime = 'espèces:'.$c['especes_fermeture'].'<br>chèques:'.$c['cheques_fermeture'].'<br>CB:'.$c['CB_fermeture'];
+						$v_prime = 'espèces:'.$c['especes_fermeture'].'<br>chèques:'.$c['cheques_fermeture'].'<br>CB:'.$c['cb'];
 					}else{
 						$v_prime = 'espèces:'.$c['depot_especes'].'<br>chèques:'.$c['depot_cheques'];
 					}
-					$v = '<div class="short">'.$v.'<div class="long">'.$v_prime.'</div></div>';
+					$v = '<div class="short">'.number_format($v, 2, ',', '').'<div class="long">'.$v_prime.'</div></div>';
 				
 				// recettes, delta
 				}elseif( ($k == 'recettes' || $k == 'delta') && $v < 0){
@@ -105,6 +96,11 @@ function show_caisses($caisse_array){
 				// heures
 				}elseif($k == 'heures'){
 					$v = '<div class="short">'.$v.'<div class="long">('.$c['horaire_am_start'].'-'.$c['horaire_am_end'].'<br>'.$c['horaire_pm_start'].'-'.$c['horaire_pm_end'].')</div></div>';
+				}
+
+				// format numbers
+				if(is_numeric($v) && $k !== 'passages'){
+					$v = number_format($v, 2, ',', '');
 				}
 
 				$caisse_output .= '<td class="'.$class.'">'.$v.'</td>';
@@ -134,10 +130,10 @@ function show_caisses($caisse_array){
 	$output .= '<tr class="totals">
 	<td colspan="4" style="text-align:left;">'.$i.' Jours Ouverts &horbar; Total &rarr;</td>
 	<td>'.$passages_tot.'</td>
-	<td colspan="5"></td>
-	<td>'.$ventes_tot.'</td>
-	<td>'.$recettes_tot.'</td>
-	<td>'.$delta_tot.'</td>
+	<td colspan="6"></td>
+	<td>'.number_format($ventes_tot, 2, ',', '').'</td>
+	<td>'.number_format($recettes_tot, 2, ',', '').'</td>
+	<td>'.number_format($delta_tot, 2, ',', '').'</td>
 	<td>'.$heures_total.'</td>
 	</tr>';
 	$output .= '</table>';

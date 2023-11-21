@@ -65,6 +65,25 @@ function get_ventes_total($date){
 	}
 }
 
+// get CB ventes by date
+function get_ventes_cb($date){
+	global $db;
+	$time_start = strtotime($date);
+	$time_end = $time_start+86400;
+	$q = "SELECT SUM(total) FROM `paniers` WHERE `statut_id` = '4' AND `paiement_id` = '3' AND `date_vente` >= ".$time_start." AND `date_vente` < ".$time_end;
+
+	// debug
+	//echo '<pre>'.__FUNCTION__.PHP_EOL.$q.'</pre>';
+
+	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
+	$total = mysqli_fetch_row($query);
+	if( !empty($total[0]) ){
+		return $total[0];
+	}else{
+		return 0;
+	}
+}
+
 /** Return multi-dimentional array from id_parent/Child hierarchy table
  * For 'categories' and 'matieres' tables
  *  */ 
