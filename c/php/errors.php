@@ -4,7 +4,7 @@
 set_error_handler("errorHandler");
 register_shutdown_function("shutdownHandler");
 
-function errorHandler($error_level, $error_message, $error_file, $error_line, $error_context){
+function errorHandler($error_level, $error_message, $error_file, $error_line,  $error_context=''){
 	$error = "level: ".$error_level." | msg:".$error_message." | file:".$error_file." | line:".$error_line;
 	switch ($error_level){
 		case E_ERROR:
@@ -40,17 +40,19 @@ function errorHandler($error_level, $error_message, $error_file, $error_line, $e
 
 function shutdownHandler(){ //will be called when php script ends.
 	$lasterror = error_get_last();
-	switch ($lasterror['type']){
-		case E_ERROR:
-		case E_CORE_ERROR:
-		case E_COMPILE_ERROR:
-		case E_USER_ERROR:
-		case E_RECOVERABLE_ERROR:
-		case E_CORE_WARNING:
-		case E_COMPILE_WARNING:
-		case E_PARSE:
-		$error = "[SHUTDOWN] level:".$lasterror['type']." | msg:".$lasterror['message']." | file:".$lasterror['file']." | line:".$lasterror['line'];
-		log_custom_error($error, "fatal");
+	if( !empty($lasterror) ){
+		switch ($lasterror['type']){
+			case E_ERROR:
+			case E_CORE_ERROR:
+			case E_COMPILE_ERROR:
+			case E_USER_ERROR:
+			case E_RECOVERABLE_ERROR:
+			case E_CORE_WARNING:
+			case E_COMPILE_WARNING:
+			case E_PARSE:
+			$error = "[SHUTDOWN] level:".$lasterror['type']." | msg:".$lasterror['message']." | file:".$lasterror['file']." | line:".$lasterror['line'];
+			log_custom_error($error, "fatal");
+		}
 	}
 }
 
@@ -64,40 +66,46 @@ function log_db_errors($error, $query){
 
 function log_custom_error($error, $errlvl){
 
+	/*
 	$headers  = 'MIME-Version: 1.0'."\r\n";
 	$headers .= 'Content-type: text/html; charset=iso-8859-1'."\r\n";
 	$headers .= 'From: '.str_replace(array('.','/','http:','https:'), '', SITE).' <admin@'.$_SERVER['HTTP_HOST'].'>'."\r\n";
+	*/
+	$message = '<aside>';
 
 	if( defined('SITE') ){
-		$message = '<aside>----------------------------------<br>An error has occurred on '.SITE.':</aside>';
+		$message .= PHP_EOL.'<br>An error has occurred on '.SITE.':<br>';
 	}else{
-		$message = '<aside>----------------------------------</aside>';
+		$message .= '<br>----------------------';
 	}
 
-	$message .= '<aside>Error at '.date('Y-m-d H:i:s').': ';
+	$message .= 'Error at '.date('Y-m-d H:i:s').': ';
 	$message .= 'URI: '.$_SERVER['REQUEST_URI'].': ';
 	$error = explode('|', $error);
 	foreach($error as $e){
 		$message .= $e.'<br>';
 	}
-	$message .= 'Severity: '.$errlvl.'</aside>';
+	$message .= 'Severity: '.$errlvl;
 
-	if( defined('SEND_ERRORS_TO') ){
-		mail(SEND_ERRORS_TO , 'Error on '.$_SERVER['HTTP_HOST'], $message, $headers);
+	$message .= '</aside>';
+
+	if( defined('SEND_ERRORS_TO') ){ // removed $headers so mail gets sent!
+		$no_html_message = str_replace(array('<br>','<aside>','</aside>'), "\r\n", $message);
+		mail(SEND_ERRORS_TO , 'Error on '.$_SERVER['HTTP_HOST'], $no_html_message );
 	}
 
 	if(DISPLAY_DEBUG){
 		echo $message;
 	}
 
-	if(LOG_ERRORS){
+	if( LOG_ERRORS && file_exists(ROOT.'_ressource_custom/hGtDjkpPWSXk.php') ){
 
 		$logfile = ROOT.'_ressource_custom/hGtDjkpPWSXk.php';
 		$message = strip_tags( $message, '<p><br>' );
-		$message = str_replace( array( '<p>', '</p>', '<aside>', '</aside>', '<br />', '<br>' ), PHP_EOL, $message );
+		$message = str_replace( array( '<p>', '</p>', '<br />', '<br>' ), PHP_EOL, $message );
 		// add HTTP_REF (added aug 4 2014)
 		if( isset($_SERVER['HTTP_REFERER']) ){
-			$message .= 'http_ref: '.$_SERVER['HTTP_REFERER'].PHP_EOL;
+			$message .= PHP_EOL.'http_ref: '.$_SERVER['HTTP_REFERER'].PHP_EOL;
 		}
 		// add session tracking (added june 18 2014)
 		if( isset($_SESSION) && !empty($_SESSION) ){
@@ -111,7 +119,7 @@ function log_custom_error($error, $errlvl){
 						}
 					}
 				}
-				$message .= $k.' Session: '.$v.PHP_EOL;
+				$message .= ' '.$k.' Session: '.$v.PHP_EOL;
 			}
 		}
 
@@ -121,7 +129,7 @@ function log_custom_error($error, $errlvl){
 					if( is_array($v) ){
 						$v = implode(',', $v);
 					}
-					$message .= $k.' Cookie: '.$v.PHP_EOL;
+					$message .= ' '.$k.' Cookie: '.$v.PHP_EOL;
 				}
 			}
 		}

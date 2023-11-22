@@ -337,7 +337,7 @@ function update_table($table, $id, $update){
 
 
 function insert_new($table, $item_data){
-	global $db;
+	global $db, $articles_visible; // if $articles_visible == '0' in params.php, no need to create corresponding dir in _ressource_custom/uploads/img_dir 
 
 	$array_keys = $array_values = array();
 
@@ -376,7 +376,7 @@ function insert_new($table, $item_data){
 	if( mysqli_query($db, $q) ){
 		// create images directory if article
 		$new_id = mysqli_insert_id($db);
-		if($table == 'articles'){
+		if($table == 'articles' && $articles_visible == 1){ // only create article dir if articles are visible in params.php
 			copyr(ROOT.'c/templates/img_dir', ROOT.'_ressource_custom/uploads/'.$new_id);
 		}
 		return $new_id;

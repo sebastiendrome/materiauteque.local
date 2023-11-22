@@ -97,8 +97,10 @@ if( isset($_GET['get_children']) ){
 	$table = urldecode($_GET['table']);
 	$id_parent = urldecode($_GET['id_parent']);
 	$children_array = get_children($table, $id_parent);
-	foreach($children_array as $ca){
-		$result .= '<option value="'.$ca['id'].'">'.$ca['nom'].'</option>';
+	if( !empty($children_array) ){
+		foreach($children_array as $ca){
+			$result .= '<option value="'.$ca['id'].'">'.$ca['nom'].'</option>';
+		}
 	}
 }
 

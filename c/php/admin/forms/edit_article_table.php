@@ -101,7 +101,7 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 -->
 		<tr>
 		<td>Catégorie:<td>
-		<select name="categories_id"<?php echo in_array('categories_id', $required) ? " required" : ""; ?> onchange="if($(this).val()=='<?php echo $participations_id; ?>'){$('input[name=poids]').val('0');$('#matieres_id option[value=<?php echo $matiere_autre_id; ?>]').prop('selected', true);}else{$('input[name=poids]').val('');$('#matieres_id option:eq(0)').prop('selected', true);}">
+		<select name="categories_id"<?php echo in_array('categories_id', $required) ? " required" : ""; ?> onchange="if($(this).val()=='<?php echo $participations_id; ?>'){$('input[name=poids]').val('0');$('tr#sousCatTR').css('display','table-row');$('#matieres_id option[value=<?php echo $matiere_autre_id; ?>]').prop('selected', true);}else{$('input[name=poids]').val('');$('#matieres_id option:eq(0)').prop('selected', true);$('tr#sousCatTR').css('display','none');}">
 			<?php
 			$options = '';
 			/*if( !isset($item_data['categories_id']) ){
@@ -119,7 +119,8 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 					if($item_data['categories_id'] == $cat['id']){
 						$selected = ' selected';
 					}
-				}elseif($cat['nom'] == 'Vente'){ // 'ventes matériauthèques' pour la matériauthèque
+				// pre-select ventes (ou 'vente', ou 'ventes matériauthèques'...)
+				}elseif( stristr($cat['nom'], 'vente') ){
 					$selected = ' selected';
 				}
 				$options .= '<option value="'.$cat['id'].'"'.$selected.'>'.$cat['nom'].'</option>';
@@ -129,16 +130,19 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 		</select>
 
 		<?php 
-		if(isset($sous_cats)){ 
+		// if sous-categories are not empty, show them and enable tham, if not hide them and disable them
+		if( isset($sous_cats) && !empty($sous_cats) ){ 
+			$sous_cats_visible = 'display:table-row;';
 			$sous_cats_enabled = '';
 		}else{
 			$sous_cats_enabled = ' disabled';
+			$sous_cats_visible = 'display:none;';
 			$sous_cats = array();
 		}	
 		?>
 
 		
-		<tr id="sousCatTR">
+		<tr id="sousCatTR" style="<?php echo $sous_cats_visible; ?>">
 		<td>Sous-catégorie:<td>
 		<select name="sous_categories_id"<?php echo in_array('sous_categories_id', $required) ? " required" : ""; ?><?php echo $sous_cats_enabled; ?>>
 			<?php
@@ -150,7 +154,7 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 					$options .= '<option value="">Choisir...</option>';
 				}
 			}
-			if( !empty($sous_cats) ){
+			if( isset($sous_cats) && !empty($sous_cats) ){
 				foreach($sous_cats as $s_cat){
 					$selected = '';
 					if( isset($item_data['categories_id']) ){
