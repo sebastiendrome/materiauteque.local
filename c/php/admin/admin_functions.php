@@ -377,13 +377,10 @@ function display_paniers($paniers){
 // refresh ventes in caisse.php
 function refresh_ventes($date){
 	$ventes = get_ventes_total($date);
-	return $ventes;
-}
-// refresh ventes CB in caisse.php
-function refresh_ventes_cb($date){
 	$ventes_cb = get_ventes_cb($date);
-	return $ventes_cb;
+	return $ventes.':'.$ventes_cb;
 }
+
 /*********** 3: ACTIVE FUNCTIONS (FUNCTIONS THAT CHANGE THE Content) ***************/
 
 // SAVE PANIER CHANGES

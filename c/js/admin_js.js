@@ -260,57 +260,6 @@ function duplicate_vrac_article(id, old_poids, old_prix){
 	});
 }
 
-// refresh ventes (in caisse.php on window focus)
-function refresh_ventes(date){
-	$.ajax({
-		url: rel+'c/php/admin/admin_ajax.php?refreshVentes&date='+date,
-		type: 'GET',
-		success : function(msg){
-			//$('span#ventes').text(msg.replace('.',','));
-			update_ventes(msg, 'ventes');
-			return msg;
-		},
-		error: function(msg){
-			alert('Error with refreshVentes ajax call. date:'+date+"\n"+msg);
-		}
-	});
-}
-// refresh ventes cb (in caisse.php on window focus)
-function refresh_ventes_cb(date){
-	$.ajax({
-		url: rel+'c/php/admin/admin_ajax.php?refreshVentesCb&date='+date,
-		type: 'GET',
-		success : function(msg){
-			//$('span#ventes_cb').text(msg.replace('.',','));
-			update_ventes(msg, 'ventes_cb');
-			return msg;
-		},
-		error: function(msg){
-			alert('Error with refreshVentes ajax call. date:'+date+"\n"+msg);
-		}
-	});
-}
-// update results from above ajax calls (update ventes and ventes_cb value)
-function update_ventes(msg, target){ // target can be 'ventes' or 'ventes_cb'
-	if(target == 'ventes'){
-		ventes = parseFloat(msg).toFixed(2);
-		$('span#ventes').text( ventes.replace(".",",") );
-	}else if(target == 'ventes_cb'){
-		ventes_cb = parseFloat(msg).toFixed(2);
-		$('span#ventes_cb').text( ventes_cb.replace(".",",") );
-	}
-	ventes = Number(ventes);
-	ventes_cb = Number(ventes_cb);
-	//console.log('ventes='+ventes+' '+typeof ventes);
-	// also update Recettes & Delta
-	var tot_ferm = $('span#total_fermeture').text().replace(',','.');
-	var tot_ouv = $('span#total_ouverture').text().replace(',','.');
-	var recettes = (parseFloat(tot_ferm) + ventes_cb) - parseFloat(tot_ouv);
-	var delta = recettes - (ventes - ventes_cb);
-	$('span#recettes').text(recettes.toFixed(2).replace(".",","));
-	$('span#delta').text(delta.toFixed(2).replace(".",","));
-}
-
 
 /******** paniers functions ********/
 

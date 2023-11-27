@@ -10,11 +10,6 @@ if( isset($_GET['refreshVentes']) ){
 	$date = urldecode($_GET['date']);
 	$result = refresh_ventes($date);
 }
-// refresh ventes CB in caisse.php on window focus (called from caisse.php)
-if( isset($_GET['refreshVentesCb']) ){
-	$date = urldecode($_GET['date']);
-	$result = refresh_ventes_cb($date);
-}
 
 // file upload
 if( isset($_POST['contextNewFile']) ){

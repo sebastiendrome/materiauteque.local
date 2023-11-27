@@ -88,7 +88,8 @@ function show_caisses($caisse_array){
 				}elseif($k == 'statut_id'){
 					if($v == 1){
 						$class = 'error';
-						$v = 'Ouverte';
+						// 2023-11-24
+						$v = '<a href="caisse.php?&day='.substr($c['date'],8,2).'&month='.substr($c['date'],5,2).'&year='.substr($c['date'],0,4).'" target="_blank" title="voir cette caisse dans une nouvelle fenêtre" style="color:#bb0808;">Ouverte</a>';
 					}else if($v == 2){
 						$v = 'Fermée';
 					}
