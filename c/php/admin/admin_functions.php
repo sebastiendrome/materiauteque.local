@@ -374,7 +374,7 @@ function display_paniers($paniers){
 	return $output;
 }
 
-// refresh ventes in caisse.php
+// refresh ventes (en ventes_cb) -> only used in caisse.php for now
 function refresh_ventes($date){
 	$ventes = get_ventes_total($date);
 	$ventes_cb = get_ventes_cb($date);

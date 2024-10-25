@@ -169,9 +169,9 @@ function filter($data){
 	global $db;
 	if( !is_array($data) ){
 		$data = strip_tags($data);
-		if( get_magic_quotes_gpc() ){
+		/*if( get_magic_quotes_gpc() ){
 			$data = stripslashes($data);
-		}
+		}*/
 		$data = mysqli_real_escape_string($db, $data);
 	}else{
 		//Self call function to sanitize array data

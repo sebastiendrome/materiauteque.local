@@ -19,11 +19,11 @@ define("SITE", $_SERVER['HTTP_HOST']);
 // both vars above are needed for processing _ressource_custom.php required below
 
 // document root (beware of inconsistent trailing slash depending on environment, hence the use of realpath)
-$root = realpath($_SERVER['DOCUMENT_ROOT']);
-
+$root = realpath($_SERVER['DOCUMENT_ROOT']).'/magazin';
+echo $root.'/_ressource_custom/params.php';
 // include custom parameters, or set default values
-if( file_exists($root.'/magazin/_ressource_custom/params.php') ){
-	require $root.'/magazin/_ressource_custom/params.php';
+if( file_exists($root.'/_ressource_custom/params.php') ){
+	require $root.'/_ressource_custom/params.php';
 }else{
 	date_default_timezone_set('Europe/Paris');
 	$ressource_custom = false;
@@ -71,7 +71,7 @@ if( !$ressource_custom && strstr(SITE,'.local') ){ 	// default local server, no 
 	$db_host = "127.0.0.1";
 	$db_user = "root";
 	$db_pass = '';
-	$db_name = 'bisusus';
+	$db_name = 'materiauteque';
 }elseif( !$ressource_custom || !isset($db_host) ){ // no custom remote server: Abort.
 	echo '<p style="color:red;">ERROR: No DB connection data!...</p>';
 	exit;

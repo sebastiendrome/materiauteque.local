@@ -13,8 +13,8 @@ define("TITLE", 'Matériauthèque de Die');
 $public_site_visible = 0;
 $caisse_visible = 1;
 $ventes_visible = 1;
-$articles_visible = 0;
-$categories_visible = 0;
+$articles_visible = 1;
+$categories_visible = 1;
 
 // Errors handling and database connection parameters
 if( strstr(SITE,'.local') ){ 	// this local server DB
@@ -22,7 +22,6 @@ if( strstr(SITE,'.local') ){ 	// this local server DB
 	ini_set('display_errors', 0);
 	$display_debug = FALSE;
 	$log_errors = TRUE;
-	//define("SEND_ERRORS_TO", AUTHOR_REF);
 	
 	// CUSTOM database
 	$db_host = "127.0.0.1";
@@ -39,7 +38,7 @@ if( strstr(SITE,'.local') ){ 	// this local server DB
 	// CUSTOM database
 	$db_host = "localhost";
 	// $db_port = 3306;
-	$db_user = "fixw2867_bisusus";
+	$db_user = "fixw2867_bis";
 	$db_pass = "matériauthèque";
 	$db_name = 'fixw2867_bisusus';
 }
