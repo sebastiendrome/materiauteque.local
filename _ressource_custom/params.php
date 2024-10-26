@@ -13,8 +13,11 @@ define("TITLE", 'Matériauthèque de Die');
 $public_site_visible = 0;
 $caisse_visible = 1;
 $ventes_visible = 1;
-$articles_visible = 1;
-$categories_visible = 1;
+$articles_visible = 0;
+$categories_visible = 0;
+
+// is this logiciel to be used online (remotely) or offline (locally)?
+$online = 1;
 
 // Errors handling and database connection parameters
 if( strstr(SITE,'.local') ){ 	// this local server DB

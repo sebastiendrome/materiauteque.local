@@ -9,6 +9,8 @@ var oldVal = ''; // global var used to store an input value and compare it to it
 // js equivalent to php time(), will be used throughout functions
 var unix_time = Math.round((new Date()).getTime()/1000);
 
+// will be used to clearTimeout(hideDoneMessage) throughout various functions
+var hideDoneMessage;
 
 /***** functions *****************************************************/
 
@@ -59,12 +61,11 @@ function bytesToReadbale(sizeInBytes){
 
 // show result message in div#done after a query has been completed
 function showDone(){
-	var t5;
 	$('#done').show();
 	var len = $('#done').find('p').text().length;
 	//alert(len);
 	if(len < 50){
-		t5 = setTimeout(function(){
+		hideDoneMessage = setTimeout(function(){
 			$('#done').fadeOut(800, function(){
 				$('#done').html('');
 			});
@@ -763,14 +764,6 @@ $(window).on('unload', function(){
 
 //sessionStorage.removeItem("paniersHtml");
 */
-
-
-
-
-
-
-
-
 
 
 

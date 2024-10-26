@@ -21,9 +21,27 @@ define("SITE", $_SERVER['HTTP_HOST']);
 // document root (beware of inconsistent trailing slash depending on environment, hence the use of realpath)
 $root = realpath($_SERVER['DOCUMENT_ROOT']);
 
+/* 
+We KNOW that this file is within 'c/php', which may or may not be at web root 
+(/c/php, OR /dir/c/php) 
+so let's see if there's anything between ROOT and 'c/php',
+if yes, it is the directory we have to add to all our relative paths
+*/
+$rel = preg_replace('/('.preg_quote($root, '/').'|c\/php)/', '', realpath(__DIR__));
+/* debug */
+//echo '<h1>REL: '.$rel.'</h1>';
+
+define("ROOT", $root.$rel);
+
+// site relative root
+define("REL", $rel);
+
+/* debug */
+//echo ROOT.'_ressource_custom/params.php';
+
 // include custom parameters, or set default values
-if( file_exists($root.'/magazin/_ressource_custom/params.php') ){
-	require $root.'/magazin/_ressource_custom/params.php';
+if( file_exists(ROOT.'_ressource_custom/params.php') ){
+	require ROOT.'_ressource_custom/params.php';
 }else{
 	date_default_timezone_set('Europe/Paris');
 	$ressource_custom = false;
@@ -42,21 +60,6 @@ if(!$ressource_custom || !isset($admin_username) ){
 }
 $master_username = 'd756b59530a2ad4b4d1bc0468f89631c2bbdb03a';
 $master_password = 'dfc46fa4321fecc8de64ed31087e25c2c9a1b76d';
-
-/* 
-We KNOW that this file is within 'c/php', which may or may not be at web root 
-(/c/php, OR /dir/c/php) 
-so let's see if there's anything between ROOT and 'c/php',
-if yes, it is the directory we have to add to all our relative paths
-*/
-$rel = preg_replace('/('.preg_quote($root, '/').'|c\/php)/', '', realpath(__DIR__));
-/* debug */
-//echo '<h1>REL: '.$rel.'</h1>';
-
-define("ROOT", $root.$rel);
-
-// site relative root
-define("REL", $rel);
 
 // Protocol: http vs https
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";

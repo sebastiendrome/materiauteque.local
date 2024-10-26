@@ -82,13 +82,13 @@ while( $row = mysqli_fetch_assoc($query) ){
     echo $row['nom'];
     echo '</td>';
 	echo '<td class="right">';
-    echo $somme['unites'];
+    if(isset($somme['unites'])){echo $somme['unites'];}
     echo '</td>';
     echo '<td class="right">';
-    echo $somme['Ventes'];
+	if(isset($somme['Ventes'])){echo $somme['Ventes'];}
     echo '</td>';
     echo '<td class="right">';
-    echo $somme['Poids'];
+	if(isset($somme['Poids'])){echo $somme['Poids'];}
     echo '</td>';
 		$query2 = mysqli_query($db, 'SELECT * FROM `matieres` WHERE `id_parent`='.$row['id'].'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
     while( $row2 = mysqli_fetch_assoc($query2) ){
@@ -101,13 +101,13 @@ while( $row = mysqli_fetch_assoc($query) ){
         echo $row2['nom'];
         echo '</td>';
 		echo '<td class="right">';
-        echo $somme2['unites'];
+        if(isset($somme['unites'])){echo $somme['unites'];}
         echo '</td>';
         echo '<td class="right">';
-        echo $somme2['Ventes'];
+        if(isset($somme['Ventes'])){echo $somme['Ventes'];}
         echo '</td>';
         echo '<td class="right">';
-        echo $somme2['Poids'];
+        if(isset($somme['Poids'])){echo $somme['Poids'];}
         echo '</td>';
         echo '</tr>';
     }
