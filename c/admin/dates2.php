@@ -2,7 +2,10 @@
 if( !defined("ROOT") ){
 	require('../php/first_include.php');
 }
-
+// format numbers european style
+function nf($num){
+	return str_replace(".",",",$num);
+}
 // set default date range (=today)
 $date_debut = array(date('d'),date('m'),date('Y'));
 $date_fin = array(date('d'),date('m'),date('Y'));
@@ -22,12 +25,16 @@ if (isset($_GET['an'])){
     if (isset($_GET['an2'])) $date_fin[2] = $_GET['an2'];
     else $date_fin[2] = $_GET['an'];
 }
+$time_start = mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]);
+$time_end = mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]);
 ?>
 <style>
 body, table td, input{font-family: 'Courier New', Courier, monospace;}
 form input[type=text]{width:30px; border:1px solid #ccc; font-size:15px;}
 form input.an{width:50px;}
-table td{padding:1px 10px 1px 0;}
+table{background-color:#eee; border-spacing:1px;}
+tr.main td{font-weight:bold;}
+table td{padding:1px 10px 1px 0; background-color:#fff;}
 td.right{text-align: right;}
 </style>
 <form name="daterange" method="GET" action="">
@@ -46,13 +53,14 @@ Fin hier : <?php echo mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]) ?>
 -->
 	
 <?php
-$query = mysqli_query($db,'SELECT SUM(total) AS `Ventes`, SUM(poids) AS `Poids` FROM `paniers` WHERE `date_vente`>'.mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]).' AND `date_vente`<'.mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]).'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
+// calculate totals (ventes and poids)
+$query = mysqli_query($db,'SELECT SUM(total) AS `Ventes`, SUM(poids) AS `Poids` FROM `paniers` WHERE `date_vente`>'.$time_start.' AND `date_vente`<'.$time_end.'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
 	while( $row = mysqli_fetch_assoc($query) ){
 		$data[] = $row;
 	}
 	if( !empty($data) ){
-		echo '<b>Ventes : '.str_replace('.',',',$data[0]['Ventes']).' &nbsp;€</b></br>';
-		echo '<b>Poids &nbsp;: '.str_replace('.',',',$data[0]['Poids']).' kg</b></br>';
+		echo '<b>Ventes : '.nf($data[0]['Ventes']).' &nbsp;€</b></br>';
+		echo '<b>Poids &nbsp;: '.nf($data[0]['Poids']).' kg</b></br>';
 	}else{
 		echo 'Aucune vente';
 	}
@@ -62,41 +70,49 @@ $query = mysqli_query($db,'SELECT SUM(total) AS `Ventes`, SUM(poids) AS `Poids` 
 <table>
     <tr>
         <td><u>CATEGORIE</u></td>
+		<td class="right"><u>UNITÉS</u></td>
         <td class="right"><u>VENTES</u></td>
         <td class="right"><u>POIDS</u></td>
     </tr>
 <?php
 $query = mysqli_query($db,'SELECT * FROM `categories` WHERE `id_parent`=0') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
-while( $row = mysqli_fetch_assoc($query) ){$somme2 = array(0,0);
+while( $row = mysqli_fetch_assoc($query) ){
+	$somme2 = array(0,0);
     $somme = array(0,0);    
-    if($query3 = mysqli_query($db,'SELECT SUM(articles.prix) AS `Ventes`, SUM(articles.poids) AS `Poids` FROM `paniers`,`articles` WHERE `paniers`.`statut_id`=4 AND categories_id='.$row['id'].' AND paniers_id=paniers.id AND paniers.`date_vente`>'.mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]).' AND paniers.`date_vente`<'.mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]).'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__)){
+    if($query3 = mysqli_query($db,'SELECT COUNT(articles.id) AS `unites`, SUM(articles.prix) AS `Ventes`, SUM(articles.poids) AS `Poids` FROM `paniers`,`articles` WHERE `paniers`.`statut_id`=4 AND categories_id='.$row['id'].' AND paniers_id=paniers.id AND paniers.`date_vente`>'.$time_start.' AND paniers.`date_vente`<'.$time_end.'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__)){
         $somme = mysqli_fetch_assoc($query3);
     }
-    echo '<tr>';
+    echo '<tr class="main">';
     echo '<td>';
-    echo '<b>'.$row['nom'].'</b>';
+    echo $row['nom'];
+    echo '</td>';
+	echo '<td class="right">';
+    if(isset($somme['unites'])){echo $somme['unites'];}
     echo '</td>';
     echo '<td class="right">';
-    echo '<b>'.$somme['Ventes'].'</b>';
+	if(isset($somme['Ventes'])){echo nf($somme['Ventes']);}
     echo '</td>';
     echo '<td class="right">';
-    echo '<b>'.$somme['Poids'].'</b>';
+	if(isset($somme['Poids'])){echo nf($somme['Poids']);}
     echo '</td>';
 		$query2 = mysqli_query($db,'SELECT * FROM `categories` WHERE `id_parent`='.$row['id'].'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__);
     while( $row2 = mysqli_fetch_assoc($query2) ){
         $somme2 = array(0,0);
-        if($query4 = mysqli_query($db,'SELECT SUM(articles.prix) AS `Ventes`, SUM(articles.poids) AS `Poids` FROM `paniers`,`articles` WHERE `paniers`.`statut_id`=4 AND sous_categories_id='.$row2['id'].' AND paniers_id=paniers.id AND paniers.`date_vente`>'.mktime(0,0,0,$date_debut[1],$date_debut[0],$date_debut[2]).' AND paniers.`date_vente`<'.mktime(23,59,59,$date_fin[1],$date_fin[0],$date_fin[2]).'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__)){
+        if($query4 = mysqli_query($db,'SELECT COUNT(articles.id) AS `unites`, SUM(articles.prix) AS `Ventes`, SUM(articles.poids) AS `Poids` FROM `paniers`,`articles` WHERE `paniers`.`statut_id`=4 AND sous_categories_id='.$row2['id'].' AND paniers_id=paniers.id AND paniers.`date_vente`>'.$time_start.' AND paniers.`date_vente`<'.$time_end.'') or log_db_errors( mysqli_error($db), 'Function: '.__FUNCTION__)){
             $somme2 = mysqli_fetch_assoc($query4);
         }
-        echo '<tr>';
+        echo '<tr class="sub">';
         echo '<td>';
-        echo ''.$row2['nom'].'';
+        echo $row2['nom'];
+        echo '</td>';
+		echo '<td class="right">';
+        if(isset($somme2['unites'])){echo $somme2['unites'];}
         echo '</td>';
         echo '<td class="right">';
-        echo ''.$somme2['Ventes'].'';
+        if(isset($somme2['Ventes'])){echo nf($somme2['Ventes']);}
         echo '</td>';
         echo '<td class="right">';
-        echo ''.$somme2['Poids'].'';
+        if(isset($somme2['Poids'])){echo nf($somme2['Poids']);}
         echo '</td>';
         echo '</tr>';
     }

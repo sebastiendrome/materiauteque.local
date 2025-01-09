@@ -288,4 +288,31 @@ $SaForm.on('mouseenter', function(){
 	$NaForm.css('opacity', 1);
 });
 
+$('form#newArticle').on('change', 'select[name=categories_id]', function(){
+	if($(this).val()=='<?php echo $participations_id; ?>'){
+		$('tr#sousCatTR').css('display','table-row');
+		$('input[name=poids]').val('0');
+		$('select[name=sous_categories_id]').prop('required',true);
+		$('#matieres_id option[value=<?php echo $matiere_autre_id; ?>]').prop('selected', true);
+		$('tr#matiereTR').css('display','none');
+		$('tr#poidsTR').css('display','none');
+	}else{
+		$('tr#matiereTR').css('display','table-row');
+		$('tr#poidsTR').css('display','table-row');
+		$('input[name=poids]').val('');
+		$('#matieres_id option:eq(0)').prop('selected', true);
+		$('select[name=sous_categories_id]').prop('required',false);
+		$('tr#sousCatTR').css('display','none');
+	}
+});
+
+$('form#newArticle').on('reset', function(){
+	$('tr#matiereTR').css('display','table-row');
+	$('tr#poidsTR').css('display','table-row');
+	$('input[name=poids]').val('');
+	$('#matieres_id option:eq(0)').prop('selected', true);
+	$('select[name=sous_categories_id]').prop('required',false);
+	$('tr#sousCatTR').css('display','none');
+});
+
 </script>

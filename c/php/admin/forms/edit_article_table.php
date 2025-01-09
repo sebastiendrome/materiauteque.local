@@ -51,10 +51,17 @@ if(!isset($matieres)){
 }
 
 /** !!!!!!!! this gets 'Participations id for showing/hiding Sous Catégories select menu */
-$participations_id = name_to_id('Participations', 'categories');
+$participations_id = name_to_id('Participations', 'categories'); 
+if($participations_id == false){
+	echo '<p class="error">ERREUR:<br>La catégorie "Participations" n\'existe plus dans la base de donnée!<br>Elle a été supprimée ou son nom a été changé. Le logiciel ne peut plus enregistrer les Adhésions.</p>';
+}
+
 /** !!!!!!!! this gets matieres id for "Autre", for selecting "Autre" if "Participations" is selected as Categories */
-$matiere_autre_id = name_to_id('Autre', 'matieres');
-//$matiere_autre_id = name_to_id('(hors matériaux)', 'matieres'); // matériauthèque
+//$matiere_autre_id = name_to_id('Autre', 'matieres');
+$matiere_autre_id = name_to_id('(hors matériaux)', 'matieres'); // matériauthèque
+/*if($matiere_autre_id == false){
+	echo '<p class="error">ERREUR:<br>La Matière "(hors matériaux)" n\'existe plus dans la base de donnée!<br>Elle a été supprimée ou son nom a été changé...</p>';
+}*/
 
 if( isset($item_data['id']) && !empty($item_data['id']) ){
 	echo '<input type="hidden" name="id" value="'.$item_data['id'].'">';
@@ -97,11 +104,11 @@ if( isset($item_data['id']) && !empty($item_data['id']) ){
 		?>
 
 <!-- !!!!!!!!
- ci-dessous: quand $(this).val()==$participations_id, matières select menu selectionne l'option "Autre", puis poids = '0'; sinon, matières select menu selectionne "Choisir...", et poids=''. 
+ ci-dessous: quand $(this).val()==$participations_id, matières select menu selectionne l'option "Autre" (ou Hors matériaux), puis poids = '0'; sinon, matières select menu selectionne "Choisir...", et poids=''. 
 -->
 		<tr>
 		<td>Catégorie:<td>
-		<select name="categories_id"<?php echo in_array('categories_id', $required) ? " required" : ""; ?> onchange="if($(this).val()=='<?php echo $participations_id; ?>'){$('input[name=poids]').val('0');$('tr#sousCatTR').css('display','table-row');$('#matieres_id option[value=<?php echo $matiere_autre_id; ?>]').prop('selected', true);}else{$('input[name=poids]').val('');$('#matieres_id option:eq(0)').prop('selected', true);$('tr#sousCatTR').css('display','none');}">
+		<select name="categories_id"<?php echo in_array('categories_id', $required) ? " required" : ""; ?>>
 			<?php
 			$options = '';
 			/*if( !isset($item_data['categories_id']) ){

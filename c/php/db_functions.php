@@ -288,7 +288,11 @@ function id_to_name($id, $table){
 	//echo '<pre>'.$q.'</pre>';
 	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Query: '.$q.' Function: '.__FUNCTION__ );
 	$name = mysqli_fetch_row($query);
-	return $name[0];
+	if( !empty($name[0]) ){
+		return $name[0];
+	}else{
+		return false;
+	}
 }
 
 // get id from name
@@ -299,7 +303,11 @@ function name_to_id($name, $table){
 	//echo '<pre>'.$q.'</pre>';
 	$query = mysqli_query($db, $q) or log_db_errors( mysqli_error($db), 'Query: '.$q.' Function: '.__FUNCTION__ );
 	$id = mysqli_fetch_row($query);
-	return $id[0];
+	if( !empty($id[0]) ){
+		return $id[0];
+	}else{
+		return false;
+	}
 }
 
 
@@ -347,12 +355,17 @@ function insert_new($table, $item_data){
 		$array_values[] = time();
 	}
 
-	if($table == 'articles'){
-		if( !array_key_exists('titre', $item_data) ){
+	if($table == 'articles'){ 
+		if( array_key_exists('matieres_id', $item_data) && !empty($item_data['matieres_id']) ){
+			$added_title = id_to_name($item_data['matieres_id'], 'matieres');
+		}else{
+			$added_title = 'article x';
+		}
+		if( !array_key_exists('titre', $item_data) ){ 
 			$array_keys[] = 'titre';
-			$array_values[] = "'article x'";
+			$array_values[] = "$added_title";
 		}elseif( empty($item_data['titre']) ){
-			$item_data['titre'] = 'article x';
+			$item_data['titre'] = $added_title;
 		}
 	}
 	foreach($item_data as $k => $v){
