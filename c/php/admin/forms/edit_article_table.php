@@ -53,15 +53,15 @@ if(!isset($matieres)){
 /** !!!!!!!! this gets 'Participations id for showing/hiding Sous Catégories select menu */
 $participations_id = name_to_id('Participations', 'categories'); 
 if($participations_id == false){
-	echo '<p class="error">ERREUR:<br>La catégorie "Participations" n\'existe plus dans la base de donnée!<br>Elle a été supprimée ou son nom a été changé. Le logiciel ne peut plus enregistrer les Adhésions.</p>';
+	echo '<p class="error">ATTENTION:<br>La catégorie "Participations" n\'existe plus dans la base de donnée!<br>Elle a été supprimée ou son nom a été changé.<br>Le logiciel ne peut plus enregistrer les Participations (Adhésions, Dons...).<br> Les Ventes peuvent continuer d\'être enregistrées. </p>';
 }
 
 /** !!!!!!!! this gets matieres id for "Autre", for selecting "Autre" if "Participations" is selected as Categories */
 //$matiere_autre_id = name_to_id('Autre', 'matieres');
 $matiere_autre_id = name_to_id('(hors matériaux)', 'matieres'); // matériauthèque
-/*if($matiere_autre_id == false){
-	echo '<p class="error">ERREUR:<br>La Matière "(hors matériaux)" n\'existe plus dans la base de donnée!<br>Elle a été supprimée ou son nom a été changé...</p>';
-}*/
+if($matiere_autre_id == false){
+	echo '<p class="error">ATTENTION:<br>La Matière "(hors matériaux)" n\'existe plus dans la base de donnée!<br>Elle a été supprimée ou son nom a été changé.<br>Le logiciel ne peut plus enregistrer les Participations (Adhésions, Dons...).<br> Les Ventes peuvent continuer d\'être enregistrées. </p>';
+}
 
 if( isset($item_data['id']) && !empty($item_data['id']) ){
 	echo '<input type="hidden" name="id" value="'.$item_data['id'].'">';
